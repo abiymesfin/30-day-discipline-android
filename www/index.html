@@ -400,8 +400,20 @@ button:disabled{opacity:.4;cursor:not-allowed}
   function getNativeNotificationPlugin(){
     try{
       const cap=window.Capacitor;
-      return cap?.Plugins?.LocalNotifications || null;
+      if(!cap)return null;
+      // Capacitor 7 does not always expose third-party plugins on cap.Plugins
+      // when the app is a static HTML bundle, so register the native proxy explicitly.
+      if(cap.registerPlugin && !cap.Plugins?.LocalNotifications){
+        const registered=cap.registerPlugin('LocalNotifications');
+        cap.Plugins=cap.Plugins||{};
+        cap.Plugins.LocalNotifications=registered;
+      }
+      return cap.Plugins?.LocalNotifications || null;
     }catch(err){return null;}
+  }
+  async function ensureNativeChannel(plugin){
+    if(!plugin?.createChannel)return;
+    try{await plugin.createChannel({id:'discipline30-reminders',name:'Daily reminders',description:'30 DAY daily challenge reminders',importance:5,sound:'default',lights:true,vibration:true});}catch(err){}
   }
   function isNativeAndroid(){
     try{return Boolean(window.Capacitor?.isNativePlatform?.() && window.Capacitor.getPlatform?.()==='android');}catch(err){return false;}
@@ -424,6 +436,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     try{
       const permission=await plugin.checkPermissions();
       if(permission.display!=='granted')return false;
+      await ensureNativeChannel(plugin);
       await cancelNativeReminder();
       const [hour,minute]=String(state.settings.reminderTime||'09:00').split(':').map(Number);
       const now=new Date();
@@ -656,7 +669,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
   async function sendSystemNotification(test=false){
     const plugin=getNativeNotificationPlugin();
     if(plugin){
-      try{await plugin.schedule({notifications:[{id:nativeTestId,title:'30 Day Challenge — Test',body:'Notifications are working on this device.',schedule:{at:new Date(Date.now()+500)},channelId:'discipline30-reminders',smallIcon:'ic_launcher',sound:'default',extra:{kind:'test'}}]});return true;}catch(err){notify('Could not schedule the Android notification. Check app notification settings.');return false;}
+      try{await ensureNativeChannel(plugin);await plugin.schedule({notifications:[{id:nativeTestId,title:'30 Day Challenge — Test',body:'Notifications are working on this device.',schedule:{at:new Date(Date.now()+2000)},channelId:'discipline30-reminders',smallIcon:'ic_launcher',sound:'default',extra:{kind:'test'}}]});return true;}catch(err){notify('Could not schedule the Android notification. Check app notification settings.');return false;}
     }
     const title=test?'30 Day Challenge — Test':'30 Day Challenge Reminder';
     const options={body:test?'Notifications are working on this device.':'Time for your daily commitment. Open your challenge and check in.',icon:'./icons/icon-192.png',badge:'./icons/icon-192.png',tag:test?'discipline30-test':'discipline30-daily',renotify:false};

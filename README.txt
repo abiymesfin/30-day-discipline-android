@@ -5,8 +5,8 @@ This archive preserves the supplied pastel single-page source and adds:
 - Local phone time picker, saved reminder time, OFF-by-default toggle.
 - Permission status, enable-permission flow and test notification button.
 - Duplicate-safe daily reminder state (one local calendar date at most in PWA mode).
-- Capacitor Android bridge for native local notifications, including a single fixed reminder ID that is cancelled/replaced on changes.
-- Service-worker cache v5 and local-only user data migration.
+- Capacitor Android bridge for native local notifications, including explicit plugin registration, an Android notification channel, and a single fixed reminder ID that is cancelled/replaced on changes.
+- Service-worker cache v5, local-only user data migration, and the 30 calendar launcher logo.
 
 PWA installation
 1. Serve this folder over HTTPS.
