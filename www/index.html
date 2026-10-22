@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2edff">
+<meta name="description" content="A personal 30-day discipline challenge with habits, progress, settings and reminders.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>30 Day — Personal Challenge</title>
+<style>
+:root{
+  --bg:#f8f7fa;--surface:#fff;--ink:#171821;--muted:#8b8c96;--line:#eceaf0;
+  --lav:#c7b2ff;--lav-deep:#9a7cf5;--yellow:#ffc85c;--blue:#a9caff;--mint:#b6e9c4;
+  --pink:#f5b2e7;--nav:#171821;--shadow:0 12px 35px rgba(33,25,61,.07);
+  --radius:22px
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg);scroll-behavior:smooth}
+body{margin:0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #9a7cf566;outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.app{width:100%;max-width:540px;min-height:100vh;margin:0 auto;background:var(--bg);padding:18px 19px calc(108px + env(safe-area-inset-bottom))}
+.topbar{position:relative;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 21px}
+.greeting{display:flex;align-items:center;gap:11px;min-width:0}
+.avatar{width:43px;height:43px;flex:none;border-radius:50%;background:#eee8ff;border:1px solid #e5dcff;display:grid;place-items:center;color:#7054cb}
+.avatar svg{width:23px;height:23px}
+.hello{font-size:16px;font-weight:800;letter-spacing:-.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today-date{font-size:12px;color:var(--muted);margin-top:3px}
+.icon-btn{position:relative;z-index:13;width:44px;height:44px;flex:none;border:1px solid #ded9e8;border-radius:50%;background:#fff;display:grid;place-items:center;color:#262731;cursor:pointer;touch-action:manipulation;box-shadow:0 3px 10px rgba(33,25,61,.06)}
+.icon-btn svg{width:22px;height:22px;pointer-events:none;stroke-width:2.1}
+.page{display:none;animation:appear .18s ease-out}
+.page.active{display:block}
+@keyframes appear{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{position:relative;overflow:hidden;background:var(--lav);border-radius:25px;padding:22px 20px 17px;min-height:178px;margin-bottom:18px;isolation:isolate}
+.hero:before{content:"";position:absolute;width:145px;height:145px;border-radius:45% 55% 60% 40%;background:#b59aff;right:-18px;top:22px;transform:rotate(18deg);z-index:-1}
+.hero:after{content:"";position:absolute;width:82px;height:82px;border-radius:28px;background:linear-gradient(140deg,#ffd05b,#ff9e5c);right:38px;top:28px;transform:rotate(26deg);box-shadow:0 12px 18px #7754af22;z-index:-1}
+.hero-copy{position:relative;z-index:1;max-width:68%}
+.hero .eyebrow{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;font-weight:850;color:#3e315f}
+.hero h1{font-size:clamp(25px,7vw,32px);letter-spacing:-1.15px;line-height:1.08;margin:9px 0 8px;font-weight:850;max-width:245px}
+.hero p{font-size:11px;line-height:1.45;color:#3f3657;margin:0;max-width:220px}
+.hero-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:19px;gap:10px;position:relative;z-index:1}
+.soft-pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:7px 10px;background:#ffffff8a;color:#31264b;font-size:11px;font-weight:800}
+.soft-pill svg{width:13px;height:13px}
+.hero-cta{border:0;border-radius:99px;background:#171821;color:#fff;padding:10px 13px;font-size:11px;font-weight:800;white-space:nowrap}
+.hero-cta:active{transform:scale(.98)}
+.floating-shape{position:absolute;right:54px;top:52px;width:41px;height:58px;border-radius:14px;background:#171821;transform:rotate(20deg);box-shadow:16px 17px 0 -3px #f6b1e4,28px -8px 0 -10px #8ab7fc;opacity:.96}
+.week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:0 0 25px}
+.week-day{border:1px solid #e7e4ec;border-radius:17px;background:transparent;min-width:0;min-height:74px;padding:9px 1px 8px;color:var(--muted);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.week-day .dow{font-size:10px}
+.week-day .date-num{font-size:14px;font-weight:800;color:#4b4b57}
+.week-day .dot{width:4px;height:4px;background:#a4a1ad;border-radius:50%}
+.week-day.active{background:var(--nav);border-color:var(--nav);color:#fff;box-shadow:0 5px 12px #17182119}
+.week-day.active .date-num{color:#fff}
+.week-day.active .dot{background:var(--lav)}
+.week-day.future{opacity:.46}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:23px 0 13px}
+.section-head h2{font-size:21px;letter-spacing:-.6px;line-height:1.15;margin:0;font-weight:850}
+.section-head p{font-size:12px;color:var(--muted);margin:5px 0 0;line-height:1.4}
+.text-btn{background:transparent;border:0;color:#6e50cc;font-size:11px;font-weight:850;padding:9px 0;white-space:nowrap}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.habit-card{position:relative;min-height:178px;padding:15px;border-radius:21px;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;color:#22212b;border:0;text-align:left;box-shadow:none}
+.habit-card.yellow{background:var(--yellow)}.habit-card.blue{background:var(--blue)}.habit-card.mint{background:var(--mint)}.habit-card.pink{background:var(--pink)}.habit-card.lav{background:var(--lav)}
+.habit-card .tag{padding:6px 9px;background:#ffffff7d;border-radius:99px;font-size:10px;font-weight:800}
+.habit-card .habit-card-name{font-weight:850;font-size:20px;letter-spacing:-.65px;line-height:1.12;margin-top:17px;max-width:95%;overflow-wrap:anywhere}
+.habit-card .habit-card-meta{font-size:11px;margin-top:8px;line-height:1.45;color:#45414c;overflow-wrap:anywhere}
+.habit-card .card-foot{display:flex;justify-content:space-between;align-items:center;gap:7px;margin-top:auto;padding-top:14px;width:100%;font-size:10px;font-weight:750}
+.card-mark{height:32px;width:32px;border-radius:50%;background:#ffffff94;display:grid;place-items:center;flex:none}
+.card-mark svg{width:16px;height:16px}
+.habit-card.complete .card-mark{background:#171821;color:#fff}
+.empty-card{grid-column:1/-1;border:1.5px dashed #dcd7e6;background:#fff8;border-radius:22px;padding:25px 18px;text-align:center}
+.empty-icon{width:47px;height:47px;background:#eee8ff;color:#7759d5;border-radius:16px;display:grid;place-items:center;margin:0 auto 12px}
+.empty-icon svg{width:23px;height:23px}
+.empty-card h3{font-size:16px;margin:0 0 7px;letter-spacing:-.3px}
+.empty-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 auto 14px;max-width:270px}
+.primary-btn{border:0;background:var(--nav);color:#fff;border-radius:13px;font-weight:800;font-size:12px;padding:13px 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.primary-btn svg{width:16px;height:16px}
+.wide-btn{width:100%;margin-top:12px;background:#fff;border:1px solid var(--line);color:#24242f;border-radius:14px;padding:13px;font-size:12px;font-weight:800}
+.wide-btn svg{width:16px;height:16px;vertical-align:middle;margin-right:7px}
+.bottom-nav{position:fixed;z-index:5;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 36px),420px);border-radius:999px;background:#171821;padding:7px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;box-shadow:0 11px 35px #17182128}
+.nav-btn{border:0;background:transparent;color:#a8a8b2;border-radius:50px;min-height:51px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700}
+.nav-btn svg{width:20px;height:20px;stroke-width:1.8}
+.nav-btn.active{background:#fff;color:#171821}
+.page-title{font-size:29px;font-weight:880;letter-spacing:-1px;margin:6px 0 7px;line-height:1.1}
+.page-subtitle{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 22px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.toolbar h3{margin:0;font-size:16px;letter-spacing:-.25px}
+.count-label{font-size:11px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid #eeecf1;border-radius:20px;padding:16px;margin-bottom:12px}
+.panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+.panel-title h3{font-size:15px;margin:0;font-weight:850}
+.label{font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.habit-row{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.habit-row:last-child{margin-bottom:0}
+.check-btn{width:25px;height:25px;flex:none;border-radius:8px;border:1.5px solid #d4d0dc;background:#fff;color:white;display:grid;place-items:center}
+.check-btn.checked{background:#171821;border-color:#171821}
+.check-btn svg{width:14px;height:14px}
+.row-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:none;background:#f1ebff;font-size:20px}
+.row-main{min-width:0;flex:1}
+.row-name{font-size:13px;font-weight:800;overflow-wrap:anywhere}
+.row-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+.more-btn{border:0;background:transparent;width:32px;height:35px;color:#8b8c96;font-size:21px;border-radius:9px}
+.list-empty{border:1px dashed #dfdbe5;background:#fff8;border-radius:20px;text-align:center;padding:28px 17px}
+.list-empty .empty-icon{margin-bottom:13px}
+.list-empty h3{margin:0 0 6px;font-size:15px}
+.list-empty p{font-size:12px;line-height:1.55;color:var(--muted);margin:0 auto 14px;max-width:280px}
+.stats-hero{background:#171821;color:#fff;border-radius:24px;padding:20px;margin-bottom:13px}
+.stats-hero .label{color:#b8b7c1}
+.big-stat{font-size:38px;font-weight:900;letter-spacing:-1.5px;margin:8px 0 5px}
+.stats-hero p{font-size:12px;color:#c5c4cd;margin:0;line-height:1.4}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-box{background:#fff;border:1px solid var(--line);border-radius:19px;padding:16px}
+.stat-box .stat-num{font-size:26px;letter-spacing:-.7px;font-weight:900;margin-top:8px}
+.stat-box .stat-name{font-size:11px;color:var(--muted);line-height:1.35;margin-top:3px}
+.chart{height:145px;display:flex;align-items:flex-end;gap:7px;padding:15px 3px 0}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;height:100%;justify-content:flex-end;min-width:0}
+.bar{width:100%;max-width:25px;min-height:3px;background:#eeeaf6;border-radius:8px 8px 3px 3px;position:relative}
+.bar.filled{background:#b9a0ff}
+.bar.today{background:#171821}
+.bar-label{font-size:9px;color:var(--muted)}
+.progress-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.calendar-weekday{text-align:center;font-size:10px;font-weight:800;color:var(--muted);padding:3px 0 5px}
+.calendar-day{position:relative;min-width:0;min-height:58px;padding:7px 1px 6px;border:1px solid #ebe7f1;border-radius:12px;background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:background .15s,border-color .15s;touch-action:manipulation}
+.calendar-day .calendar-date{font-size:14px;font-weight:850;line-height:1.1}
+.calendar-day .calendar-index{font-size:9px;color:var(--muted);line-height:1.1}
+.calendar-day.complete{background:#e0f5e7;border-color:#b6e2c4}
+.calendar-day.complete .calendar-index{color:#347b4f}
+.calendar-day.partial{background:#f1ebff;border-color:#d9cafa}
+.calendar-day.partial .calendar-index{color:#7654bc}
+.calendar-day.today{box-shadow:inset 0 0 0 1.5px #171821}
+.calendar-day.selected{background:#171821;border-color:#171821;color:#fff;box-shadow:0 4px 12px #17182120}
+.calendar-day.selected .calendar-index{color:#ddd7ee}
+.calendar-day.future:not(.selected){background:#faf9fc;color:#a8a4b0}
+.calendar-day.future:not(.selected) .calendar-index{color:#aaa6b3}
+.calendar-day.empty{visibility:hidden;pointer-events:none}
+.calendar-selected{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:13px;margin-top:13px;border-top:1px solid #f0edf4}
+.calendar-selected-main{min-width:0}
+.calendar-selected-title{font-size:12px;font-weight:850}
+.calendar-selected-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+.calendar-view-btn{border:0;background:#f0eaff;color:#6544bd;border-radius:11px;font-size:11px;font-weight:850;padding:10px 11px;white-space:nowrap}
+@media(max-width:365px){.calendar-day{min-height:52px;border-radius:10px}.calendar-day .calendar-date{font-size:13px}.calendar-day .calendar-index{font-size:8px}.progress-calendar{gap:4px}}
+
+.profile-top{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:17px;margin:19px 0 15px}
+.profile-avatar{width:63px;height:63px;border-radius:50%;display:grid;place-items:center;background:#f0eaff;color:#6c50c8;flex:none}
+.profile-avatar svg{width:29px;height:29px}
+.profile-name{font-weight:850;font-size:17px;letter-spacing:-.4px;overflow-wrap:anywhere}
+.profile-sub{color:var(--muted);font-size:12px;margin-top:5px}
+.info-row{padding:14px 0;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0eef3}
+.info-row:last-child{border-bottom:0}
+.info-icon{width:38px;height:38px;border-radius:13px;background:#f4f0ff;display:grid;place-items:center;color:#7556d0;flex:none}
+.info-icon svg{width:18px;height:18px}
+.info-main{min-width:0;flex:1}
+.info-title{font-size:13px;font-weight:800}
+.info-desc{font-size:11px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.arrow{color:#a09eaa;font-size:19px}
+.form-field{margin:14px 0}
+.form-field label{display:block;font-size:11px;font-weight:800;color:#696976;margin-bottom:7px}
+.form-field input,.form-field textarea,.form-field select{width:100%;padding:13px 13px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;color:var(--ink);outline:none;font-size:13px}
+.form-field textarea{min-height:84px;resize:vertical}
+.form-field input:focus,.form-field textarea:focus{border-color:#aa90fb}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-back{position:fixed;inset:0;background:#17182166;z-index:20;display:none;align-items:flex-end;justify-content:center;padding:10px}
+.modal-back.show{display:flex}
+.modal{width:min(100%,510px);background:#fff;border-radius:25px 25px 18px 18px;padding:22px 19px calc(20px + env(safe-area-inset-bottom));box-shadow:0 15px 55px #17182125;max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-head h2{font-size:22px;margin:0;letter-spacing:-.7px}
+.close-btn{width:34px;height:34px;border-radius:50%;border:0;background:#f4f2f7;color:#555462;font-size:21px}
+.modal-actions{display:flex;gap:9px;margin-top:18px}
+.modal-actions>*{flex:1}
+.secondary-btn{border:1px solid var(--line);background:#fff;color:#383743;border-radius:13px;font-weight:800;font-size:12px;padding:13px}
+.toast{position:fixed;z-index:30;bottom:calc(86px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#171821;color:white;border-radius:13px;padding:12px 17px;font-size:12px;font-weight:750;box-shadow:var(--shadow);display:none;max-width:calc(100% - 30px);text-align:center}
+.toast.show{display:block}
+.small-note{font-size:11px;line-height:1.55;color:var(--muted);margin-top:10px}
+.danger-btn{border:1px solid #f1c8cb;color:#c24958;background:#fff7f7;border-radius:12px;padding:12px 14px;font-size:12px;font-weight:800}
+.settings-intro{background:var(--lav);border-radius:21px;padding:19px;margin-bottom:13px;color:#29213d}
+.settings-intro .label{color:#4f426e}.settings-intro h2{font-size:23px;line-height:1.12;letter-spacing:-.7px;margin:8px 0}.settings-intro p{font-size:12px;line-height:1.5;margin:0;color:#4e4563}
+.settings-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+.settings-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.settings-card-head h3{font-size:15px;margin:0 0 4px;font-weight:850}.settings-card-head p{font-size:11px;color:var(--muted);line-height:1.45;margin:0}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-top:1px solid #f0eef3;border-bottom:1px solid #f0eef3}
+.switch-title{font-size:13px;font-weight:800}.switch-desc{font-size:11px;line-height:1.45;color:var(--muted);margin-top:4px;max-width:250px}
+.toggle{position:relative;display:inline-flex;width:48px;height:28px;flex:none}.toggle input{position:absolute;opacity:0;width:1px;height:1px}.toggle-track{position:absolute;inset:0;border-radius:999px;background:#e4e1e9;transition:background .18s}.toggle-track:before{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 5px #17182120;transition:transform .18s}.toggle input:checked+.toggle-track{background:#171821}.toggle input:checked+.toggle-track:before{transform:translateX(20px)}.toggle input:focus-visible+.toggle-track{outline:3px solid #9a7cf566;outline-offset:3px}
+.time-setting{display:grid;grid-template-columns:1fr 145px;align-items:center;gap:12px;padding:15px 0}.time-setting label{display:block;font-size:13px;font-weight:800}.time-setting small{display:block;font-size:11px;color:var(--muted);line-height:1.4;margin-top:4px}.time-setting input{width:100%;padding:12px 10px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;color:var(--ink);font-size:16px;font-weight:800}
+.permission-status{display:flex;align-items:flex-start;gap:9px;background:#f8f6fc;border-radius:13px;padding:12px;margin-top:11px;font-size:11px;color:#676473;line-height:1.5}.status-dot{width:8px;height:8px;border-radius:50%;background:#b7b2c2;flex:none;margin-top:4px}.status-dot.allowed{background:#48a86c}.status-dot.denied{background:#d45d66}
+.settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.settings-actions .primary-btn,.settings-actions .secondary-btn{width:100%;min-width:0}.settings-back{width:100%;margin:1px 0 12px;background:#fff;border:1px solid var(--line);color:#292833;border-radius:13px;padding:12px;font-weight:800;font-size:12px}
+.reminder-note{font-size:11px;color:#777481;line-height:1.6;margin:10px 2px 0}.inline-status{font-size:11px;color:var(--muted);margin-top:8px;min-height:15px}
+
+@media(min-width:600px){body{padding:24px 0}.app{min-height:calc(100vh - 48px);border:1px solid #eeebf5;border-radius:32px;box-shadow:0 18px 70px #33234d0a;padding-top:22px;padding-bottom:125px}.bottom-nav{bottom:28px}.modal-back{align-items:center}.modal{border-radius:25px;padding-bottom:22px}}
+@media(max-width:365px){.app{padding-left:13px;padding-right:13px}.hero{padding:18px 15px}.hero-copy{max-width:74%}.hero h1{font-size:25px}.hero:after{right:-25px}.floating-shape{right:37px}.week-day{min-height:68px}.week-day .dow{font-size:9px}.habit-card{padding:12px;min-height:164px}.habit-card .habit-card-name{font-size:18px}.nav-btn{font-size:8px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <div class="greeting">
+      <div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg></div>
+      <div style="min-width:0"><div class="hello" id="greetingText">Hello there</div><div class="today-date" id="headerDate"></div></div>
+    </div>
+    <button type="button" class="icon-btn settings-icon-btn" id="headerAction" aria-label="Open Settings" title="Settings" data-destination="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3H3.7a1.8 1.8 0 0 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3Z"/></svg></button>
+  </header>
+
+  <section class="page active" id="page-home" data-page="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">YOUR PERSONAL JOURNEY</div>
+        <h1 id="heroTitle">30 day<br>challenge</h1>
+        <p id="heroCaption">Build discipline, one small promise at a time.</p>
+      </div>
+      <div class="floating-shape" aria-hidden="true"></div>
+      <div class="hero-bottom">
+        <span class="soft-pill" id="heroDay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Z"/></svg><span>Day 1 / 30</span></span>
+        <button class="hero-cta" id="heroCta">Set my first habit ↗</button>
+      </div>
+    </section>
+
+    <div class="week-strip" id="weekStrip" aria-label="Challenge days"></div>
+
+    <div class="section-head">
+      <div><h2>Your plan</h2><p id="planSubtitle">Your daily commitments, in one place.</p></div>
+      <button class="text-btn" id="seeHabitsBtn">SEE ALL ↗</button>
+    </div>
+    <div class="plan-grid" id="homePlan"></div>
+    <button class="wide-btn" id="homeAddBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>Add a habit</button>
+  </section>
+
+  <section class="page" id="page-habits" data-page="habits">
+    <div class="page-title">My habits</div>
+    <p class="page-subtitle">Your daily habits.</p>
+    <div class="toolbar"><h3 id="habitsTitle">Daily habits</h3><span class="count-label" id="habitsCount">0 habits</span></div>
+    <div id="habitsPageList"></div>
+    <button class="primary-btn" style="width:100%;margin-top:14px" id="habitsAddBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Create a habit</button>
+    <div class="small-note">Habits you add are saved on this device. Nothing is pre-filled.</div>
+  </section>
+
+  <section class="page" id="page-progress" data-page="progress">
+    <div class="page-title">Your progress</div>
+    <p class="page-subtitle">Your 30-day activity at a glance.</p>
+    <div class="stats-hero">
+      <div class="label">CHALLENGE COMPLETION</div>
+      <div class="big-stat" id="statPercent">0%</div>
+      <p id="statSummary">Start by adding a habit and checking it off each day.</p>
+      <div style="margin-top:16px;height:7px;background:#ffffff21;border-radius:99px;overflow:hidden"><div id="statFill" style="height:100%;width:0;background:#c6b1ff;border-radius:99px;transition:width .2s"></div></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="label">COMPLETED</div><div class="stat-num" id="statDone">0</div><div class="stat-name">Habit check-ins</div></div>
+      <div class="stat-box"><div class="label">BEST STREAK</div><div class="stat-num" id="statStreak">0</div><div class="stat-name">Consecutive full days</div></div>
+      <div class="stat-box"><div class="label">ACTIVE HABITS</div><div class="stat-num" id="statHabits">0</div><div class="stat-name">Habits you created</div></div>
+      <div class="stat-box"><div class="label">DAYS COMPLETED</div><div class="stat-num" id="statDays">0</div><div class="stat-name">All habits done</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><h3>30-day calendar</h3><span class="count-label" id="calendarRangeLabel">Challenge days</span></div>
+      <div class="progress-calendar" id="progressCalendar" aria-label="30-day challenge calendar"></div>
+      <div class="calendar-selected">
+        <div class="calendar-selected-main"><div class="calendar-selected-title" id="calendarSelectedTitle">Day 1</div><div class="calendar-selected-sub" id="calendarSelectedSub">No habits completed</div></div>
+        <button class="calendar-view-btn" id="calendarViewHabits" type="button">View day ↗</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><h3>Daily consistency</h3><span class="count-label">30 days</span></div>
+      <div class="chart" id="progressChart"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-profile" data-page="profile">
+    <div class="page-title">Profile</div>
+    <p class="page-subtitle">Your challenge details and data.</p>
+    <div class="profile-top">
+      <div class="profile-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg></div>
+      <div style="min-width:0;flex:1"><div class="profile-name" id="profileDisplayName">Your profile</div><div class="profile-sub" id="profileDisplaySub">Personal 30-day challenge</div></div>
+      <button class="icon-btn" id="editProfileBtn" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><h3>Challenge details</h3><button class="text-btn" id="editChallengeBtn">EDIT</button></div>
+      <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg></div><div class="info-main"><div class="info-title">Start date</div><div class="info-desc" id="profileStartDate"></div></div><div class="arrow">›</div></div>
+      <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="info-main"><div class="info-title">Challenge length</div><div class="info-desc">30 days</div></div></div>
+      <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/></svg></div><div class="info-main"><div class="info-title">Your daily habits</div><div class="info-desc" id="profileHabitsInfo">No habits added yet</div></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><h3>Your data</h3></div>
+      <div class="info-row" id="exportBtn" role="button" tabindex="0"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 17v3h14v-3"/></svg></div><div class="info-main"><div class="info-title">Export my data</div><div class="info-desc">Download your habits, check-ins and notes</div></div><div class="arrow">›</div></div>
+      <div class="info-row" id="clearDataBtn" role="button" tabindex="0"><div class="info-icon" style="background:#fff0f0;color:#c24958"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg></div><div class="info-main"><div class="info-title">Reset my challenge</div><div class="info-desc">Remove saved habits, notes and progress</div></div><div class="arrow">›</div></div>
+    </div>
+    <div class="small-note">Your information stays in local storage in this browser on this device. Clearing browser storage or using another browser may remove or not show it.</div>
+  </section>
+
+  <section class="page" id="page-settings" data-page="settings">
+    <div class="page-title">Settings</div>
+    <p class="page-subtitle">Reminder time and notification controls.</p>
+    <div class="settings-card">
+      <div class="settings-card-head"><div><h3>Daily reminder</h3><p>Get a notification at the time you choose.</p></div><div class="info-icon">⏰</div></div>
+      <div class="switch-row">
+        <div><div class="switch-title">Daily notification</div><div class="switch-desc">Turn your reminder on or off.</div></div>
+        <label class="toggle" aria-label="Enable daily reminder"><input id="reminderToggle" type="checkbox"><span class="toggle-track"></span></label>
+      </div>
+      <div class="time-setting">
+        <div><label for="reminderTime">Reminder time</label><small>Uses the local time on your phone.</small></div>
+        <input id="reminderTime" type="time" value="09:00" aria-label="Daily reminder time">
+      </div>
+      <button class="primary-btn" id="saveReminderBtn" style="width:100%">Save reminder settings</button>
+      <div class="permission-status" id="notificationPermissionStatus"><span class="status-dot"></span><span id="notificationPermissionText">Check notification permission.</span></div><div class="small-note" id="notificationModeNote"></div>
+      <div class="settings-actions">
+        <button class="secondary-btn" id="enableNotificationsBtn">Enable notifications</button>
+        <button class="secondary-btn" id="testReminderBtn">Test notification</button>
+      </div>
+      <div class="inline-status" id="reminderStatusText" aria-live="polite"></div>
+    </div>
+    <button class="settings-back" id="backFromSettings">← Back to Home</button>
+  </section>
+</main>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="nav-btn active" data-nav="home" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2Z"/></svg><span>Home</span></button>
+  <button class="nav-btn" data-nav="habits" aria-label="Habits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/></svg><span>Habits</span></button>
+  <button class="nav-btn" data-nav="progress" aria-label="Progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7 15v2m5-6v6m5-10v10"/></svg><span>Progress</span></button>
+  <button class="nav-btn" data-nav="profile" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg><span>Profile</span></button>
+</nav>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head"><h2 id="modalTitle">Add a habit</h2><button class="close-btn" id="closeModal" aria-label="Close">×</button></div>
+    <div id="habitFormWrap">
+      <div class="form-field"><label for="habitName">HABIT NAME</label><input id="habitName" maxlength="70" placeholder="Enter a habit name" autocomplete="off"></div>
+      <div class="form-field"><label for="habitDetails">WHY IS THIS IMPORTANT? (OPTIONAL)</label><textarea id="habitDetails" maxlength="180" placeholder="Write your own reason"></textarea></div>
+      <div class="two-col">
+        <div class="form-field"><label for="habitEmoji">ICON</label><select id="habitEmoji"><option value="">Choose icon</option><option value="🎯">🎯 Target</option><option value="📚">📚 Learning</option><option value="💧">💧 Water</option><option value="🏃">🏃 Movement</option><option value="🧘">🧘 Mindfulness</option><option value="🙏">🙏 Reflection</option><option value="💤">💤 Sleep</option><option value="📵">📵 Focus</option><option value="✍️">✍️ Writing</option><option value="💪">💪 Strength</option><option value="🌱">🌱 Growth</option><option value="⭐">⭐ Other</option></select></div>
+        <div class="form-field"><label for="habitColor">CARD COLOR</label><select id="habitColor"><option value="yellow">Warm yellow</option><option value="blue">Soft blue</option><option value="mint">Mint green</option><option value="pink">Pink</option><option value="lav">Lavender</option></select></div>
+      </div>
+      <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveHabitBtn">Save habit</button></div>
+    </div>
+    <div id="profileFormWrap" hidden>
+      <div class="form-field"><label for="profileNameInput">YOUR NAME (OPTIONAL)</label><input id="profileNameInput" maxlength="55" placeholder="Enter your name"></div>
+      <div class="form-field"><label for="challengeNameInput">CHALLENGE TITLE (OPTIONAL)</label><input id="challengeNameInput" maxlength="60" placeholder="Give your challenge a title"></div>
+      <div class="modal-actions"><button class="secondary-btn" id="cancelProfile">Cancel</button><button class="primary-btn" id="saveProfile">Save changes</button></div>
+    </div>
+    <div id="dateFormWrap" hidden>
+      <div class="form-field"><label for="startDateInput">CHALLENGE START DATE</label><input id="startDateInput" type="date"></div>
+      <p class="small-note">Changing the start date changes how challenge days are labelled. It does not erase your existing check-ins.</p>
+      <div class="modal-actions"><button class="secondary-btn" id="cancelDate">Cancel</button><button class="primary-btn" id="saveDate">Save date</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'personal_discipline_challenge_v2';
+  const $ = id => document.getElementById(id);
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  };
+  const dateFromISO = str => {
+    const [y,m,d] = String(str).split('-').map(Number);
+    return new Date(y, m-1, d, 12, 0, 0);
+  };
+  const isoDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const addDays = (date, n) => { const d = new Date(date); d.setDate(d.getDate()+n); return d; };
+  const dayDiff = (a,b) => Math.round((dateFromISO(a)-dateFromISO(b))/86400000);
+  const formatDate = (iso, options={weekday:'short',month:'short',day:'numeric'}) => dateFromISO(iso).toLocaleDateString(undefined, options);
+  const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const icons = {
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg>'
+  };
+  let state;
+  let selectedDay = 1;
+  let modalMode = 'habit';
+  let editingHabitId = null;
+  let toastTimer = null;
+  let nativeNotificationPlugin = null;
+  const nativeReminderId = 3001;
+  const nativeTestId = 3002;
+  const newState = () => ({startDate:todayISO(),profile:{name:'',challengeTitle:''},habits:[],checks:{},notes:{},settings:{dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''}});
+  function loadState(){
+    try{
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if(stored){
+        const parsed = JSON.parse(stored);
+        if(parsed && Array.isArray(parsed.habits) && parsed.checks && parsed.notes && parsed.profile) {
+          state = parsed;
+          if(!state.startDate) state.startDate=todayISO();
+          if(!state.settings) state.settings={dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''};
+          if(typeof state.settings.dailyReminderEnabled!=='boolean') state.settings.dailyReminderEnabled=false;
+          if(!state.settings.reminderTime) state.settings.reminderTime='09:00';
+          if(!('lastReminderDate' in state.settings)) state.settings.lastReminderDate='';
+          return;
+        }
+      }
+    }catch(err){}
+    state = newState();
+    persist();
+  }
+  function getNativeNotificationPlugin(){
+    try{
+      const cap=window.Capacitor;
+      return cap?.Plugins?.LocalNotifications || null;
+    }catch(err){return null;}
+  }
+  function isNativeAndroid(){
+    try{return Boolean(window.Capacitor?.isNativePlatform?.() && window.Capacitor.getPlatform?.()==='android');}catch(err){return false;}
+  }
+  async function getNotificationPermission(){
+    const plugin=getNativeNotificationPlugin();
+    if(plugin){
+      try{const result=await plugin.checkPermissions();return result.display==='granted'?'granted':result.display==='denied'?'denied':'default';}catch(err){return 'default';}
+    }
+    return 'Notification' in window ? Notification.permission : 'unsupported';
+  }
+  async function cancelNativeReminder(){
+    const plugin=getNativeNotificationPlugin();
+    if(!plugin)return;
+    try{await plugin.cancel({notifications:[{id:nativeReminderId}]});}catch(err){}
+  }
+  async function scheduleNativeReminder(){
+    const plugin=getNativeNotificationPlugin();
+    if(!plugin || !isNativeAndroid() || !state.settings.dailyReminderEnabled)return false;
+    try{
+      const permission=await plugin.checkPermissions();
+      if(permission.display!=='granted')return false;
+      await cancelNativeReminder();
+      const [hour,minute]=String(state.settings.reminderTime||'09:00').split(':').map(Number);
+      const now=new Date();
+      const at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),hour,minute,0,0);
+      if(at<=now)at.setDate(at.getDate()+1);
+      await plugin.schedule({notifications:[{id:nativeReminderId,title:'30 Day Challenge Reminder',body:'Time for your daily commitment. Open your challenge and check in.',schedule:{at,repeats:true,allowWhileIdle:true},channelId:'discipline30-reminders',smallIcon:'ic_launcher',sound:'default',extra:{kind:'daily-reminder'}}]});
+      return true;
+    }catch(err){return false;}
+  }
+  function persist(){
+    try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
+    catch(err){notify('Could not save. Check browser storage settings.');}
+  }
+  function challengeDay(){
+    const d = dayDiff(todayISO(), state.startDate)+1;
+    return Math.max(1, Math.min(30, d));
+  }
+  function clampDay(n){return Math.max(1,Math.min(30,Number(n)||1));}
+  function checkDate(day){return isoDate(addDays(dateFromISO(state.startDate), day-1));}
+  function isFuture(day){return checkDate(day)>todayISO();}
+  function dayChecks(day){return state.checks[String(day)] || {};}
+  function doneCount(day){return state.habits.filter(h=>Boolean(dayChecks(day)[h.id])).length;}
+  function isDayDone(day){return state.habits.length>0 && doneCount(day)===state.habits.length;}
+  function totalChecked(){let n=0;for(let d=1;d<=30;d++)n+=doneCount(d);return n;}
+  function overallPercent(){const possible=state.habits.length*30;return possible?Math.round(totalChecked()/possible*100):0;}
+  function currentStreak(){
+    let n=0;
+    // A streak is counted backwards from today, using challenge-day indexes.
+    for(let d=challengeDay();d>=1;d--){if(isDayDone(d))n++;else break;}
+    return n;
+  }
+  function bestStreak(){
+    let best=0, run=0;
+    for(let d=1;d<=30;d++){if(isDayDone(d)){run++;best=Math.max(best,run)}else run=0;}
+    return best;
+  }
+  function allDoneDays(){let n=0;for(let d=1;d<=30;d++)if(isDayDone(d))n++;return n;}
+  function notify(message){
+    const el=$('toast');el.textContent=message;el.classList.add('show');
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2100);
+  }
+  function goPage(name){
+    if(!document.querySelector(`.page[data-page="${name}"]`)){name='home';}
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));
+    if(name==='home') renderHome();
+    if(name==='habits') renderHabits();
+    if(name==='progress') renderStats();
+    if(name==='profile') renderProfile();
+    if(name==='settings') renderSettings();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function renderHeader(){
+    const name=state.profile.name.trim();
+    $('greetingText').textContent=name?`Hello, ${name}`:'Hello there';
+    $('headerDate').textContent=formatDate(todayISO(),{weekday:'long',month:'short',day:'numeric'});
+    $('headerAction').setAttribute('aria-label','Open settings');
+    $('headerAction').setAttribute('title','Settings');
+  }
+  function renderHero(){
+    const day=challengeDay();
+    const title=state.profile.challengeTitle.trim();
+    $('heroTitle').innerHTML=title?escapeHTML(title):'30 day<br>challenge';
+    $('heroCaption').textContent=state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} chosen by you. Keep showing up for yourself.`:'Build discipline, one small promise at a time.';
+    $('heroDay').innerHTML=icons.calendar+`<span>Day ${day} / 30</span>`;
+    $('heroCta').textContent=state.habits.length?'View my habits ↗':'Set my first habit ↗';
+  }
+  function renderWeek(){
+    const d=challengeDay();
+    let start=Math.floor((d-1)/7)*7+1;
+    if(start>24)start=24;
+    const wrap=$('weekStrip');wrap.innerHTML='';
+    for(let day=start;day<Math.min(start+7,31);day++){
+      const date=checkDate(day);
+      const button=document.createElement('button');
+      button.className='week-day'+(day===selectedDay?' active':'')+(isFuture(day)?' future':'');
+      button.setAttribute('aria-label',`Day ${day}, ${formatDate(date)}`);
+      button.innerHTML=`<span class="dow">${formatDate(date,{weekday:'short'}).slice(0,3)}</span><span class="date-num">${dateFromISO(date).getDate()}</span><span class="dot"></span>`;
+      button.addEventListener('click',()=>{selectedDay=day;renderHome();});
+      wrap.append(button);
+    }
+  }
+  function renderHome(){
+    renderHeader();renderHero();renderWeek();
+    const plans=$('homePlan');plans.innerHTML='';
+    $('planSubtitle').textContent=state.habits.length?`${doneCount(selectedDay)} of ${state.habits.length} complete · ${formatDate(checkDate(selectedDay),{weekday:'long',month:'short',day:'numeric'})}`:'Your daily commitments, in one place.';
+    if(!state.habits.length){
+      plans.innerHTML=`<div class="empty-card"><div class="empty-icon">${icons.plus}</div><h3>Your plan starts here</h3><p>No habits added yet. Choose the first daily action you want to commit to.</p><button class="primary-btn" id="emptyAddBtn">${icons.plus} Create my first habit</button></div>`;
+      $('emptyAddBtn').addEventListener('click',()=>openHabitModal());
+    }else{
+      state.habits.forEach((habit,index)=>{
+        const complete=Boolean(dayChecks(selectedDay)[habit.id]);
+        const card=document.createElement('button');
+        card.type='button';
+        card.className=`habit-card ${escapeHTML(habit.color||['yellow','blue','mint','pink','lav'][index%5])}${complete?' complete':''}`;
+        card.innerHTML=`<span class="tag">${complete?'COMPLETED':'DAILY HABIT'}</span><span class="habit-card-name">${escapeHTML(habit.name)}</span><span class="habit-card-meta">${escapeHTML(habit.details||'Your personal commitment')}</span><span class="card-foot"><span>${escapeHTML(habit.emoji||'⭐')} &nbsp;${complete?'Done for today':'Tap to mark done'}</span><span class="card-mark">${complete?icons.check:'↗'}</span></span>`;
+        card.addEventListener('click',()=>toggleHabit(habit.id,selectedDay));
+        plans.append(card);
+      });
+    }
+    $('homeAddBtn').style.display=state.habits.length?'block':'none';
+  }
+  function renderHabitRow(habit,day){
+    const complete=Boolean(dayChecks(day)[habit.id]);
+    const row=document.createElement('div');row.className='habit-row';
+    const check=document.createElement('button');check.className='check-btn'+(complete?' checked':'');check.setAttribute('aria-label',complete?'Mark incomplete':'Mark complete');check.innerHTML=complete?icons.check:'';
+    check.addEventListener('click',()=>toggleHabit(habit.id,day));
+    const em=document.createElement('div');em.className='row-icon';em.textContent=habit.emoji||'⭐';
+    const main=document.createElement('div');main.className='row-main';main.innerHTML=`<div class="row-name">${escapeHTML(habit.name)}</div><div class="row-desc">${escapeHTML(complete?'Completed for this day':habit.details||'Not checked off yet')}</div>`;
+    const more=document.createElement('button');more.className='more-btn';more.textContent='⋯';more.setAttribute('aria-label','Habit options');more.onclick=()=>habitOptions(habit.id);
+    row.append(check,em,main,more);return row;
+  }
+  function renderHabits(){
+    renderHeader();
+    $('habitsCount').textContent=`${state.habits.length} habit${state.habits.length===1?'':'s'}`;
+    const wrap=$('habitsPageList');wrap.innerHTML='';
+    if(!state.habits.length){
+      wrap.innerHTML=`<div class="list-empty"><div class="empty-icon">${icons.plus}</div><h3>No habits yet</h3><p>This page will hold the habits you choose. Add one when you're ready to begin.</p><button class="primary-btn" id="emptyHabitsAdd">${icons.plus} Add my first habit</button></div>`;
+      $('emptyHabitsAdd').onclick=()=>openHabitModal();
+    }else state.habits.forEach(h=>wrap.append(renderHabitRow(h,selectedDay)));
+  }
+  function renderStats(){
+    renderHeader();
+    const pct=overallPercent();
+    $('statPercent').textContent=pct+'%';
+    $('statFill').style.width=pct+'%';
+    $('statDone').textContent=totalChecked();
+    $('statStreak').textContent=bestStreak();
+    $('statHabits').textContent=state.habits.length;
+    $('statDays').textContent=allDoneDays();
+    $('statSummary').textContent=state.habits.length?`${totalChecked()} check-ins · ${state.habits.length} habit${state.habits.length===1?'':'s'}`:'No check-ins yet';
+    renderChallengeCalendar();
+    const chart=$('progressChart');chart.innerHTML='';
+    for(let d=1;d<=30;d++){
+      const wrap=document.createElement('div');wrap.className='bar-wrap';
+      const bar=document.createElement('div');bar.className='bar';
+      const count=doneCount(d),ratio=state.habits.length?count/state.habits.length:0;
+      bar.style.height=`${Math.max(3,ratio*100)}%`;
+      if(count)bar.classList.add('filled');
+      if(d===challengeDay())bar.classList.add('today');
+      bar.title=`Day ${d}: ${count} of ${state.habits.length}`;
+      const label=document.createElement('div');label.className='bar-label';label.textContent=d%5===1||d===30?d:'';
+      wrap.append(bar,label);chart.append(wrap);
+    }
+  }
+  function renderChallengeCalendar(){
+    const calendar=$('progressCalendar');
+    if(!calendar)return;
+    calendar.innerHTML='';
+    const weekdays=['S','M','T','W','T','F','S'];
+    weekdays.forEach(dayName=>{
+      const label=document.createElement('div');
+      label.className='calendar-weekday';label.textContent=dayName;
+      calendar.append(label);
+    });
+    const startDate=dateFromISO(state.startDate);
+    const endDate=addDays(startDate,29);
+    const startMonth=startDate.toLocaleDateString(undefined,{month:'short',year:'numeric'});
+    const endMonth=endDate.toLocaleDateString(undefined,{month:'short',year:'numeric'});
+    $('calendarRangeLabel').textContent=startMonth===endMonth?startMonth:`${startMonth} – ${endMonth}`;
+    // Pad the first week to the correct weekday, then draw only the 30 challenge days.
+    for(let i=0;i<startDate.getDay();i++){
+      const blank=document.createElement('div');blank.className='calendar-day empty';blank.setAttribute('aria-hidden','true');calendar.append(blank);
+    }
+    for(let day=1;day<=30;day++){
+      const date=checkDate(day),count=doneCount(day),complete=isDayDone(day);
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='calendar-day'+(complete?' complete':count?' partial':'')+(day===challengeDay()?' today':'')+(day===selectedDay?' selected':'')+(isFuture(day)?' future':'');
+      button.setAttribute('aria-label',`Challenge day ${day}, ${formatDate(date,{weekday:'long',month:'short',day:'numeric'})}, ${count} of ${state.habits.length} habits completed`);
+      button.setAttribute('aria-pressed',day===selectedDay?'true':'false');
+      button.innerHTML=`<span class="calendar-date">${dateFromISO(date).getDate()}</span><span class="calendar-index">D${day}</span>`;
+      button.title=`Day ${day} · ${formatDate(date)} · ${count}/${state.habits.length} habits`;
+      button.addEventListener('click',()=>{
+        selectedDay=day;
+        renderHome();renderHabits();renderStats();
+      });
+      calendar.append(button);
+    }
+    $('calendarSelectedTitle').textContent=`Day ${selectedDay} · ${formatDate(checkDate(selectedDay),{weekday:'short',month:'short',day:'numeric'})}`;
+    const completeCount=doneCount(selectedDay);
+    $('calendarSelectedSub').textContent=state.habits.length?`${completeCount} of ${state.habits.length} habits completed${isDayDone(selectedDay)?' · Complete':''}`:'No habits added';
+    $('calendarViewHabits').onclick=()=>goPage('habits');
+  }
+  function renderProfile(){
+    renderHeader();
+    $('profileDisplayName').textContent=state.profile.name.trim()||'Your profile';
+    $('profileDisplaySub').textContent=state.profile.challengeTitle.trim()||'Personal 30-day challenge';
+    $('profileStartDate').textContent=formatDate(state.startDate,{year:'numeric',month:'long',day:'numeric'});
+    $('profileHabitsInfo').textContent=state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} created`:'No habits added yet';
+  }
+  async function renderSettings(){
+    const cfg=state.settings||(state.settings={dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''});
+    $('reminderToggle').checked=Boolean(cfg.dailyReminderEnabled);
+    $('reminderTime').value=cfg.reminderTime||'09:00';
+    const native=isNativeAndroid(), permission=await getNotificationPermission();
+    let status='Notifications are not supported by this browser.',statusClass='';
+    if(native && permission==='granted'){status='Android notifications are allowed. Native reminders can be scheduled for the background.';statusClass='allowed';}
+    else if(native && permission==='denied'){status='Android notifications are blocked. Allow them in Android app settings.';statusClass='denied';}
+    else if(native){status='Android notification permission has not been granted. Tap “Enable notifications” to ask permission.';}
+    else if(!('Notification' in window)){status='System notifications are not supported in this browser.';}
+    else if(!window.isSecureContext){status='Notifications require a secure HTTPS address. Open the app over HTTPS.';}
+    else if(permission==='granted'){status='Browser notifications are allowed. Reminders work while the PWA is open or woken by the browser.';statusClass='allowed';}
+    else if(permission==='denied'){status="Notifications are blocked. Change this site's notification permission in Chrome/Android settings.";statusClass='denied';}
+    else{status='Notifications have not been allowed yet. Tap “Enable notifications” to ask permission.';}
+    $('notificationPermissionText').textContent=status;
+    $('notificationPermissionStatus').querySelector('.status-dot').className='status-dot'+(statusClass?' '+statusClass:'');
+    $('notificationModeNote').textContent=native?'Android native mode: the local-notifications bridge schedules one repeating local alarm and replaces it when settings change.':'PWA mode: the browser can show notifications only while the app is running; closed-app alarms are not available without a native Android build.';
+    $('enableNotificationsBtn').disabled=permission==='denied'||permission==='unsupported';
+    $('testReminderBtn').disabled=permission==='denied'||permission==='unsupported';
+    $('reminderStatusText').textContent=cfg.dailyReminderEnabled?`Daily reminder enabled for ${cfg.reminderTime||'09:00'} local time.`:'Daily reminder is off.';
+  }
+  async function ensureNotificationPermission(){
+    const plugin=getNativeNotificationPlugin();
+    let permission='unsupported';
+    if(plugin){
+      try{
+        let result=await plugin.checkPermissions();
+        if(result.display==='prompt'||result.display==='prompt-with-rationale')result=await plugin.requestPermissions();
+        permission=result.display==='granted'?'granted':result.display==='denied'?'denied':'default';
+      }catch(err){permission='denied';}
+    }else if('Notification' in window && window.isSecureContext){
+      permission=Notification.permission;
+      if(permission==='default'){try{permission=await Notification.requestPermission();}catch(err){permission='denied';}}
+    }
+    renderSettings();
+    if(permission!=='granted'){notify(permission==='denied'?'Notifications are blocked. Check Android or browser settings.':'Allow notifications to use reminders.');return false;}
+    return true;
+  }
+  async function sendSystemNotification(test=false){
+    const plugin=getNativeNotificationPlugin();
+    if(plugin){
+      try{await plugin.schedule({notifications:[{id:nativeTestId,title:'30 Day Challenge — Test',body:'Notifications are working on this device.',schedule:{at:new Date(Date.now()+500)},channelId:'discipline30-reminders',smallIcon:'ic_launcher',sound:'default',extra:{kind:'test'}}]});return true;}catch(err){notify('Could not schedule the Android notification. Check app notification settings.');return false;}
+    }
+    const title=test?'30 Day Challenge — Test':'30 Day Challenge Reminder';
+    const options={body:test?'Notifications are working on this device.':'Time for your daily commitment. Open your challenge and check in.',icon:'./icons/icon-192.png',badge:'./icons/icon-192.png',tag:test?'discipline30-test':'discipline30-daily',renotify:false};
+    try{if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.ready;if(reg && reg.showNotification){await reg.showNotification(title,options);return true;}}new Notification(title,options);return true;}catch(err){try{new Notification(title,options);return true;}catch(err2){notify('Could not display a notification. Check your Android settings.');return false;}}
+  }
+  async function enableDailyReminder(){
+    const allowed=await ensureNotificationPermission();
+    if(!allowed){state.settings.dailyReminderEnabled=false;persist();renderSettings();return;}
+    state.settings.reminderTime=$('reminderTime').value||state.settings.reminderTime||'09:00';
+    state.settings.dailyReminderEnabled=true;
+    persist();renderSettings();await scheduleNativeReminder();notify('Daily reminder enabled.');
+    checkDailyReminder();
+  }
+  async function saveReminderSettings(){
+    const time=$('reminderTime').value;
+    if(!time){notify('Choose a reminder time first.');return;}
+    state.settings.reminderTime=time;
+    persist();await scheduleNativeReminder();renderSettings();notify('Reminder time saved.');
+    checkDailyReminder();
+  }
+  async function testReminder(){
+    const allowed=await ensureNotificationPermission();
+    if(!allowed)return;
+    const ok=await sendSystemNotification(true);
+    if(ok)notify('Test notification sent.');
+  }
+  async function checkDailyReminder(){
+    const cfg=state && state.settings;
+    if(!cfg||!cfg.dailyReminderEnabled||!('Notification' in window)||Notification.permission!=='granted')return;
+    const now=new Date();
+    const localTime=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const today=todayISO();
+    if(localTime!==cfg.reminderTime||cfg.lastReminderDate===today)return;
+    // Mark before dispatch to avoid duplicate notifications if the app wakes repeatedly.
+    cfg.lastReminderDate=today;persist();
+    await sendSystemNotification(false);
+  }
+  function openModal(mode){
+    modalMode=mode;
+    $('modalBack').classList.add('show');
+    $('habitFormWrap').hidden=mode!=='habit';
+    $('profileFormWrap').hidden=mode!=='profile';
+    $('dateFormWrap').hidden=mode!=='date';
+    $('modalTitle').textContent=mode==='profile'?'Edit profile':mode==='date'?'Challenge start date':editingHabitId?'Edit habit':'Add a habit';
+    if(mode==='habit'){
+      const existing=editingHabitId?state.habits.find(h=>h.id===editingHabitId):null;
+      $('habitName').value=existing?.name||'';
+      $('habitDetails').value=existing?.details||'';
+      $('habitEmoji').value=existing?.emoji||'';
+      $('habitColor').value=existing?.color||'yellow';
+      $('saveHabitBtn').textContent=existing?'Save changes':'Save habit';
+    }else if(mode==='profile'){
+      $('profileNameInput').value=state.profile.name||'';
+      $('challengeNameInput').value=state.profile.challengeTitle||'';
+    }else{
+      $('startDateInput').value=state.startDate||todayISO();
+    }
+    setTimeout(()=>{const focus=mode==='habit'?'habitName':mode==='profile'?'profileNameInput':'startDateInput';$(focus).focus();},60);
+  }
+  function openHabitModal(id=null){editingHabitId=id;openModal('habit');}
+  function closeModal(){$('modalBack').classList.remove('show');editingHabitId=null;}
+  function saveHabit(){
+    const name=$('habitName').value.trim();
+    if(!name){notify('Enter a habit name first.');$('habitName').focus();return;}
+    const details=$('habitDetails').value.trim(),emoji=$('habitEmoji').value,color=$('habitColor').value;
+    if(editingHabitId){
+      const h=state.habits.find(h=>h.id===editingHabitId);
+      if(h)Object.assign(h,{name,details,emoji,color});
+      notify('Habit updated.');
+    }else{
+      state.habits.push({id:cryptoId(),name,details,emoji,color,createdAt:new Date().toISOString()});
+      notify('Habit added.');
+    }
+    persist();closeModal();renderAll();
+  }
+  function cryptoId(){return 'habit_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
+  function toggleHabit(id,day){
+    const key=String(day);if(!state.checks[key])state.checks[key]={};
+    if(state.checks[key][id])delete state.checks[key][id];else state.checks[key][id]=true;
+    persist();renderAll();
+    if(isDayDone(day))notify('Every habit is complete for this day. Nice work!');
+  }
+  function habitOptions(id){
+    const habit=state.habits.find(h=>h.id===id);if(!habit)return;
+    const choice=prompt(`Habit: ${habit.name}\nType EDIT to edit or DELETE to remove it.`, 'EDIT');
+    if(!choice)return;
+    const action=choice.trim().toLowerCase();
+    if(action==='edit')openHabitModal(id);
+    else if(action==='delete'){
+      if(confirm(`Delete "${habit.name}" and all its check-ins?`)){
+        state.habits=state.habits.filter(h=>h.id!==id);
+        Object.values(state.checks).forEach(c=>{if(c)delete c[id]});
+        persist();renderAll();notify('Habit deleted.');
+      }
+    }
+  }
+  function saveProfile(){
+    state.profile.name=$('profileNameInput').value.trim();
+    state.profile.challengeTitle=$('challengeNameInput').value.trim();
+    persist();closeModal();renderAll();notify('Profile updated.');
+  }
+  function saveStartDate(){
+    const value=$('startDateInput').value;
+    if(!value){notify('Choose a start date.');return;}
+    state.startDate=value;selectedDay=clampDay(challengeDay());persist();closeModal();renderAll();notify('Start date updated.');
+  }
+  function exportData(){
+    const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
+    const blob=new Blob([content],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=`my-30-day-challenge-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    notify('Your data export was prepared.');
+  }
+  function resetData(){
+    if(!confirm('Reset this challenge? All habits, check-ins, profile details and notes saved in this app will be deleted. This cannot be undone.'))return;
+    state=newState();selectedDay=1;persist();renderAll();goPage('home');notify('Challenge reset. Start fresh whenever you are ready.');
+  }
+  function renderAll(){
+    renderHeader();renderHome();renderHabits();renderStats();renderProfile();renderSettings();
+    // Keep only one page visible after refreshing all page models.
+    const active=document.querySelector('.page.active')?.dataset.page||'home';
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===active));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===active));
+  }
+  document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>goPage(b.dataset.nav)));
+  $('headerAction').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();goPage('settings');},true);
+  $('headerAction').addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('settings');}});
+  $('heroCta').addEventListener('click',()=>state.habits.length?goPage('habits'):openHabitModal());
+  $('seeHabitsBtn').addEventListener('click',()=>goPage('habits'));
+  $('homeAddBtn').addEventListener('click',()=>openHabitModal());
+  $('habitsAddBtn').addEventListener('click',()=>openHabitModal());
+  $('closeModal').addEventListener('click',closeModal);
+  $('cancelModal').addEventListener('click',closeModal);
+  $('saveHabitBtn').addEventListener('click',saveHabit);
+  $('editProfileBtn').addEventListener('click',()=>openModal('profile'));
+  $('editChallengeBtn').addEventListener('click',()=>openModal('date'));
+  $('cancelProfile').addEventListener('click',closeModal);
+  $('saveProfile').addEventListener('click',saveProfile);
+  $('cancelDate').addEventListener('click',closeModal);
+  $('saveDate').addEventListener('click',saveStartDate);
+  $('exportBtn').addEventListener('click',exportData);
+  $('exportBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();exportData();}});
+  $('clearDataBtn').addEventListener('click',resetData);
+  $('clearDataBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetData();}});
+  $('backFromSettings').addEventListener('click',()=>goPage('home'));
+  $('saveReminderBtn').addEventListener('click',saveReminderSettings);
+  $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);
+  $('testReminderBtn').addEventListener('click',testReminder);
+  $('reminderToggle').addEventListener('change',async e=>{
+    if(e.target.checked){await enableDailyReminder();}
+    else{state.settings.dailyReminderEnabled=false;persist();await cancelNativeReminder();renderSettings();notify('Daily reminder turned off.');}
+  });
+  $('reminderTime').addEventListener('change',async()=>{if($('reminderTime').value){state.settings.reminderTime=$('reminderTime').value;persist();await scheduleNativeReminder();renderSettings();}});
+  $('modalBack').addEventListener('click',e=>{if(e.target===$('modalBack'))closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&modalMode==='habit'&&$('modalBack').classList.contains('show')&&document.activeElement===$('habitName'))saveHabit();});
+  loadState();
+  selectedDay=challengeDay();
+  renderAll();
+  nativeNotificationPlugin=getNativeNotificationPlugin();
+  if(nativeNotificationPlugin && state.settings.dailyReminderEnabled) scheduleNativeReminder();
+  // Browser timers are best-effort; Android may pause them when the app is closed/suspended.
+  window.setInterval(checkDailyReminder, 15000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDailyReminder();});
+  window.addEventListener('focus',checkDailyReminder);
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+}
+</script>
+</body>
+</html>

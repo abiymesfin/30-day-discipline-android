@@ -1,0 +1,27 @@
+{
+  "id": "./index.html",
+  "name": "30 DAY",
+  "short_name": "30 DAY",
+  "description": "A personal 30-day challenge and daily habit tracker.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f7fa",
+  "theme_color": "#f2edff",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

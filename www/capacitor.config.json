@@ -1,0 +1,7 @@
+{
+  "appId": "com.thirtyday.discipline",
+  "appName": "30 DAY",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": { "androidScheme": "https" }
+}

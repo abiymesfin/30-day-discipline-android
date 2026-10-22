@@ -1,0 +1,20 @@
+MANUS AI — UPDATE THE EXISTING 30 DAY DISCIPLINE CHALLENGE APP
+
+Use the attached ZIP/project as the source of truth. Continue editing this project; do not rebuild it from an unrelated template and do not add sample data.
+
+REQUIRED FIXES
+1. Fix the top-right gear/settings button. It must be a clearly visible 44×44 px tap target, with an accessible label and a reliable click handler that opens the dedicated Settings page. Test it on Android-size screens. Do not link it to Profile or Search. Ensure the Service Worker cache is versioned so installed users receive the updated code instead of an old cached version.
+2. Add an interactive 30-day calendar to the Progress page. Lay out the real start-date weekday and dates in a seven-column grid. Show challenge day numbers D1–D30 and indicate completed, partial, current, selected and future days. Calendar completion states must be computed only from real user check-ins; do not fabricate progress.
+3. When a date/day is tapped, select that challenge day, update its visual state and show the selected day's progress. The “View day” action should open Habits with that day selected.
+4. Remove redundant helper paragraphs and overlong explanations. Keep labels and short status messages needed to use controls; retain important permission feedback.
+5. Preserve the existing pastel style, rounded cards, font sizes, mobile layout and separate Home, Habits, Progress, Profile and Settings pages.
+6. Preserve existing user-entered habits, profile and check-ins during updates. For a fresh install, profile fields/habits/notes/check-ins must be empty, completion statistics must be zero, and reminders must be OFF by default.
+7. Keep the daily reminder time setting and enable/disable notification controls. Do not claim a reminder will fire while the app is fully closed unless native Android scheduled notifications or a reliable push solution has actually been implemented and tested.
+
+ACCEPTANCE TESTS BEFORE DELIVERY
+- Tap the top-right gear: Settings opens every time; Back to Home returns home.
+- Navigate to Progress: the 30-day calendar is visible with the correct dates.
+- Tap different calendar days: selection and daily summary update; “View day” opens Habits on the chosen day.
+- Complete a habit: Progress calendar state and statistics update correctly.
+- Reload and reopen the app: real data persists; a clean installation has no demo data.
+- Provide the changed source files and a new ZIP. Provide an installable APK only if the platform actually builds one, and state what was tested.
