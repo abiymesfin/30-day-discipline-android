@@ -6,7 +6,7 @@ This archive preserves the supplied pastel single-page source and adds:
 - Permission status, enable-permission flow and test notification button.
 - Duplicate-safe daily reminder state (one local calendar date at most in PWA mode).
 - Capacitor Android bridge for native local notifications, including explicit plugin registration, an Android notification channel, and a single fixed reminder ID that is cancelled/replaced on changes.
-- Service-worker cache v5, local-only user data migration, and the 30 calendar launcher logo.
+- Service-worker cache v5, local-only user data migration, and the black-background launcher logo showing only 30, plus a white 30 notification glyph required by Android status bars.
 
 PWA installation
 1. Serve this folder over HTTPS.
