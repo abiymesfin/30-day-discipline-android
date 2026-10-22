@@ -31,3 +31,9 @@ Suggested acceptance test on a physical Android build
 - Verify permission status changes, send a test notification, then disable notifications in Android Settings and verify the blocked status.
 - Enable a reminder, inspect that only one scheduled reminder exists after changing time repeatedly, force-stop/reopen, and reboot the phone; verify one notification on the next local day.
 - Install fresh and verify empty habits/profile/check-ins and zero progress.
+
+
+UI-only account screen
+- Profile → Sign in opens a professional Sign in/Create account screen.
+- Includes Google, Apple, Facebook and Telegram provider buttons.
+- This screen is visual UI only; buttons do not authenticate or sync data.

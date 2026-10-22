@@ -193,6 +193,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
 @media(min-width:600px){body{padding:24px 0}.app{min-height:calc(100vh - 48px);border:1px solid #eeebf5;border-radius:32px;box-shadow:0 18px 70px #33234d0a;padding-top:22px;padding-bottom:125px}.bottom-nav{bottom:28px}.modal-back{align-items:center}.modal{border-radius:25px;padding-bottom:22px}}
 @media(max-width:365px){.app{padding-left:13px;padding-right:13px}.hero{padding:18px 15px}.hero-copy{max-width:74%}.hero h1{font-size:25px}.hero:after{right:-25px}.floating-shape{right:37px}.week-day{min-height:68px}.week-day .dow{font-size:9px}.habit-card{padding:12px;min-height:164px}.habit-card .habit-card-name{font-size:18px}.nav-btn{font-size:8px}}
 .app-loading{position:fixed;inset:0;z-index:100;background:#f8f7fa;display:grid;place-items:center;transition:opacity .22s ease,visibility .22s ease}.app-loading.hidden{opacity:0;visibility:hidden;pointer-events:none}.loading-card{text-align:center}.loading-mark{width:64px;height:64px;border-radius:19px;background:#000;color:#fff;display:grid;place-items:center;font-size:27px;font-weight:900;letter-spacing:-2px;margin:0 auto 15px;box-shadow:0 10px 26px rgba(23,24,33,.16)}.loading-spinner{width:18px;height:18px;border:2px solid #ddd7ee;border-top-color:#171821;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 9px}.loading-label{font-size:11px;color:#8b8c96;font-weight:700}@keyframes spin{to{transform:rotate(360deg)}}
+
+.auth-shell{padding:8px 2px 20px}.auth-brand{text-align:center;margin:5px 0 24px}.auth-mark{width:58px;height:58px;background:#171821;color:#fff;border-radius:18px;display:grid;place-items:center;margin:0 auto 13px;font-size:24px;font-weight:900;letter-spacing:-2px}.auth-brand h1{font-size:24px;margin:0;letter-spacing:-.8px}.auth-brand p{font-size:12px;color:var(--muted);margin:7px 0 0}.auth-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px 16px;box-shadow:0 10px 28px rgba(33,25,61,.05)}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f5f2fa;border-radius:12px;padding:4px;margin-bottom:18px}.auth-tab{border:0;background:transparent;border-radius:9px;color:#8b8894;padding:10px;font-size:12px;font-weight:850}.auth-tab.active{background:#fff;color:#171821;box-shadow:0 2px 8px rgba(33,25,61,.08)}.auth-label{display:block;font-size:10px;color:#696976;font-weight:850;letter-spacing:.7px;margin:13px 0 7px;text-transform:uppercase}.auth-input{width:100%;padding:13px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;font-size:13px;color:var(--ink);outline:none}.auth-input:focus{border-color:#aa90fb;box-shadow:0 0 0 3px #aa90fb22}.auth-submit{width:100%;margin-top:16px}.auth-divider{display:flex;align-items:center;gap:10px;color:#aaa6b1;font-size:10px;margin:19px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#eeeaf2;flex:1}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e8e4ef;background:#fff;border-radius:12px;padding:11px 8px;color:#292833;font-size:11px;font-weight:800}.social-btn svg{width:17px;height:17px}.social-btn:active{transform:scale(.98)}.auth-foot{text-align:center;font-size:10px;line-height:1.5;color:var(--muted);margin:14px 3px 0}.auth-back{width:100%;margin-top:12px}.account-card{background:#171821;color:#fff;border-radius:21px;padding:17px;margin:0 0 14px;display:flex;align-items:center;gap:13px}.account-card .auth-mini-mark{width:42px;height:42px;border-radius:13px;background:#fff;color:#171821;display:grid;place-items:center;font-weight:900;letter-spacing:-1px;flex:none}.account-card .account-copy{min-width:0;flex:1}.account-card h3{font-size:14px;margin:0 0 4px}.account-card p{font-size:11px;color:#c5c4cd;margin:0;line-height:1.4}.account-cta{border:0;background:#c7b2ff;color:#171821;border-radius:10px;padding:9px 10px;font-size:10px;font-weight:900;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -276,6 +278,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <div style="min-width:0;flex:1"><div class="profile-name" id="profileDisplayName">Your profile</div><div class="profile-sub" id="profileDisplaySub">Personal 30-day challenge</div></div>
       <button class="icon-btn" id="editProfileBtn" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button>
     </div>
+    <div class="account-card"><div class="auth-mini-mark">30</div><div class="account-copy"><h3>Protect your progress</h3><p>Sign in to keep your challenge connected across devices.</p></div><button class="account-cta" id="openAuthBtn" type="button">Sign in</button></div>
     <div class="panel">
       <div class="panel-title"><h3>Challenge details</h3><button class="text-btn" id="editChallengeBtn">EDIT</button></div>
       <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg></div><div class="info-main"><div class="info-title">Start date</div><div class="info-desc" id="profileStartDate"></div></div><div class="arrow">›</div></div>
@@ -290,6 +293,29 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="small-note">Your information stays in local storage in this browser on this device. Clearing browser storage or using another browser may remove or not show it.</div>
   </section>
 
+  <section class="page" id="page-auth" data-page="auth">
+    <div class="auth-shell">
+      <div class="auth-brand"><div class="auth-mark">30</div><h1>Welcome to 30 DAY</h1><p>Build discipline. Keep your promise.</p></div>
+      <div class="auth-card">
+        <div class="auth-tabs"><button class="auth-tab active" id="authSignInTab" type="button">Sign in</button><button class="auth-tab" id="authSignUpTab" type="button">Create account</button></div>
+        <form id="authForm" novalidate>
+          <label class="auth-label" for="authEmail">Email address</label><input class="auth-input" id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
+          <label class="auth-label" for="authPassword">Password</label><input class="auth-input" id="authPassword" type="password" placeholder="Enter your password" autocomplete="current-password">
+          <div id="authConfirmWrap" hidden><label class="auth-label" for="authConfirm">Confirm password</label><input class="auth-input" id="authConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password"></div>
+          <button class="primary-btn auth-submit" id="authSubmit" type="submit">Sign in</button>
+        </form>
+        <div class="auth-divider">or continue with</div>
+        <div class="social-grid">
+          <button class="social-btn" data-provider="Google" type="button"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.25-.2-1.8H12v3.41h5.37a4.58 4.58 0 0 1-1.99 3.01v2.5h3.22c1.88-1.73 2.75-4.28 2.75-7.12Z"/><path fill="#34A853" d="M12 21.5c2.7 0 4.96-.9 6.61-2.43l-3.22-2.5c-.9.6-2.04.96-3.39.96-2.6 0-4.8-1.76-5.59-4.12H3.08v2.58A9.99 9.99 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.41 13.41A6 6 0 0 1 6.1 12c0-.49.11-.97.3-1.41V8.01H3.08A9.5 9.5 0 0 0 2 12c0 1.44.34 2.8 1.08 3.99l3.33-2.58Z"/><path fill="#EA4335" d="M12 6.47c1.47 0 2.78.5 3.82 1.5l2.86-2.86C16.95 3.43 14.7 2.5 12 2.5a9.99 9.99 0 0 0-8.92 5.51l3.33 2.58C7.2 8.23 9.4 6.47 12 6.47Z"/></svg>Google</button>
+          <button class="social-btn" data-provider="Apple" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.02-2.1 1.72-3.12 1.8-3.17a3.87 3.87 0 0 0-3.05-1.65c-1.29-.13-2.53.77-3.18.77-.66 0-1.68-.75-2.76-.73a4.07 4.07 0 0 0-3.42 2.09c-1.47 2.54-.38 6.28 1.04 8.34.7 1 1.52 2.12 2.61 2.08 1.05-.04 1.45-.67 2.73-.67 1.27 0 1.64.67 2.75.64 1.14-.02 1.85-1.01 2.55-2.02.81-1.16 1.14-2.28 1.16-2.34-.03-.01-2.21-.85-2.23-3.34ZM14.9 6.32c.58-.7.97-1.67.86-2.64-.84.03-1.86.56-2.46 1.25-.54.62-1.01 1.62-.88 2.57.94.07 1.9-.48 2.48-1.18Z"/></svg>Apple</button>
+          <button class="social-btn" data-provider="Facebook" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1877F2"/><path fill="#fff" d="M13.3 19v-6h2l.3-2.3h-2.3V9.2c0-.67.19-1.1 1.12-1.1h1.2V6.05c-.2-.03-.9-.09-1.72-.09-1.7 0-2.86 1.04-2.86 2.95v1.79H9.1V13h1.94v6h2.26Z"/></svg>Facebook</button>
+          <button class="social-btn" data-provider="Telegram" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="m17.9 7.5-2.23 10.53c-.17.75-.61.94-1.24.58l-3.43-2.53-1.66 1.6c-.18.18-.33.33-.68.33l.24-3.49 6.35-5.74c.28-.24-.06-.38-.43-.14L7 13.1l-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14 1.06.53Z"/></svg>Telegram</button>
+        </div>
+        <p class="auth-foot">UI preview only. Account providers can be connected later without changing this design.</p>
+      </div>
+      <button class="secondary-btn auth-back" id="backFromAuth" type="button">← Continue without signing in</button>
+    </div>
+  </section>
   <section class="page" id="page-settings" data-page="settings">
     <div class="page-title">Settings</div>
     <p class="page-subtitle">Reminder time and notification controls.</p>
@@ -825,6 +851,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
   $('exportBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();exportData();}});
   $('clearDataBtn').addEventListener('click',resetData);
   $('clearDataBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetData();}});
+  $('openAuthBtn').addEventListener('click',()=>goPage('auth'));
+  $('backFromAuth').addEventListener('click',()=>goPage('home'));
+  let authMode='signin';
+  function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';}
+  $('authSignInTab').addEventListener('click',()=>setAuthMode('signin'));
+  $('authSignUpTab').addEventListener('click',()=>setAuthMode('signup'));
+  $('authForm').addEventListener('submit',e=>{e.preventDefault();notify(authMode==='signup'?'Account creation is ready for provider connection.':'Sign-in is ready for provider connection.');});
+  document.querySelectorAll('.social-btn').forEach(btn=>btn.addEventListener('click',()=>notify(`${btn.dataset.provider} sign-in is ready for provider connection.`)));
   $('backFromSettings').addEventListener('click',()=>goPage('home'));
   $('saveReminderBtn').addEventListener('click',saveReminderSettings);
   $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);
