@@ -1397,6 +1397,16 @@ html[data-theme="dark"] .coach-send{color:#171821}
   function getCapPlugin(name){
     try{const cap=window.Capacitor;if(!cap?.registerPlugin)return null;if(!pluginCache[name])pluginCache[name]=cap.registerPlugin(name);return pluginCache[name];}catch(err){return null;}
   }
+  async function saveNativeDownload(filename,base64,mimeType){
+    const saver=getCapPlugin('FileSaver');
+    if(!saver?.saveBase64)throw new Error('Direct Downloads storage is unavailable in this build.');
+    return saver.saveBase64({filename,data:base64,mimeType});
+  }
+  function textToBase64(text){
+    const bytes=new TextEncoder().encode(String(text));let binary='';
+    for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+    return btoa(binary);
+  }
   // Android WebView cannot download blobs or print, so write the file to cache and open the Android share sheet.
   async function shareFileNative(filename,content,title){
     const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
@@ -1445,8 +1455,8 @@ html[data-theme="dark"] .coach-send{color:#171821}
   async function exportData(){
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
     if(isNativeAndroid()){
-      try{await shareFileNative(`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`,content,'30 DAY backup');notify('Choose where to save your backup (Drive, Files, email…).');}
-      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not save the JSON backup. Use the Android share sheet to choose Files or Drive.');}
+      try{const filename=`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`;await saveNativeDownload(filename,textToBase64(content),'application/json');notify(`JSON downloaded to Downloads/30 DAY: ${filename}`);}
+      catch(err){notify('Could not download the JSON file. Please install the latest APK.');}
       return;
     }
     const blob=new Blob([content],{type:'application/json'});
@@ -1468,8 +1478,8 @@ html[data-theme="dark"] .coach-send{color:#171821}
       const pdfBlob=await makePdfBlob(reportText, state.profile.challengeTitle||'Challenge report');
       const filename=`my-${duration}-day-challenge-report-${todayISO()}.pdf`;
       if(isNativeAndroid()){
-        await shareBase64Native(filename,await blobToBase64(pdfBlob),'30 DAY PDF report');
-        notify('Choose where to save or share your PDF report.');
+        await saveNativeDownload(filename,await blobToBase64(pdfBlob),'application/pdf');
+        notify(`PDF downloaded to Downloads/30 DAY: ${filename}`);
       }else{
         const url=URL.createObjectURL(pdfBlob);const a=document.createElement('a');
         a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
