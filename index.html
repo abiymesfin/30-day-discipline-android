@@ -218,6 +218,54 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .reminder-note{font-size:11px;color:#777481;line-height:1.6;margin:10px 2px 0}.inline-status{font-size:11px;color:var(--muted);margin-top:8px;min-height:15px}
 
 
+
+/* Draggable AI Coach orb: floats above the navigation and can be moved around the screen. */
+.coach-fab{position:fixed;z-index:18;right:18px;bottom:calc(91px + env(safe-area-inset-bottom));width:66px;height:66px;border:0;border-radius:50%;color:#fff;background:radial-gradient(circle at 32% 25%,#9c81ff 0%,#6a4ac7 43%,#2c2149 100%);box-shadow:0 10px 28px #6b4ac755,0 0 0 1px #ffffff55 inset;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;animation:coachFabFloat 3.2s ease-in-out infinite;transition:box-shadow .2s,transform .2s}
+.coach-fab:before{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid #8d70e7aa;animation:coachFabOrbit 7s linear infinite;pointer-events:none}
+.coach-fab:after{content:"";position:absolute;inset:-10px;border-radius:50%;border:1px dashed #8d70e755;animation:coachFabOrbit 12s linear infinite reverse;pointer-events:none}
+.coach-fab.dragging{cursor:grabbing;animation:none;transform:scale(1.06);box-shadow:0 14px 34px #6b4ac788}
+.coach-fab .fab-spark{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8}
+.coach-fab .fab-word{font-size:10px;line-height:1.05;font-weight:900;letter-spacing:.5px;margin-top:1px}
+.coach-fab .fab-status{position:absolute;right:3px;top:3px;width:9px;height:9px;border:2px solid #39285d;background:#9be8b0;border-radius:50%}
+/* Do not show the floating shortcut on the Coach page itself. */
+body.coach-open #coachFab{display:none!important}
+@keyframes coachFabFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes coachFabOrbit{to{transform:rotate(360deg)}}
+.goal-plan-card{background:var(--surface);border:1px solid var(--line);border-radius:21px;padding:15px;margin:0 0 14px;box-shadow:0 6px 22px #25203608}
+.goal-plan-kicker{font-size:9px;text-transform:uppercase;letter-spacing:1.15px;font-weight:900;color:#7c61c6;margin-bottom:7px}
+.goal-plan-card h3{font-size:17px;letter-spacing:-.4px;line-height:1.2;margin:0 0 7px}
+.goal-plan-card p{font-size:11px;color:var(--muted);line-height:1.55;margin:0 0 12px}
+.goal-plan-card label{display:block;font-size:10px;color:var(--muted);font-weight:850;margin:12px 0 6px}
+.goal-plan-card textarea,.goal-plan-card select{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:12px;outline:none}
+.goal-plan-card textarea{min-height:80px;resize:vertical;line-height:1.5}
+.goal-plan-card textarea:focus,.goal-plan-card select:focus{border-color:#a58be8;box-shadow:0 0 0 3px #a58be81b}
+.goal-plan-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:end;gap:10px}
+.goal-plan-controls label{margin-top:0}
+.goal-plan-controls .primary-btn{width:100%;min-height:43px;font-size:11px}
+.goal-plan-status{font-size:11px;line-height:1.5;color:var(--muted);margin-top:10px;white-space:pre-wrap}
+.goal-plan-status.error{color:#c24958}
+.goal-plan-status.success{color:#218448}
+.goal-plan-preview{border-top:1px solid var(--line);margin-top:13px;padding-top:13px}
+.goal-plan-summary{font-size:12px;line-height:1.6;color:var(--ink);white-space:pre-wrap;margin:0 0 10px}
+.goal-plan-section{background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:11px;margin:9px 0}
+.goal-plan-section strong{font-size:11px;display:block;margin-bottom:6px}
+.goal-plan-section ul{font-size:11px;line-height:1.55;margin:0;padding-left:18px;color:var(--muted)}
+.goal-day-list{display:grid;gap:7px;max-height:310px;overflow:auto;margin:10px 0}
+.goal-day-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px}
+.goal-day-head{font-size:10px;font-weight:900;color:#7c61c6;margin-bottom:5px}
+.goal-day-item div:not(.goal-day-head){font-size:11px;line-height:1.45;color:var(--ink);margin-top:4px}
+.goal-plan-actions{display:flex;gap:8px;margin-top:11px}
+.goal-plan-actions button{flex:1}
+.saved-goal-list{margin-top:13px;border-top:1px solid var(--line);padding-top:12px}
+.saved-goal-list:empty{display:none}
+.saved-goal-title{font-size:11px;font-weight:900;margin-bottom:8px}
+.saved-goal-item{padding:10px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:7px 0}
+.saved-goal-item strong{font-size:11px;display:block}
+.saved-goal-item small{font-size:10px;color:var(--muted);display:block;margin-top:4px;line-height:1.45}
+html[data-theme="dark"] .goal-plan-card{box-shadow:none}
+@media(max-width:365px){.coach-fab{width:60px;height:60px;right:13px}.goal-plan-card{padding:12px}.goal-plan-controls{grid-template-columns:1fr}.goal-plan-controls .primary-btn{min-height:42px}}
+@media(prefers-reduced-motion:reduce){.coach-fab,.coach-fab:before,.coach-fab:after{animation:none}}
+
 /* Optional dark theme; user data stays local on this device. */
 html[data-theme="dark"]{--bg:#111218;--surface:#1b1c25;--ink:#f3f1fa;--muted:#aaa8b8;--line:#30313d;--nav:#c7b2ff;--shadow:0 12px 35px rgba(0,0,0,.24)}
 html[data-theme="dark"],html[data-theme="dark"] body,html[data-theme="dark"] .app{background:var(--bg);color:var(--ink)}
@@ -383,6 +431,57 @@ html[data-theme="dark"] .app-loading{
 @media(prefers-reduced-motion:reduce){.loading-card,.loading-orbit,.loading-live::before{animation-duration:.01ms!important;animation-iteration-count:1!important}.loading-progress span{animation-duration:5s!important}}
 
 .auth-shell{padding:8px 2px 20px}.auth-brand{text-align:center;margin:5px 0 24px}.auth-mark{width:68px;height:68px;background:#000;border-radius:0;display:block;object-fit:contain;margin:0 auto 13px;box-shadow:none}.auth-brand h1{font-size:24px;margin:0;letter-spacing:-.8px}.auth-brand p{font-size:12px;color:var(--muted);margin:7px 0 0}.auth-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px 16px;box-shadow:0 10px 28px rgba(33,25,61,.05)}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f5f2fa;border-radius:12px;padding:4px;margin-bottom:18px}.auth-tab{border:0;background:transparent;border-radius:9px;color:#8b8894;padding:10px;font-size:12px;font-weight:850}.auth-tab.active{background:#fff;color:#171821;box-shadow:0 2px 8px rgba(33,25,61,.08)}.auth-label{display:block;font-size:10px;color:#696976;font-weight:850;letter-spacing:.7px;margin:13px 0 7px;text-transform:uppercase}.auth-input{width:100%;padding:13px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;font-size:13px;color:var(--ink);outline:none}.auth-input:focus{border-color:#aa90fb;box-shadow:0 0 0 3px #aa90fb22}.auth-submit{width:100%;margin-top:16px}.auth-divider{display:flex;align-items:center;gap:10px;color:#aaa6b1;font-size:10px;margin:19px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#eeeaf2;flex:1}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e8e4ef;background:#fff;border-radius:12px;padding:11px 8px;color:#292833;font-size:11px;font-weight:800}.social-btn svg{width:17px;height:17px}.social-btn:active{transform:scale(.98)}.auth-foot{text-align:center;font-size:10px;line-height:1.5;color:var(--muted);margin:14px 3px 0}.auth-back{width:100%;margin-top:12px}.account-card{background:#171821;color:#fff;border-radius:21px;padding:17px;margin:0 0 14px;display:flex;align-items:center;gap:13px}.account-card .auth-mini-mark{width:42px;height:42px;border-radius:0;background:#000;display:block;object-fit:contain;flex:none}.account-card .account-copy{min-width:0;flex:1}.account-card h3{font-size:14px;margin:0 0 4px}.account-card p{font-size:11px;color:#c5c4cd;margin:0;line-height:1.4}.account-cta{border:0;background:#c7b2ff;color:#171821;border-radius:10px;padding:9px 10px;font-size:10px;font-weight:900;white-space:nowrap}
+
+/* AI Coach: keeps the existing app visual language and adapts to Light/Dark mode. */
+.coach-hero{position:relative;overflow:hidden;border-radius:23px;padding:19px;background:linear-gradient(135deg,#201b2c 0%,#453260 62%,#6950a7 100%);color:#fff;margin:0 0 13px}
+.coach-kicker{font-size:10px;font-weight:850;letter-spacing:1.7px;text-transform:uppercase;color:#d5c5ff;margin-bottom:10px}
+.coach-hero h2{font-size:25px;line-height:1.15;letter-spacing:-.7px;margin:0 0 8px;font-weight:880}
+.coach-hero p{font-size:12px;line-height:1.55;color:#e6def4;margin:0;max-width:310px}
+.coach-topline{display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;gap:8px;margin-bottom:14px;min-width:0}
+.coach-status{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:100%;overflow:hidden;padding:6px 9px;border:1px solid #ffffff30;background:#ffffff12;border-radius:99px;font-size:10px;font-weight:800;color:#f4eeff;white-space:nowrap}
+.coach-status #coachModeStatus{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.coach-status-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#9ee6ad;box-shadow:0 0 0 3px #9ee6ad22}
+.coach-language{display:flex;align-items:center;justify-self:end;flex:0 0 auto;min-width:max-content;gap:4px;border:1px solid var(--line);background:var(--surface);padding:4px;border-radius:13px;white-space:nowrap}
+.coach-language button{flex:0 0 auto;white-space:nowrap;border:0;border-radius:9px;padding:8px 10px;background:transparent;color:var(--muted);font-size:11px;font-weight:800}
+.coach-language button.active{background:var(--nav);color:#fff}
+html[data-theme="dark"] .coach-language button.active{color:#171821}
+.coach-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:13px}
+.coach-stat{min-width:0;border:1px solid var(--line);border-radius:15px;padding:12px;background:var(--surface)}
+.coach-stat strong{font-size:20px;font-weight:900;letter-spacing:-.6px;display:block;overflow-wrap:anywhere}
+.coach-stat span{font-size:9px;line-height:1.4;color:var(--muted);display:block;margin-top:4px;font-weight:750;text-transform:uppercase;letter-spacing:.35px}
+.coach-insight{display:flex;gap:11px;align-items:flex-start;border:1px solid #e6dcff;background:#f5f0ff;color:#312544;border-radius:17px;padding:13px;margin-bottom:13px}
+.coach-insight-icon{width:34px;height:34px;border-radius:11px;background:#e8ddff;display:grid;place-items:center;flex:none;font-size:17px}
+.coach-insight strong{display:block;font-size:12px;margin:0 0 4px}
+.coach-insight p{font-size:11px;line-height:1.5;margin:0;color:#57466b}
+html[data-theme="dark"] .coach-insight{background:#282237;border-color:#4a3a66;color:#f2eaff}
+html[data-theme="dark"] .coach-insight-icon{background:#403052}
+html[data-theme="dark"] .coach-insight p{color:#d0c4df}
+.coach-chat-card{border:1px solid var(--line);background:var(--surface);border-radius:20px;overflow:hidden}
+.coach-chat-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 15px;border-bottom:1px solid var(--line)}
+.coach-chat-head h3{font-size:14px;margin:0;font-weight:850}
+.coach-text-btn{border:0;background:transparent;color:var(--muted);font-size:10px;font-weight:800;padding:6px}
+.coach-messages{padding:14px;display:flex;flex-direction:column;gap:10px;min-height:190px;max-height:390px;overflow-y:auto;overscroll-behavior:contain}
+.coach-message{max-width:91%;padding:11px 12px;border-radius:15px;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.coach-message.assistant{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:5px;color:var(--ink)}
+.coach-message.user{align-self:flex-end;background:#332844;color:#fff;border-bottom-right-radius:5px}
+html[data-theme="dark"] .coach-message.user{background:#c7b2ff;color:#171821}
+.coach-message small{display:block;font-size:9px;opacity:.66;font-weight:800;margin-bottom:4px;letter-spacing:.3px}
+.coach-typing{font-size:11px;color:var(--muted);padding:0 15px 10px;display:none}
+.coach-typing.visible{display:block}
+.coach-quick-title{padding:12px 14px 7px;font-size:10px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.coach-quick-prompts{display:flex;gap:7px;overflow-x:auto;padding:0 14px 13px;scrollbar-width:thin}
+.coach-quick-prompts button{flex:none;max-width:210px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 11px;font-size:10px;font-weight:750;white-space:nowrap}
+.coach-compose{display:flex;gap:8px;align-items:flex-end;padding:12px;border-top:1px solid var(--line);background:var(--surface)}
+.coach-compose textarea{display:block;min-width:0;flex:1;resize:none;min-height:45px;max-height:130px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;font-size:12px;line-height:1.4;outline:none}
+.coach-compose textarea:focus{border-color:#a58be8;box-shadow:0 0 0 3px #a58be81b}
+.coach-send{width:45px;height:45px;flex:none;display:grid;place-items:center;border:0;border-radius:14px;background:var(--nav);color:#fff}
+html[data-theme="dark"] .coach-send{color:#171821}
+.coach-send svg{width:19px;height:19px}
+.coach-send:disabled{opacity:.45}
+.coach-privacy{padding:10px 14px 13px;font-size:10px;line-height:1.5;color:var(--muted)}
+.coach-privacy strong{color:var(--ink)}
+@media(max-width:365px){.coach-hero{padding:16px}.coach-hero h2{font-size:23px}.coach-stat{padding:10px}.coach-stat strong{font-size:18px}.coach-message{max-width:96%}.coach-topline{gap:6px}.coach-status{gap:5px;padding:6px 7px;font-size:9px}.coach-language{gap:3px;padding:3px}.coach-language button{padding:7px 8px;font-size:10px}}
+
 </style>
 
 </head>
@@ -470,7 +569,7 @@ html[data-theme="dark"] .app-loading{
     <div class="stat-grid">
       <div class="stat-box"><div class="label">COMPLETED</div><div class="stat-num" id="statDone">0</div><div class="stat-name">Habit check-ins</div></div>
       <div class="stat-box"><div class="label">BEST STREAK</div><div class="stat-num" id="statStreak">0</div><div class="stat-name">Consecutive full days</div></div>
-      <div class="stat-box"><div class="label">ACTIVE HABITS</div><div class="stat-num" id="statHabits">0</div><div class="stat-name">Habits you created</div></div>
+      <div class="stat-box"><div class="label">SCHEDULED TASKS</div><div class="stat-num" id="statHabits">0</div><div class="stat-name">Tasks across your plan</div></div>
       <div class="stat-box"><div class="label">DAYS COMPLETED</div><div class="stat-num" id="statDays">0</div><div class="stat-name">All habits done</div></div>
     </div>
     <div class="panel">
@@ -511,6 +610,61 @@ html[data-theme="dark"] .app-loading{
     <button type="button" class="settings-back" id="journalToProgressBtn">← Back to Progress Calendar</button>
   </section>
 
+  <section class="page" id="page-coach" data-page="coach">
+    <div class="page-title" id="coachPageTitle">AI Coach</div>
+    <p class="page-subtitle" id="coachPageSubtitle">A personal guide for your 30-day challenge, in your language.</p>
+    <div class="coach-hero">
+      <div class="coach-topline"><span class="coach-status"><i class="coach-status-dot"></i><span id="coachModeStatus">On-device coach</span></span>
+        <div class="coach-language" role="group" aria-label="Coach language"><button type="button" id="coachLangAm" aria-pressed="false">አማርኛ</button><button type="button" id="coachLangEn" class="active" aria-pressed="true">English</button></div>
+      </div>
+      <div class="coach-kicker" id="coachHeroKicker">YOUR PERSONAL GUIDE</div>
+      <h2 id="coachHeroTitle">Small steps. Real progress.</h2>
+      <p id="coachHeroCopy">Tell me what is difficult today. We'll turn it into one clear, achievable next step.</p>
+    </div>
+    <div class="coach-stats" aria-label="Your challenge progress">
+      <div class="coach-stat"><strong id="coachStatProgress">0%</strong><span id="coachStatProgressLabel">Total progress</span></div>
+      <div class="coach-stat"><strong id="coachStatStreak">0</strong><span id="coachStatStreakLabel">Day streak</span></div>
+      <div class="coach-stat"><strong id="coachStatToday">0/0</strong><span id="coachStatTodayLabel">Today's habits</span></div>
+    </div>
+    <div class="coach-insight"><div class="coach-insight-icon">✦</div><div><strong id="coachInsightTitle">Your daily insight</strong><p id="coachInsightText">A personalized note will appear here based on your challenge progress.</p></div></div>
+    <section class="goal-plan-card" id="goalPlanCard">
+      <div class="goal-plan-kicker" id="goalPlanKicker">AI GOAL PLANNER</div>
+      <h3 id="goalPlanHeading">Turn your goal into a daily plan</h3>
+      <p id="goalPlanCopy">Tell your coach what you want to achieve. It builds a 7-day Weekly Goal or a 30-day Monthly Goal with independent habits for each date, including nutrition and activity ideas when relevant.</p>
+      <label for="goalPlanInput" id="goalPlanInputLabel">What do you want to achieve?</label>
+      <textarea id="goalPlanInput" maxlength="600" placeholder="Example: I want to gain 1 kg in one month. Suggest balanced meals and safe activities."></textarea>
+      <div class="goal-plan-controls">
+        <div><label for="goalPlanDuration" id="goalPlanDurationLabel">Plan duration</label><select id="goalPlanDuration"><option value="7">1 week / 7 days</option><option value="30" selected>1 month / 30 days</option></select></div>
+        <button type="button" class="primary-btn" id="goalGenerateBtn">✦ Generate plan</button>
+      </div>
+      <div class="goal-plan-status" id="goalPlanStatus" aria-live="polite"></div>
+      <div class="goal-plan-preview" id="goalPlanPreview" hidden>
+        <div class="goal-plan-summary" id="goalPlanSummary"></div>
+        <div id="goalNutritionSection"></div><div id="goalActivitySection"></div><div id="goalSafetySection"></div>
+        <div class="goal-day-list" id="goalDayList"></div>
+        <div class="goal-plan-actions"><button type="button" class="secondary-btn" id="goalCancelBtn">Cancel</button><button type="button" class="primary-btn" id="goalApplyBtn">Add daily habits</button></div>
+      </div>
+      <div class="saved-goal-list" id="savedGoalPlans"></div>
+    </section>
+    <div class="coach-chat-card">
+      <div class="coach-chat-head"><h3 id="coachChatTitle">Talk to your coach</h3><button type="button" class="coach-text-btn" id="coachClearBtn">Clear chat</button></div>
+      <div class="coach-messages" id="coachMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+      <div class="coach-typing" id="coachTyping" aria-live="polite">Thinking…</div>
+      <div class="coach-quick-title" id="coachQuickTitle">TRY ASKING</div>
+      <div class="coach-quick-prompts" id="coachQuickPrompts">
+        <button type="button" data-coach-prompt="Help me stay consistent today">Help me stay consistent</button>
+        <button type="button" data-coach-prompt="Review my progress and suggest my next step">Review my progress</button>
+        <button type="button" data-coach-prompt="I missed a day. Help me restart">I missed a day</button>
+      </div>
+      <form class="coach-compose" id="coachForm">
+        <textarea id="coachInput" maxlength="1200" rows="1" aria-label="Message your coach" placeholder="Tell your coach what you need…"></textarea>
+        <button class="coach-send" type="submit" id="coachSendBtn" aria-label="Send message"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+      </form>
+      <div class="coach-privacy" id="coachPrivacyText"><strong>Privacy:</strong> Your challenge stats and coach chat stay on this device in offline mode. Journal entries are never sent to the coach.</div>
+    </div>
+    <p class="small-note" id="coachDisclaimer" style="margin:12px 4px 0">The coach provides general habit-building guidance, not medical or mental-health treatment.</p>
+  </section>
+
   <section class="page" id="page-profile" data-page="profile">
     <div class="page-title">Profile</div>
     <p class="page-subtitle">Your challenge details and data.</p>
@@ -519,7 +673,7 @@ html[data-theme="dark"] .app-loading{
       <div style="min-width:0;flex:1"><div class="profile-name" id="profileDisplayName">Your profile</div><div class="profile-sub" id="profileDisplaySub">Personal 30-day challenge</div></div>
       <button class="icon-btn" id="editProfileBtn" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button>
     </div>
-    <div class="account-card"><img src="logo-30.png" class="auth-mini-mark" alt="30 DAY app logo"><div class="account-copy"><h3>Protect your progress</h3><p>Sign in to keep your challenge connected across devices.</p></div><button class="account-cta" id="openAuthBtn" type="button">Sign in</button></div>
+    <div class="account-card"><img src="data:image/png;base64,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" class="auth-mini-mark" alt="30 DAY app logo"><div class="account-copy"><h3>Protect your progress</h3><p>Sign in to keep your challenge connected across devices.</p></div><button class="account-cta" id="openAuthBtn" type="button">Sign in</button></div>
     <div class="panel">
       <div class="panel-title"><h3>Challenge details</h3><button class="text-btn" id="editChallengeBtn">EDIT</button></div>
       <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg></div><div class="info-main"><div class="info-title">Start date</div><div class="info-desc" id="profileStartDate"></div></div><div class="arrow">›</div></div>
@@ -539,7 +693,7 @@ html[data-theme="dark"] .app-loading{
 
   <section class="page" id="page-auth" data-page="auth">
     <div class="auth-shell">
-      <div class="auth-brand"><img src="logo-30.png" class="auth-mark" alt="30 DAY app logo"><h1>Welcome to 30 DAY</h1><p>Build discipline. Keep your promise.</p></div>
+      <div class="auth-brand"><img src="data:image/png;base64,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" class="auth-mark" alt="30 DAY app logo"><h1>Welcome to 30 DAY</h1><p>Build discipline. Keep your promise.</p></div>
       <div class="auth-card">
         <div class="auth-tabs"><button class="auth-tab active" id="authSignInTab" type="button">Sign in</button><button class="auth-tab" id="authSignUpTab" type="button">Create account</button></div>
         <form id="authForm">
@@ -548,17 +702,7 @@ html[data-theme="dark"] .app-loading{
           <div id="authConfirmWrap" hidden><label class="auth-label" for="authConfirm">Confirm password</label><input class="auth-input" id="authConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" minlength="8"></div>
           <button class="primary-btn auth-submit" id="authSubmit" type="submit">Sign in</button>
         </form>
-        <button class="text-btn" id="forgotPasswordBtn" type="button">Forgot password?</button>
-        <div id="authMessage" class="inline-status" role="status" aria-live="polite"></div>
-        <button class="secondary-btn auth-back" id="authSignOutBtn" type="button" hidden>Sign out</button>
-        <div class="auth-divider">or continue with</div>
-        <div class="social-grid">
-          <button class="social-btn" disabled data-provider="Google" type="button"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.25-.2-1.8H12v3.41h5.37a4.58 4.58 0 0 1-1.99 3.01v2.5h3.22c1.88-1.73 2.75-4.28 2.75-7.12Z"/><path fill="#34A853" d="M12 21.5c2.7 0 4.96-.9 6.61-2.43l-3.22-2.5c-.9.6-2.04.96-3.39.96-2.6 0-4.8-1.76-5.59-4.12H3.08v2.58A9.99 9.99 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.41 13.41A6 6 0 0 1 6.1 12c0-.49.11-.97.3-1.41V8.01H3.08A9.5 9.5 0 0 0 2 12c0 1.44.34 2.8 1.08 3.99l3.33-2.58Z"/><path fill="#EA4335" d="M12 6.47c1.47 0 2.78.5 3.82 1.5l2.86-2.86C16.95 3.43 14.7 2.5 12 2.5a9.99 9.99 0 0 0-8.92 5.51l3.33 2.58C7.2 8.23 9.4 6.47 12 6.47Z"/></svg>Google</button>
-          <button class="social-btn" disabled data-provider="Apple" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.02-2.1 1.72-3.12 1.8-3.17a3.87 3.87 0 0 0-3.05-1.65c-1.29-.13-2.53.77-3.18.77-.66 0-1.68-.75-2.76-.73a4.07 4.07 0 0 0-3.42 2.09c-1.47 2.54-.38 6.28 1.04 8.34.7 1 1.52 2.12 2.61 2.08 1.05-.04 1.45-.67 2.73-.67 1.27 0 1.64.67 2.75.64 1.14-.02 1.85-1.01 2.55-2.02.81-1.16 1.14-2.28 1.16-2.34-.03-.01-2.21-.85-2.23-3.34ZM14.9 6.32c.58-.7.97-1.67.86-2.64-.84.03-1.86.56-2.46 1.25-.54.62-1.01 1.62-.88 2.57.94.07 1.9-.48 2.48-1.18Z"/></svg>Apple</button>
-          <button class="social-btn" disabled data-provider="Facebook" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1877F2"/><path fill="#fff" d="M13.3 19v-6h2l.3-2.3h-2.3V9.2c0-.67.19-1.1 1.12-1.1h1.2V6.05c-.2-.03-.9-.09-1.72-.09-1.7 0-2.86 1.04-2.86 2.95v1.79H9.1V13h1.94v6h2.26Z"/></svg>Facebook</button>
-          <button class="social-btn" disabled data-provider="Telegram" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="m17.9 7.5-2.23 10.53c-.17.75-.61.94-1.24.58l-3.43-2.53-1.66 1.6c-.18.18-.33.33-.68.33l.24-3.49 6.35-5.74c.28-.24-.06-.38-.43-.14L7 13.1l-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14 1.06.53Z"/></svg>Telegram</button>
-        </div>
-        <p class="auth-foot">Your password is handled by Supabase. Challenge progress stays local until you sign in and choose to sync it.</p>
+        <p class="auth-foot">Sign in with your email to use the live AI Coach. Your password is sent only to Supabase Auth and is never stored in this app.</p>
       </div>
       <button class="secondary-btn auth-back" id="backFromAuth" type="button">← Continue without signing in</button>
     </div>
@@ -599,6 +743,9 @@ html[data-theme="dark"] .app-loading{
   <button class="nav-btn" data-nav="journal" aria-label="Journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h10a2 2 0 0 1 2 2v16H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg><span>Journal</span></button>
   <button class="nav-btn" data-nav="profile" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg><span>Profile</span></button>
 </nav>
+<button type="button" id="coachFab" class="coach-fab" aria-label="Open AI Coach. Drag to move." title="AI Coach — drag to move">
+  <span class="fab-status" aria-hidden="true"></span><svg class="fab-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.7 9.3 21.5 12 14.7 14.7 12 21.5 9.3 14.7 2.5 12 9.3 9.3Z"/><path d="m19 2 .7 2.1L22 5l-2.3.7L19 8l-.7-2.3L16 5l2.3-.7Z"/></svg><span class="fab-word">AI COACH</span>
+</button>
 
 <div class="modal-back" id="modalBack">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -610,6 +757,7 @@ html[data-theme="dark"] .app-loading{
         <div class="form-field"><label for="habitEmoji">ICON</label><select id="habitEmoji"><option value="">Choose icon</option><option value="🎯">🎯 Target</option><option value="📚">📚 Learning</option><option value="💧">💧 Water</option><option value="🏃">🏃 Movement</option><option value="🧘">🧘 Mindfulness</option><option value="🙏">🙏 Reflection</option><option value="💤">💤 Sleep</option><option value="📵">📵 Focus</option><option value="✍️">✍️ Writing</option><option value="💪">💪 Strength</option><option value="🌱">🌱 Growth</option><option value="⭐">⭐ Other</option></select></div>
         <div class="form-field"><label for="habitColor">CARD COLOR</label><select id="habitColor"><option value="yellow">Warm yellow</option><option value="blue">Soft blue</option><option value="mint">Mint green</option><option value="pink">Pink</option><option value="lav">Lavender</option></select></div>
       </div>
+      <div class="form-field habit-edit-scope-wrap" id="habitEditScopeWrap" hidden><label for="habitEditScope">APPLY EDITS TO</label><select id="habitEditScope"><option value="day">This day only (recommended)</option><option value="all">Every day this habit appears</option></select><small class="small-note">Choose “This day only” to keep other days unchanged.</small></div>
       <div class="modal-actions"><button class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn" id="saveHabitBtn">Save habit</button></div>
     </div>
     <div id="profileFormWrap" hidden>
@@ -629,24 +777,45 @@ html[data-theme="dark"] .app-loading{
 
 <script src="./vendor/jspdf.umd.min.js"></script>
 <script src="./supabase-config.js"></script>
-<script type="module">
-  import('https://esm.sh/@supabase/supabase-js@2')
-    .then(({createClient}) => {
-      const config = window.SUPABASE_CONFIG || {};
-      if (!config.url || !config.publishableKey) return null;
-      window.__supabaseClient = createClient(config.url, config.publishableKey, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-      });
-      return window.__supabaseClient;
-    })
-    .catch(() => null)
-    .then(client => window.__resolveSupabaseReady?.(client));
-</script>
+<script src="./ai-coach-config.js"></script>
 <script>
 (() => {
   'use strict';
   const STORAGE_KEY = 'personal_discipline_challenge_v2';
   const $ = id => document.getElementById(id);
+  let supabaseClient=null;
+  let currentSupabaseSession=null;
+  let supabaseInitStarted=false;
+  let liveAiVerifiedThisSession=false;
+  let cloudSyncReady=false;
+  let cloudSaveTimer=null;
+  let cloudErrorShown=false;
+  function cloudHasLocalProgress(){return state.habits.length>0||Object.keys(state.checks).length>0||Object.keys(state.notes).length>0||Boolean(state.profile.name||state.profile.challengeTitle||state.goals?.length);}
+  function cloudReadableError(error){const m=String(error?.message||error||'');if(/relation|challenge_data/i.test(m))return 'Sign-in works, but the cloud data table is not configured yet.';if(/network|fetch/i.test(m))return 'Network error. Your local changes are still saved.';return m||'Cloud sync failed.';}
+  async function saveCloudState(user,quiet=false){if(!supabaseClient||!user)return false;const {error}=await supabaseClient.from('challenge_data').upsert({user_id:user.id,payload:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error&&!quiet&&!cloudErrorShown){cloudErrorShown=true;notify(cloudReadableError(error));}return !error;}
+  function queueCloudSave(){if(!cloudSyncReady||!currentSupabaseSession?.user)return;clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>saveCloudState(currentSupabaseSession.user,true),700);}
+  async function reconcileCloud(user){if(!supabaseClient||!user)return;const {data,error}=await supabaseClient.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){notify(cloudReadableError(error));return;}const cloud=data?.payload&&isPlainObject(data.payload)?data.payload:null;if(cloud&&Object.keys(cloud).length&&cloudHasLocalProgress()){await saveCloudState(user,true);}else if(cloud&&Object.keys(cloud).length){state=normalizeState(cloud);persist({sync:false});}else if(cloudHasLocalProgress()){await saveCloudState(user,true);}cloudSyncReady=true;renderAll();}
+  function initializeSupabaseClient(){
+    if(supabaseInitStarted||supabaseClient)return;
+    supabaseInitStarted=true;
+    try{
+      const projectUrl=String(window.__30DAY_SUPABASE_URL||'').trim();
+      const publishableKey=String(window.__30DAY_SUPABASE_ANON_KEY||'').trim();
+      const sdk=window.supabase;
+      if(projectUrl&&publishableKey&&sdk&&typeof sdk.createClient==='function'){
+        supabaseClient=sdk.createClient(projectUrl,publishableKey);window.__30DAY_SUPABASE_CLIENT=supabaseClient;
+        window.__30DAY_GET_ACCESS_TOKEN=async()=>{if(!supabaseClient)return null;const result=await supabaseClient.auth.getSession();currentSupabaseSession=result?.data?.session||null;return currentSupabaseSession?.access_token||null;};
+        supabaseClient.auth.getSession().then(async result=>{currentSupabaseSession=result?.data?.session||null;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();}).catch(()=>{});
+        supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentSupabaseSession=session||null;cloudSyncReady=false;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();});
+      }
+    }catch(err){console.warn('Supabase client is not configured.',err);}
+  }
+  // Load the optional auth SDK asynchronously: it must never block opening the app offline.
+  if(window.supabase&&typeof window.supabase.createClient==='function')initializeSupabaseClient();
+  else if(String(window.__30DAY_SUPABASE_URL||'').trim()&&String(window.__30DAY_SUPABASE_ANON_KEY||'').trim()){
+    const sdkScript=document.createElement('script');sdkScript.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';sdkScript.async=true;
+    sdkScript.onload=initializeSupabaseClient;sdkScript.onerror=()=>console.warn('Supabase SDK could not load; the app remains available offline.');document.head.appendChild(sdkScript);
+  }
   const todayISO = () => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -673,7 +842,7 @@ html[data-theme="dark"] .app-loading{
   let nativeNotificationPlugin = null;
   const nativeReminderId = 3001;
   const nativeTestId = 3002;
-  const newState = () => ({startDate:todayISO(),duration:30,profile:{name:'',challengeTitle:''},habits:[],checks:{},notes:{},settings:{dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:'',theme:'light'}});
+  const newState = () => ({startDate:todayISO(),duration:30,profile:{name:'',challengeTitle:''},habits:[],checks:{},notes:{},goals:[],settings:{dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:'',theme:'light'}});
   const isPlainObject = v => v!==null && typeof v==='object' && !Array.isArray(v);
   const validISO = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s||'')) && !isNaN(dateFromISO(s).getTime());
   // Turns any saved/imported object into a complete, safe state so a missing field can never break the app.
@@ -684,7 +853,7 @@ html[data-theme="dark"] .app-loading{
       startDate:validISO(s.startDate)?s.startDate:todayISO(),
       duration:Math.max(1,Math.min(365,Math.floor(Number(s.duration)||30))),
       profile:{name:'',challengeTitle:''},
-      habits:[],checks:{},notes:{},
+      habits:[],checks:{},notes:{},goals:[],
       settings:{...base.settings}
     };
     if(isPlainObject(s.profile)){
@@ -696,11 +865,12 @@ html[data-theme="dark"] .app-loading{
       s.habits.forEach(h=>{
         if(!isPlainObject(h)||h.id==null)return;
         const id=String(h.id);if(seen.has(id))return;seen.add(id);
-        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow'});
+        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow',...(Array.isArray(h.days)?{days:[...new Set(h.days.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{}),...(Array.isArray(h.excludeDays)?{excludeDays:[...new Set(h.excludeDays.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{})});
       });
     }
     if(isPlainObject(s.checks))Object.keys(s.checks).forEach(k=>{if(isPlainObject(s.checks[k]))out.checks[k]=s.checks[k];});
     if(isPlainObject(s.notes))Object.keys(s.notes).forEach(k=>{const n=s.notes[k];if(typeof n==='string'||isPlainObject(n))out.notes[k]=n;});
+    if(Array.isArray(s.goals))out.goals=s.goals.filter(g=>isPlainObject(g)&&typeof g.id==='string').slice(-30).map(g=>({...g,title:String(g.title||'Goal').slice(0,180),durationDays:Math.max(1,Math.min(30,Number(g.durationDays)||7)),startDay:Math.max(1,Math.min(365,Number(g.startDay)||1))}));
     if(isPlainObject(s.settings)){
       const st=s.settings;
       if(typeof st.dailyReminderEnabled==='boolean')out.settings.dailyReminderEnabled=st.dailyReminderEnabled;
@@ -771,83 +941,9 @@ html[data-theme="dark"] .app-loading{
       await cancelNativeReminder();
       const [hour,minute]=String(state.settings.reminderTime||'09:00').split(':').map(Number);
       if(!Number.isInteger(hour)||!Number.isInteger(minute))return false;
-      await plugin.schedule({notifications:[{id:nativeReminderId,title:'30 Day Challenge Reminder',body:'Time for your daily commitment. Open your challenge and check in.',schedule:{on:{hour,minute},allowWhileIdle:true},channelId:'discipline30-reminders',smallIcon:'notification_icon_30',sound:'default',extra:{kind:'daily-reminder'}}]});
+      await plugin.schedule({notifications:[{id:nativeReminderId,title:'30 DAY',body:'Time for your daily commitment. Open your challenge and check in.',schedule:{on:{hour,minute},allowWhileIdle:true},channelId:'discipline30-reminders',smallIcon:'notification_icon_30',sound:'default',extra:{kind:'daily-reminder'}}]});
       return true;
     }catch(err){return false;}
-  }
-  let authSession = null;
-  let cloudSyncReady = false;
-  let cloudSaveTimer = null;
-  let cloudErrorShown = false;
-  function authMessage(text, error=false){
-    const el=$('authMessage');
-    if(el){el.textContent=text||'';el.style.color=error?'#c24958':'';}
-  }
-  function readableAuthError(error){
-    const message=String(error?.message||error||'');
-    const lower=message.toLowerCase();
-    if(lower.includes('invalid login credentials'))return 'Email or password is incorrect.';
-    if(lower.includes('email not confirmed'))return 'Please confirm your email before signing in.';
-    if(lower.includes('already registered')||lower.includes('user already registered'))return 'This email is already registered. Try signing in.';
-    if(lower.includes('rate limit'))return 'Too many attempts. Please wait and try again.';
-    if(lower.includes('failed to fetch')||lower.includes('network'))return 'Network error. Check your connection and try again.';
-    if(lower.includes('challenge_data')||lower.includes('relation'))return 'Authentication works, but the cloud data table is not configured yet.';
-    return message||'Something went wrong. Please try again.';
-  }
-  async function getSupabase(){
-    try{return await (window.__supabaseReady||Promise.resolve(null));}catch(err){return null;}
-  }
-  function hasLocalProgress(){return state.habits.length>0||Object.keys(state.checks).length>0||Object.keys(state.notes).length>0||Boolean(state.profile.name||state.profile.challengeTitle);}
-  async function saveCloudState(user, quiet=false){
-    const client=await getSupabase();
-    if(!client||!user)return false;
-    const {error}=await client.from('challenge_data').upsert({user_id:user.id,payload:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-    if(error){if(!quiet&&!cloudErrorShown){notify(readableAuthError(error));cloudErrorShown=true;}return false;}
-    return true;
-  }
-  function queueCloudSave(){
-    if(!cloudSyncReady||!authSession)return;
-    clearTimeout(cloudSaveTimer);
-    cloudSaveTimer=setTimeout(()=>saveCloudState(authSession.user,true),700);
-  }
-  async function reconcileCloud(user){
-    const client=await getSupabase();
-    if(!client)return;
-    const {data,error}=await client.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();
-    if(error){authMessage(readableAuthError(error),true);return;}
-    const cloudPayload=data?.payload && isPlainObject(data.payload)?data.payload:null;
-    if(cloudPayload && Object.keys(cloudPayload).length && hasLocalProgress()){
-      // Do not interrupt app launch with a Cancel/OK dialog. Existing device progress wins and is synced.
-      await saveCloudState(user);
-    }else if(cloudPayload && Object.keys(cloudPayload).length){
-      state=normalizeState(cloudPayload);persist({sync:false});
-    }else if(hasLocalProgress()){
-      // Local progress is uploaded without interrupting startup with a confirmation dialog.
-      await saveCloudState(user);
-    }
-    cloudSyncReady=true;
-    const page=document.querySelector('.page.active')?.dataset.page||'home';
-    renderHeader();goPage(page);
-  }
-  function updateAuthUI(){
-    const signedIn=Boolean(authSession?.user);
-    const email=authSession?.user?.email||'';
-    $('openAuthBtn').textContent=signedIn?'Sign out':'Sign in';
-    $('authSignOutBtn').hidden=!signedIn;
-    $('forgotPasswordBtn').hidden=authMode==='signup';
-    if(signedIn){authMessage(`Signed in as ${email}. Your cloud progress is protected by your account.`);}
-  }
-  async function refreshAuthSession(){
-    const client=await getSupabase();
-    if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
-    const {data,error}=await client.auth.getSession();
-    if(error){authMessage(readableAuthError(error),true);return;}
-    authSession=data.session;
-    updateAuthUI();
-    if(authSession){await reconcileCloud(authSession.user);}
-    client.auth.onAuthStateChange((_event,session)=>{
-      authSession=session;updateAuthUI();
-    });
   }
   function persist(options={}){
     try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
@@ -863,10 +959,16 @@ html[data-theme="dark"] .app-loading{
   function checkDate(day){return isoDate(addDays(dateFromISO(state.startDate), day-1));}
   function isFuture(day){return checkDate(day)>todayISO();}
   function dayChecks(day){return state.checks[String(day)] || {};}
-  function doneCount(day){return state.habits.filter(h=>Boolean(dayChecks(day)[h.id])).length;}
-  function isDayDone(day){return state.habits.length>0 && doneCount(day)===state.habits.length;}
+  function habitDaysFor(habit){
+    const base=Array.isArray(habit.days)&&habit.days.length?habit.days.map(Number):Array.from({length:challengeDuration()},(_,i)=>i+1);
+    const excluded=new Set(Array.isArray(habit.excludeDays)?habit.excludeDays.map(Number):[]);
+    return [...new Set(base)].filter(d=>Number.isInteger(d)&&d>=1&&d<=challengeDuration()&&!excluded.has(d));
+  }
+  function habitsForDay(day){const d=Number(day);return state.habits.filter(h=>{const allowed=!Array.isArray(h.days)||h.days.length===0||h.days.includes(d);const excluded=Array.isArray(h.excludeDays)&&h.excludeDays.includes(d);return allowed&&!excluded;});}
+  function doneCount(day){return habitsForDay(day).filter(h=>Boolean(dayChecks(day)[h.id])).length;}
+  function isDayDone(day){const habits=habitsForDay(day);return habits.length>0 && doneCount(day)===habits.length;}
   function totalChecked(){let n=0;for(let d=1;d<=challengeDuration();d++)n+=doneCount(d);return n;}
-  function overallPercent(){const possible=state.habits.length*challengeDuration();return possible?Math.round(totalChecked()/possible*100):0;}
+  function overallPercent(){let possible=0;for(let d=1;d<=challengeDuration();d++)possible+=habitsForDay(d).length;return possible?Math.round(totalChecked()/possible*100):0;}
   function currentStreak(){
     let n=0;
     // A streak is counted backwards from today, using challenge-day indexes.
@@ -890,12 +992,14 @@ html[data-theme="dark"] .app-loading{
   }
   function goPage(name){
     if(!document.querySelector(`.page[data-page="${name}"]`)){name='home';}
+    document.body.classList.toggle('coach-open',name==='coach');
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));
     if(name==='home') renderHome();
     if(name==='habits') renderHabits();
     if(name==='progress') renderStats();
     if(name==='journal') renderJournal();
+    if(name==='coach') renderCoachPage();
     if(name==='profile') renderProfile();
     if(name==='settings') renderSettings();
     window.scrollTo({top:0,behavior:'smooth'});
@@ -913,7 +1017,8 @@ html[data-theme="dark"] .app-loading{
     $('heroTitle').innerHTML=title?escapeHTML(title):'30 day<br>challenge';
     const endDate=checkDate(challengeDuration());
     const finished=todayISO()>endDate;
-    $('heroCaption').textContent=finished?`Your ${challengeDuration()}-day challenge has reached its end date. Review your progress or adjust your next goal.`:state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} chosen by you. Keep showing up for yourself.`:'Build discipline, one small promise at a time.';
+    const todayHabits=habitsForDay(challengeDay());
+    $('heroCaption').textContent=finished?`Your ${challengeDuration()}-day challenge has reached its end date. Review your progress or adjust your next goal.`:todayHabits.length?`${todayHabits.length} habit${todayHabits.length===1?'':'s'} for today. Keep showing up for yourself.`:'Build discipline, one small promise at a time.';
     $('heroDay').innerHTML=icons.calendar+`<span>Day ${day} / ${challengeDuration()}</span>`;
     $('heroCta').textContent=state.habits.length?'View my habits ↗':'Set my first habit ↗';
   }
@@ -935,13 +1040,14 @@ html[data-theme="dark"] .app-loading{
   }
   function renderHome(){
     renderHeader();renderHero();renderWeek();
+    const visibleHabits=habitsForDay(selectedDay);
     const plans=$('homePlan');plans.innerHTML='';
-    $('planSubtitle').textContent=state.habits.length?`${doneCount(selectedDay)} of ${state.habits.length} complete · ${formatDate(checkDate(selectedDay),{weekday:'long',month:'short',day:'numeric'})}`:'Your daily commitments, in one place.';
-    if(!state.habits.length){
+    $('planSubtitle').textContent=visibleHabits.length?`${doneCount(selectedDay)} of ${visibleHabits.length} complete · ${formatDate(checkDate(selectedDay),{weekday:'long',month:'short',day:'numeric'})}`:'Your daily commitments, in one place.';
+    if(!visibleHabits.length){
       plans.innerHTML=`<div class="empty-card"><div class="empty-icon">${icons.plus}</div><h3>Your plan starts here</h3><p>No habits added yet. Choose the first daily action you want to commit to.</p><button class="primary-btn" id="emptyAddBtn">${icons.plus} Create my first habit</button></div>`;
       $('emptyAddBtn').addEventListener('click',()=>openHabitModal());
     }else{
-      state.habits.forEach((habit,index)=>{
+      visibleHabits.forEach((habit,index)=>{
         const complete=Boolean(dayChecks(selectedDay)[habit.id]);
         const card=document.createElement('button');
         card.type='button';
@@ -951,7 +1057,7 @@ html[data-theme="dark"] .app-loading{
         plans.append(card);
       });
     }
-    $('homeAddBtn').style.display=state.habits.length?'block':'none';
+    $('homeAddBtn').style.display=visibleHabits.length?'block':'none';
   }
   function renderHabitRow(habit,day){
     const complete=Boolean(dayChecks(day)[habit.id]);
@@ -967,12 +1073,14 @@ html[data-theme="dark"] .app-loading{
   }
   function renderHabits(){
     renderHeader();
-    $('habitsCount').textContent=`${state.habits.length} habit${state.habits.length===1?'':'s'}`;
+    const visibleHabits=habitsForDay(selectedDay);
+    $('habitsTitle').textContent=`Habits for ${formatDate(checkDate(selectedDay),{weekday:'long',month:'short',day:'numeric'})}`;
+    $('habitsCount').textContent=`${visibleHabits.length} habit${visibleHabits.length===1?'':'s'}`;
     const wrap=$('habitsPageList');wrap.innerHTML='';
-    if(!state.habits.length){
+    if(!visibleHabits.length){
       wrap.innerHTML=`<div class="list-empty"><div class="empty-icon">${icons.plus}</div><h3>No habits yet</h3><p>This page will hold the habits you choose. Add one when you're ready to begin.</p><button class="primary-btn" id="emptyHabitsAdd">${icons.plus} Add my first habit</button></div>`;
       $('emptyHabitsAdd').onclick=()=>openHabitModal();
-    }else state.habits.forEach(h=>wrap.append(renderHabitRow(h,selectedDay)));
+    }else visibleHabits.forEach(h=>wrap.append(renderHabitRow(h,selectedDay)));
   }
   function renderStats(){
     renderHeader();
@@ -993,11 +1101,11 @@ html[data-theme="dark"] .app-loading{
     for(let d=1;d<=duration;d++){
       const wrap=document.createElement('div');wrap.className='bar-wrap';
       const bar=document.createElement('div');bar.className='bar';
-      const count=doneCount(d),ratio=state.habits.length?count/state.habits.length:0;
+      const dayTotal=habitsForDay(d).length,count=doneCount(d),ratio=dayTotal?count/dayTotal:0;
       bar.style.height=`${Math.max(3,ratio*100)}%`;
       if(count)bar.classList.add('filled');
       if(d===challengeDay())bar.classList.add('today');
-      bar.title=`Day ${d}: ${count} of ${state.habits.length}`;
+      bar.title=`Day ${d}: ${count} of ${dayTotal}`;
       const label=document.createElement('div');label.className='bar-label';const labelStep=Math.max(1,Math.ceil(duration/6));label.textContent=d===1||d===duration||d%labelStep===0?d:'';
       wrap.append(bar,label);chart.append(wrap);
     }
@@ -1026,10 +1134,10 @@ html[data-theme="dark"] .app-loading{
       const button=document.createElement('button');
       button.type='button';
       button.className='calendar-day'+(complete?' complete':count?' partial':'')+(day===challengeDay()?' today':'')+(day===selectedDay?' selected':'')+(isFuture(day)?' future':'');
-      button.setAttribute('aria-label',`Challenge day ${day}, ${formatDate(date,{weekday:'long',month:'short',day:'numeric'})}, ${count} of ${state.habits.length} habits completed`);
+      button.setAttribute('aria-label',`Challenge day ${day}, ${formatDate(date,{weekday:'long',month:'short',day:'numeric'})}, ${count} of ${habitsForDay(day).length} habits completed`);
       button.setAttribute('aria-pressed',day===selectedDay?'true':'false');
       button.innerHTML=`<span class="calendar-date">${dateFromISO(date).getDate()}</span><span class="calendar-index">D${day}</span>`;
-      button.title=`Day ${day} · ${formatDate(date)} · ${count}/${state.habits.length} habits`;
+      button.title=`Day ${day} · ${formatDate(date)} · ${count}/${habitsForDay(day).length} habits`;
       button.addEventListener('click',()=>{
         selectedDay=day;
         renderHome();renderHabits();renderStats();
@@ -1038,12 +1146,15 @@ html[data-theme="dark"] .app-loading{
     }
     $('calendarSelectedTitle').textContent=`Day ${selectedDay} · ${formatDate(checkDate(selectedDay),{weekday:'short',month:'short',day:'numeric'})}`;
     const completeCount=doneCount(selectedDay);
-    $('calendarSelectedSub').textContent=state.habits.length?`${completeCount} of ${state.habits.length} habits completed${isDayDone(selectedDay)?' · Complete':''}`:'No habits added';
+    const selectedHabitTotal=habitsForDay(selectedDay).length;
+    $('calendarSelectedSub').textContent=selectedHabitTotal?`${completeCount} of ${selectedHabitTotal} habits completed${isDayDone(selectedDay)?' · Complete':''}`:'No habits added';
     $('calendarViewHabits').textContent='Open journal ↗';
     $('calendarViewHabits').onclick=()=>goPage('journal');
   }
   function renderProfile(){
     renderHeader();
+    if($('openAuthBtn'))$('openAuthBtn').textContent=currentSupabaseSession?'Sign out':'Sign in';
+    const accountCopy=document.querySelector('.account-copy');if(accountCopy){accountCopy.querySelector('h3').textContent=currentSupabaseSession?'Account connected':'Protect your progress';accountCopy.querySelector('p').textContent=currentSupabaseSession?(currentSupabaseSession.user?.email||'Signed in with Supabase'):'Sign in to enable live AI Coach access and keep your challenge connected across devices.';}
     $('profileDisplayName').textContent=state.profile.name.trim()||'Your profile';
     $('profileDisplaySub').textContent=state.profile.challengeTitle.trim()||`Personal ${challengeDuration()}-day challenge`;
     $('profileStartDate').textContent=formatDate(state.startDate,{year:'numeric',month:'long',day:'numeric'});
@@ -1124,7 +1235,7 @@ html[data-theme="dark"] .app-loading{
     if(plugin){
       try{await ensureNativeChannel(plugin);await plugin.schedule({notifications:[{id:nativeTestId,title:'30 Day Challenge — Test',body:'Notifications are working on this device.',schedule:{at:new Date(Date.now()+2000)},channelId:'discipline30-reminders',smallIcon:'notification_icon_30',sound:'default',extra:{kind:'test'}}]});return true;}catch(err){notify('Could not schedule the Android notification. Check app notification settings.');return false;}
     }
-    const title=test?'30 Day Challenge — Test':'30 Day Challenge Reminder';
+    const title='30 DAY';
     const options={body:test?'Notifications are working on this device.':'Time for your daily commitment. Open your challenge and check in.',icon:'./icons/icon-192.png',badge:'./icons/icon-192.png',tag:test?'discipline30-test':'discipline30-daily',renotify:false};
     try{if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.ready;if(reg && reg.showNotification){await reg.showNotification(title,options);return true;}}new Notification(title,options);return true;}catch(err){try{new Notification(title,options);return true;}catch(err2){notify('Could not display a notification. Check your Android settings.');return false;}}
   }
@@ -1173,6 +1284,9 @@ html[data-theme="dark"] .app-loading{
       $('habitDetails').value=existing?.details||'';
       $('habitEmoji').value=existing?.emoji||'';
       $('habitColor').value=existing?.color||'yellow';
+      const editDays=existing?habitDaysFor(existing):[];
+      $('habitEditScopeWrap').hidden=!(existing&&editDays.includes(selectedDay)&&editDays.length>1);
+      $('habitEditScope').value='day';
       $('saveHabitBtn').textContent=existing?'Save changes':'Save habit';
     }else if(mode==='profile'){
       $('profileNameInput').value=state.profile.name||'';
@@ -1191,8 +1305,27 @@ html[data-theme="dark"] .app-loading{
     const details=$('habitDetails').value.trim(),emoji=$('habitEmoji').value,color=$('habitColor').value;
     if(editingHabitId){
       const h=state.habits.find(h=>h.id===editingHabitId);
-      if(h)Object.assign(h,{name,details,emoji,color});
-      notify('Habit updated.');
+      if(h){
+        const visibleDays=habitDaysFor(h);
+        const editOnlyThisDay=$('habitEditScope').value!=='all'&&visibleDays.includes(selectedDay)&&visibleDays.length>1;
+        if(editOnlyThisDay){
+          const dayKey=String(selectedDay);
+          const dayChecksForSelected=state.checks[dayKey]||(state.checks[dayKey]={});
+          const wasChecked=Boolean(dayChecksForSelected[h.id]);
+          if(Array.isArray(h.days)&&h.days.length){h.days=visibleDays.filter(day=>day!==selectedDay);}
+          else{h.excludeDays=[...new Set([...(Array.isArray(h.excludeDays)?h.excludeDays:[]),selectedDay])];}
+          const cloneId=cryptoId();
+          state.habits.push({...h,id:cloneId,name,details,emoji,color,days:[selectedDay],excludeDays:[],createdAt:new Date().toISOString(),daySpecificEditOf:h.id});
+          if(wasChecked){dayChecksForSelected[cloneId]=true;delete dayChecksForSelected[h.id];}
+          notify('Updated for this day only. Other days are unchanged.');
+        }else{
+          Object.assign(h,{name,details,emoji,color});
+          if($('habitEditScope').value==='all'){
+            state.habits.filter(item=>item.daySpecificEditOf===h.id).forEach(item=>Object.assign(item,{name,details,emoji,color}));
+          }
+          notify('Habit updated.');
+        }
+      }
     }else{
       state.habits.push({id:cryptoId(),name,details,emoji,color,createdAt:new Date().toISOString()});
       notify('Habit added.');
@@ -1209,9 +1342,23 @@ html[data-theme="dark"] .app-loading{
   }
   function deleteHabit(id){
     const habit=state.habits.find(h=>h.id===id);if(!habit)return;
-    if(!confirm(`Delete \"${habit.name}\" and all its check-ins?`))return;
-    state.habits=state.habits.filter(h=>h.id!==id);
-    Object.values(state.checks).forEach(c=>{if(c)delete c[id]});
+    const visibleDays=habitDaysFor(habit);
+    if(visibleDays.length>1){
+      const dateLabel=formatDate(checkDate(selectedDay),{weekday:'long',month:'short',day:'numeric'});
+      const answer=prompt(`Remove "${habit.name}" from which dates?\nType DAY to remove it only from ${dateLabel}.\nType ALL to remove it from every day. Cancel keeps it.`, 'DAY');
+      if(answer===null)return;
+      const scope=answer.trim().toUpperCase();
+      if(scope==='DAY'){
+        if(Array.isArray(habit.days)&&habit.days.length)habit.days=visibleDays.filter(day=>day!==selectedDay);
+        else habit.excludeDays=[...new Set([...(Array.isArray(habit.excludeDays)?habit.excludeDays:[]),selectedDay])];
+        if(state.checks[String(selectedDay)])delete state.checks[String(selectedDay)][id];
+        persist();renderAll();notify('Habit removed from this day only.');return;
+      }
+      if(scope!=='ALL'){notify('No changes made. Type DAY or ALL.');return;}
+    }else if(!confirm(`Delete "${habit.name}" and its check-ins?`))return;
+    const removeIds=new Set([id,...state.habits.filter(h=>h.daySpecificEditOf===id).map(h=>h.id)]);
+    state.habits=state.habits.filter(h=>!removeIds.has(h.id));
+    Object.values(state.checks).forEach(c=>{if(c)removeIds.forEach(rid=>{delete c[rid];});});
     persist();renderAll();notify('Habit deleted.');
   }
   function habitOptions(id){
@@ -1220,11 +1367,7 @@ html[data-theme="dark"] .app-loading{
     if(!choice)return;
     const action=choice.trim().toLowerCase();
     if(action==='edit')openHabitModal(id);
-    else if(action==='delete'){
-      if(confirm(`Delete "${habit.name}" and all its check-ins?`)){
-        deleteHabit(id);
-      }
-    }
+    else if(action==='delete')deleteHabit(id);
   }
   function saveProfile(){
     state.profile.name=$('profileNameInput').value.trim();
@@ -1240,7 +1383,7 @@ html[data-theme="dark"] .app-loading{
   }
   const pluginCache={};
   function getCapPlugin(name){
-    try{const cap=window.Capacitor;if(!cap)return null;if(!pluginCache[name])pluginCache[name]=cap.Plugins?.[name] || (cap.registerPlugin ? cap.registerPlugin(name) : null);return pluginCache[name];}catch(err){return null;}
+    try{const cap=window.Capacitor;if(!cap?.registerPlugin)return null;if(!pluginCache[name])pluginCache[name]=cap.registerPlugin(name);return pluginCache[name];}catch(err){return null;}
   }
   // Android WebView cannot download blobs or print, so write the file to cache and open the Android share sheet.
   async function shareFileNative(filename,content,title){
@@ -1271,10 +1414,8 @@ html[data-theme="dark"] .app-loading{
     const margin=40,lineHeight=15,maxWidth=515;
     pdf.setFont('helvetica','normal');pdf.setFontSize(10);
     let y=margin;
-    const raw=String(text||'').split('\n');
-    for(const row of raw){
-      const lines=pdf.splitTextToSize(row||' ',maxWidth);
-      for(const line of lines){
+    for(const row of String(text||'').split('\n')){
+      for(const line of pdf.splitTextToSize(row||' ',maxWidth)){
         if(y>800){pdf.addPage();y=margin;}
         pdf.text(line,margin,y);y+=lineHeight;
       }
@@ -1332,7 +1473,7 @@ html[data-theme="dark"] .app-loading{
       const candidate=parsed && Array.isArray(parsed.habits) ? parsed : parsed?.state;
       if(!isPlainObject(candidate)||!Array.isArray(candidate.habits)||!isPlainObject(candidate.checks)){throw new Error('This file is not a valid 30 DAY backup.');}
       state=normalizeState(candidate);
-      selectedDay=clampDay(challengeDay());persist();renderAll();notify('Backup restored successfully. Your local challenge is ready.');
+      selectedDay=clampDay(challengeDay());persist();renderAll();notify('Backup restored successfully.');
     }catch(err){notify(err?.message||'Could not read this backup file.');}
     finally{$('backupFileInput').value='';}
   }
@@ -1340,8 +1481,199 @@ html[data-theme="dark"] .app-loading{
     if(!confirm('Reset this challenge? All habits, check-ins, profile details and notes saved in this app will be deleted. This cannot be undone.'))return;
     state=newState();selectedDay=1;persist();renderAll();goPage('home');notify('Challenge reset. Start fresh whenever you are ready.');
   }
+
+  // Bilingual AI Coach. Offline-first: uses challenge aggregates only, never journal text.
+  const COACH_HISTORY_KEY = '30day_ai_coach_history_v1';
+  const COACH_LANG_KEY = '30day_ai_coach_language_v1';
+  let coachLanguage = (()=>{try{return localStorage.getItem(COACH_LANG_KEY)==='am'?'am':'en';}catch(e){return 'en';}})();
+  let coachHistory = (()=>{try{const v=JSON.parse(localStorage.getItem(COACH_HISTORY_KEY)||'[]');return Array.isArray(v)?v.filter(x=>x&&['user','assistant'].includes(x.role)&&typeof x.text==='string').slice(-36):[];}catch(e){return [];}})();
+  function coachIsAmharic(text){return /[\u1200-\u137F]/.test(String(text||''));}
+  function coachT(en,am){return coachLanguage==='am'?am:en;}
+  function coachContext(){
+    const day=challengeDay(), duration=challengeDuration(), today=doneCount(day), total=habitsForDay(day).length;
+    return {day,duration,progressPercent:overallPercent(),habitsCount:total,completedToday:today,todayTotal:total,currentStreak:currentStreak(),bestStreak:bestStreak(),completedDays:allDoneDays()};
+  }
+  function coachSaveHistory(){try{localStorage.setItem(COACH_HISTORY_KEY,JSON.stringify(coachHistory.slice(-36)));}catch(e){}}
+  function coachAddMessage(role,text){
+    const clean=String(text||'').trim().slice(0,5000);if(!clean)return;
+    coachHistory.push({role,text:clean,at:Date.now()});coachHistory=coachHistory.slice(-36);coachSaveHistory();
+    const area=$('coachMessages');if(!area)return;
+    const msg=document.createElement('div');msg.className='coach-message '+(role==='user'?'user':'assistant');
+    const name=document.createElement('small');name.textContent=role==='user'?coachT('YOU','እርስዎ'):coachT('YOUR COACH','ኮችዎ');
+    const body=document.createElement('div');body.textContent=clean;msg.append(name,body);area.appendChild(msg);area.scrollTop=area.scrollHeight;
+  }
+  function coachRenderHistory(){
+    const area=$('coachMessages');if(!area)return;area.textContent='';
+    if(!coachHistory.length){
+      const hello=coachLanguage==='am'?'ሰላም! እኔ የ30 ቀን ቻሌንጅ ኮችህ ነኝ። ዛሬ ምን እየተቸገርክ ነው? በአንድ ትንሽ እርምጃ እንጀምር።':'Hi! I’m your 30-day challenge coach. What feels difficult today? Let’s start with one small, doable step.';
+      const msg=document.createElement('div');msg.className='coach-message assistant';const name=document.createElement('small');name.textContent=coachT('YOUR COACH','ኮችዎ');const body=document.createElement('div');body.textContent=hello;msg.append(name,body);area.appendChild(msg);
+    } else coachHistory.forEach(item=>{const msg=document.createElement('div');msg.className='coach-message '+(item.role==='user'?'user':'assistant');const name=document.createElement('small');name.textContent=item.role==='user'?coachT('YOU','እርስዎ'):coachT('YOUR COACH','ኮችዎ');const body=document.createElement('div');body.textContent=item.text;msg.append(name,body);area.appendChild(msg);});
+    area.scrollTop=area.scrollHeight;
+  }
+  function coachLocalReply(message,lang,ctx){
+    const am=lang==='am';const q=String(message||'').toLowerCase();
+    const missing=Math.max(0,ctx.todayTotal-ctx.completedToday), left=Math.max(0,ctx.duration-ctx.day);
+    const hasHabits=ctx.habitsCount>0;
+    if(!hasHabits) return am?'መጀመሪያ 1–3 ቀላል ልማዶችን አክል። ለምሳሌ 10 ደቂቃ ማንበብ፣ ውሃ መጠጣት ወይም 10 ደቂቃ እንቅስቃሴ። ትንሽ የሚመስል ነገር በተደጋጋሚ ሲደረግ ይለወጣል።':'Start by adding 1–3 simple habits. For example, read for 10 minutes, drink water, or move for 10 minutes. Make them small enough to repeat on a busy day.';
+    if(/miss|fail|skip|restart|break|ቀን አል|አልቻል|ተውኩ|ተው/.test(q)) return am?`አንድ ቀን መቅረት ሙሉ ቻሌንጁን አያጠፋም። እንደገና መጀመር ብቻ ነው። ዛሬ ${missing?`ከቀሩት ${missing} ልማዶች አንዱን`:'አንድ ልማድ'} በ5 ደቂቃ ለመጀመር ወስን። ያለፈውን ቀን አትቅጣ፤ ቀጣዩን ምርጫ ተቆጣጠር።`:`Missing one day doesn't erase your progress. Restart with the next choice, not a punishment. Today, pick ${missing?'one of the '+missing+' remaining habits':'one habit'} and do a five-minute version. Focus on the next action, not a perfect streak.`;
+    if(/overwhelm|too much|stress|tired|busy|አቅም የለ|ደክሞ|በዝቶ|ጭንቀት|ጊዜ የለ/.test(q)) return am?`አሁን የምትፈልገው ተጨማሪ ጫና ሳይሆን ቀላል እቅድ ነው። የሚቻለውን በጣም ትንሽ ስሪት ምረጥ፤ 2–5 ደቂቃ ብቻ እንኳ ይበቃል። የተረፈውን በኋላ አስብ።`:`You may need a lighter plan, not more pressure. Choose the smallest version of one habit—even 2–5 minutes counts as showing up. After that, decide whether you have energy for more.`;
+    if(/progress|review|how am i|how's|stats|report|እድገት|ሁኔታ|ውጤት|ግምገማ/.test(q)) return am?`የአሁኑ ሁኔታህ፦ የተጠናቀቀ እድገት ${ctx.progressPercent}% ነው፤ ${ctx.completedDays} ቀናትን ሁሉም ልማዶች ጨርሰሃል፤ ዛሬ ${ctx.completedToday}/${ctx.todayTotal} ልማዶች ተጠናቀዋል፤ የአሁኑ ተከታታይ ቀናት ${ctx.currentStreak} እና ምርጥ ተከታታይ ቀናት ${ctx.bestStreak} ናቸው። ቀጣይ እርምጃ፦ ዛሬ የቀረውን አንድ ልማድ ጨርስ፣ ከዚያ ምን እንደረዳህ በJournal ጻፍ።`:`Here is your snapshot: overall progress is ${ctx.progressPercent}%; you completed all habits on ${ctx.completedDays} day(s); today you have checked off ${ctx.completedToday}/${ctx.todayTotal}; your current streak is ${ctx.currentStreak}, and your best streak is ${ctx.bestStreak}. Next step: finish one remaining habit today, then note what helped you in your journal.`;
+    if(/motivat|discipline|consistent|focus|procrast|አነሳሽ|መነሳሳት|ዲሲፕሊን|ትኩረት|መዘግየት/.test(q)) return am?`መነሳሳት እስኪመጣ መጠበቅ አያስፈልግም። የምትችለውን የ2 ደቂቃ ስሪት አሁን ጀምር። ስልክህን አስቀምጥ፣ ሰዓት አዘጋጅ፣ አንድ ስራ ብቻ አድርግ። ዲሲፕሊን ትንሽ በተደጋጋሚ ሲደረግ ይገነባል።`:`Do not wait to feel motivated. Start a two-minute version now: put your phone aside, set a short timer, and do one task only. Discipline grows through small repetitions, not perfect moods.`;
+    if(/plan|tomorrow|schedule|next step|እቅድ|ነገ|ቀጣይ እርምጃ/.test(q)) return am?`ቀላል እቅድ እንዲህ ይሁን፦ 1) አሁን አንድ ልማድ ምረጥ። 2) መቼ እንደምታደርገው ወስን (ለምሳሌ ከቁርስ በኋላ)። 3) ከተጠናቀቀ በኋላ በapp ውስጥ ምልክት አድርግ። 4) ነገ ደግሞ በተመሳሳይ ጊዜ ድገም።`:`Try this simple plan: 1) Pick one habit. 2) Attach it to a specific moment, such as after breakfast. 3) Check it off in the app when done. 4) Repeat at roughly the same time tomorrow. A clear cue makes follow-through easier.`;
+    return am?`ከዛሬ ያለው መረጃ፦ የአጠቃላይ እድገትህ ${ctx.progressPercent}% ነው፣ ዛሬ ${ctx.completedToday} ከ${ctx.todayTotal} ልማዶች ጨርሰሃል፣ የአሁኑ ተከታታይ ቀናት ${ctx.currentStreak} ናቸው። ምክሬ፦ ሁሉንም በአንድ ጊዜ ለመቀየር አትሞክር፤ አሁን የምትችለውን አንድ እርምጃ ምረጥ። በተለይ በየትኛው ልማድ እየተቸገርክ እንዳለ ንገረኝ እና የበለጠ የተለየ እቅድ እናዘጋጃለን።`:`Based on your challenge data, overall progress is ${ctx.progressPercent}%, you have completed ${ctx.completedToday} of ${ctx.todayTotal} habits today, and your current streak is ${ctx.currentStreak}. My suggestion: don't try to change everything at once. Pick one next action you can finish now. Tell me which habit is hardest and we can make a more specific plan.`;
+  }
+  function renderCoachPage(){
+    const ctx=coachContext();
+    $('coachStatProgress').textContent=ctx.progressPercent+'%';$('coachStatStreak').textContent=ctx.currentStreak;$('coachStatToday').textContent=ctx.completedToday+'/'+ctx.todayTotal;
+    const aiEndpointReady=Boolean(String(window.__30DAY_AI_COACH_ENDPOINT||'').trim());
+    $('coachModeStatus').textContent=!aiEndpointReady?(coachLanguage==='am'?'ከመሣሪያው ላይ የሚሰራ ኮች · Live AI አልተዋቀረም':'Offline coach · Live AI not configured'):!supabaseClient?(coachLanguage==='am'?'Supabase ውቅረት ያስፈልጋል':'Supabase setup required'):!currentSupabaseSession?(coachLanguage==='am'?'ለLive AI መለያ ግባ':'Sign in for live AI'):liveAiVerifiedThisSession?(coachLanguage==='am'?'Live AI ተገናኝቷል':'Live AI connected'):(coachLanguage==='am'?'AI ለመፈተሽ መልዕክት ላክ':'Signed in · send a message to test');
+    const liveCoachReady=aiEndpointReady&&Boolean(supabaseClient)&&Boolean(currentSupabaseSession)&&liveAiVerifiedThisSession;
+    const coachStatusDot=document.querySelector('.coach-status-dot');if(coachStatusDot)coachStatusDot.style.background=liveCoachReady?'#9ee6ad':'#e7bb76';
+    const coachFabStatus=document.querySelector('#coachFab .fab-status');if(coachFabStatus)coachFabStatus.style.background=liveCoachReady?'#9be8b0':'#e7bb76';
+    document.documentElement.lang=coachLanguage==='am'?'am':'en';
+    const labels=coachLanguage==='am'?{
+      title:'ኤአይ ኮች',subtitle:'ለ30 ቀን ቻሌንጅህ የግል መመሪያ፣ በምትመርጠው ቋንቋ።',kicker:'የግል መመሪያህ',hero:'ትንሽ እርምጃ። እውነተኛ እድገት።',copy:'ዛሬ ምን እንደከበደህ ንገረኝ። ወደ አንድ ግልጽና ሊፈጸም የሚችል እርምጃ እንቀይረዋለን።',progress:'አጠቃላይ እድገት',streak:'ተከታታይ ቀናት',today:'የዛሬ ልማዶች',insight:'የዛሬ ምክር',chat:'ከኮችህ ጋር ተነጋገር',clear:'ውይይት አጽዳ',quick:'እንዲህ ብለህ ጠይቅ',placeholder:'ለኮችህ የምትፈልገውን ንገር…',privacy:'ግላዊነት፦ በoffline ሁኔታ የቻሌንጅ ስታቲስቲክስና ውይይትህ በዚህ መሣሪያ ይቆያሉ። የJournal ጽሑፎች ወደ ኮቹ አይላኩም።',disclaimer:'ኮቹ አጠቃላይ የልማድ መመሪያ ይሰጣል፤ የሕክምና ወይም የአእምሮ ጤና ህክምና አይደለም።',todayInsight:ctx.habitsCount===0?'ከመጀመሪያ 1–3 ቀላል ልማዶችን አክል።':ctx.completedToday===ctx.todayTotal?'ጥሩ ስራ! ዛሬ የተወሰኑትን ልማዶች ጨርሰሃል። ምን እንደረዳህ አስብ።':`ዛሬ ${Math.max(0,ctx.todayTotal-ctx.completedToday)} ልማድ ይቀርሃል። ቀላሉን በ5 ደቂቃ ጀምር።`,prompts:['ዛሬ ቋሚ እንዴት ልሁን?','እድገቴን ገምግም','አንድ ቀን አልፎኛል፣ እንዴት ልጀምር?']
+    }:{title:'AI Coach',subtitle:'A personal guide for your 30-day challenge, in your language.',kicker:'YOUR PERSONAL GUIDE',hero:'Small steps. Real progress.',copy:'Tell me what is difficult today. We’ll turn it into one clear, achievable next step.',progress:'Total progress',streak:'Current streak',today:'Today’s habits',insight:'Your daily insight',chat:'Talk to your coach',clear:'Clear chat',quick:'TRY ASKING',placeholder:'Tell your coach what you need…',privacy:'Privacy: In offline mode, your challenge stats and coach chat stay on this device. Journal entries are never sent to the coach.',disclaimer:'The coach provides general habit-building guidance, not medical or mental-health treatment.',todayInsight:ctx.habitsCount===0?'Add 1–3 simple habits to give your challenge a clear starting point.':ctx.completedToday===ctx.todayTotal?'Nice work! You’ve checked off today’s habits. Notice what helped you follow through.':`You have ${Math.max(0,ctx.todayTotal-ctx.completedToday)} habit(s) left today. Start with the easiest one for five minutes.`,prompts:['Help me stay consistent today','Review my progress','I missed a day. Help me restart']};
+    $('coachPageTitle').textContent=labels.title;$('coachPageSubtitle').textContent=labels.subtitle;$('coachHeroKicker').textContent=labels.kicker;$('coachHeroTitle').textContent=labels.hero;$('coachHeroCopy').textContent=labels.copy;$('coachStatProgressLabel').textContent=labels.progress;$('coachStatStreakLabel').textContent=labels.streak;$('coachStatTodayLabel').textContent=labels.today;$('coachInsightTitle').textContent=labels.insight;$('coachInsightText').textContent=labels.todayInsight;$('coachChatTitle').textContent=labels.chat;$('coachClearBtn').textContent=labels.clear;$('coachQuickTitle').textContent=labels.quick;$('coachInput').placeholder=labels.placeholder;
+    $('goalPlanKicker').textContent=coachLanguage==='am'?'የሳምንት / ወር ግብ እቅድ':'WEEKLY / MONTHLY GOAL PLANNER';
+    $('goalPlanHeading').textContent=coachLanguage==='am'?'የሳምንት ወይም የወር ግብህን ወደ ዕለታዊ እቅድ ቀይር':'Create a Weekly Goal or Monthly Goal';
+    $('goalPlanCopy').textContent=coachLanguage==='am'?'ምን ማሳካት እንደምትፈልግ ጻፍ። የ7 ቀን የሳምንት ግብ ወይም የ30 ቀን የወር እቅድ ምረጥ። ኮቹ ለእያንዳንዱ ቀን የተለየ ልማድ ይፈጥራል፤ አስፈላጊ ከሆነ የምግብና የእንቅስቃሴ ምክሮችንም ያካትታል።':'Choose a 7-day Weekly Goal or 30-day Monthly Goal. The coach creates independent habits for every date, with nutrition and activity guidance when relevant.';
+    $('goalPlanInputLabel').textContent=coachLanguage==='am'?'ምን ማሳካት ትፈልጋለህ?':'What do you want to achieve?';
+    $('goalPlanDurationLabel').textContent=coachLanguage==='am'?'የእቅድ ጊዜ':'Plan duration';
+    $('goalPlanInput').placeholder=coachLanguage==='am'?'ምሳሌ፦ በአንድ ወር 1 ኪሎ መጨመር እፈልጋለሁ፤ ሚዛናዊ ምግብና ደህንነቱ የተጠበቀ እንቅስቃሴ አዘጋጅልኝ።':'Example: I want to gain 1 kg in one month. Suggest balanced meals and safe activities.';
+    $('goalGenerateBtn').textContent=coachLanguage==='am'?'✦ እቅድ አዘጋጅ':'✦ Generate plan';
+    $('goalCancelBtn').textContent=coachLanguage==='am'?'ዝጋ':'Cancel';$('goalApplyBtn').textContent=coachLanguage==='am'?'የዕለት ልማዶችን ጨምር':'Add daily habits';
+    const durationSelect=$('goalPlanDuration');durationSelect.options[0].textContent=coachLanguage==='am'?'1 ሳምንት / 7 ቀን':'1 week / 7 days';durationSelect.options[1].textContent=coachLanguage==='am'?'1 ወር / 30 ቀን':'1 month / 30 days';
+    renderSavedGoalPlans();
+    const remoteConfigured=Boolean(String(window.__30DAY_AI_COACH_ENDPOINT||'').trim());
+    $('coachPrivacyText').textContent=remoteConfigured?(coachLanguage==='am'?'ግላዊነት፦ የምትልከው መልዕክትና የቻሌንጅ አጠቃላይ ስታቲስቲክስ ወደ የተዋቀረው AI endpoint ይላካሉ። የJournal ጽሑፎችና የልማድ ስሞች አይላኩም።':'Privacy: Your message and aggregate challenge stats are sent to the configured AI endpoint. Journal entries and habit names are not sent.'):labels.privacy;$('coachDisclaimer').textContent=labels.disclaimer;
+    $('coachLangAm').classList.toggle('active',coachLanguage==='am');$('coachLangAm').setAttribute('aria-pressed',String(coachLanguage==='am'));$('coachLangEn').classList.toggle('active',coachLanguage==='en');$('coachLangEn').setAttribute('aria-pressed',String(coachLanguage==='en'));
+    const buttons=$('coachQuickPrompts').querySelectorAll('button');buttons.forEach((b,i)=>{b.textContent=labels.prompts[i]||b.dataset.coachPrompt;b.dataset.coachPrompt=labels.prompts[i]||b.dataset.coachPrompt;});
+    coachRenderHistory();
+  }
+  async function coachRemoteReply(message,lang,ctx,mode='chat',extra={}){
+    const endpoint=String(window.__30DAY_AI_COACH_ENDPOINT||'').trim();if(!endpoint)throw new Error('Live AI endpoint is not configured.');
+    const token=typeof window.__30DAY_GET_ACCESS_TOKEN==='function'?await window.__30DAY_GET_ACCESS_TOKEN():null;
+    if(!token)throw new Error('Sign in with a configured Supabase account to use live AI.');
+    const headers={'Content-Type':'application/json','Authorization':'Bearer '+token,'apikey':String(window.__30DAY_SUPABASE_ANON_KEY||'').trim()};
+    const response=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify({mode,message,language:lang,context:ctx,...extra})});
+    if(!response.ok){let detail='';try{detail=(await response.json()).error||'';}catch(e){}throw new Error(detail||('AI endpoint returned '+response.status));}
+    const result=await response.json();
+    if(mode==='plan'){
+      const plan=result.plan||result;
+      if(!plan||!Array.isArray(plan.habits))throw new Error('AI returned an invalid plan.');
+      liveAiVerifiedThisSession=true;renderCoachPage();
+      return plan;
+    }
+    const text=result.reply||result.message||result.content;
+    if(typeof text!=='string'||!text.trim())throw new Error('AI returned an empty reply.');
+    liveAiVerifiedThisSession=true;renderCoachPage();
+    return text.trim();
+  }
+  let coachSending=false;
+  async function coachSendMessage(raw){
+    if(coachSending)return;
+    const message=String(raw||'').trim().slice(0,1200);if(!message)return;
+    coachSending=true;
+    let languageSwitched=false;if(coachIsAmharic(message)&&coachLanguage!=='am'){coachLanguage='am';languageSwitched=true;try{localStorage.setItem(COACH_LANG_KEY,coachLanguage);}catch(e){}}
+    if(languageSwitched)renderCoachPage();
+    coachAddMessage('user',message);$('coachInput').value='';$('coachTyping').classList.add('visible');$('coachSendBtn').disabled=true;
+    try{
+      const ctx=coachContext();let answer='';
+      if(String(window.__30DAY_AI_COACH_ENDPOINT||'').trim()){
+        try{answer=await coachRemoteReply(message,coachLanguage,ctx,'chat');}
+        catch(err){console.warn('Live AI Coach request failed:',err);answer=coachLanguage==='am'?'የቀጥታ AI አሁን አልተገናኘም። Supabase ውቅረትህን፣ መለያ መግባትህን እና AI API secret አረጋግጥ። ይህ የአካባቢ ምላሽ አይደለም ብሎ መደበቅ አንፈልግም።':'Live AI is not connected. Check your Supabase configuration, sign-in session, and server-side AI API secret. This request was not replaced with an offline reply.';}
+      } else {answer=coachLocalReply(message,coachLanguage,ctx);}
+      coachAddMessage('assistant',answer);
+    } finally {coachSending=false;$('coachTyping').classList.remove('visible');$('coachSendBtn').disabled=false;}
+  }
+  let pendingCoachPlan=null;
+  function setGoalPlanStatus(message,type=''){
+    const el=$('goalPlanStatus');el.textContent=message;el.className='goal-plan-status'+(type?' '+type:'');
+  }
+  function goalListSection(title,items){
+    const box=document.createElement('div');box.className='goal-plan-section';
+    const strong=document.createElement('strong');strong.textContent=title;box.appendChild(strong);
+    const ul=document.createElement('ul');(Array.isArray(items)?items:[]).slice(0,8).forEach(item=>{if(typeof item!=='string'||!item.trim())return;const li=document.createElement('li');li.textContent=item.slice(0,350);ul.appendChild(li);});
+    if(!ul.children.length){const li=document.createElement('li');li.textContent=coachLanguage==='am'?'የተለየ መረጃ አልተሰጠም።':'No additional details provided.';ul.appendChild(li);}box.appendChild(ul);return box;
+  }
+  function renderGoalPlanPreview(plan){
+    $('goalPlanPreview').hidden=false;$('goalPlanSummary').textContent=String(plan.summary||'').slice(0,1000);
+    const nut=$('goalNutritionSection');nut.textContent='';if(Array.isArray(plan.nutritionGuidance)&&plan.nutritionGuidance.length)nut.appendChild(goalListSection(coachLanguage==='am'?'የምግብ ምክሮች':'Nutrition guidance',plan.nutritionGuidance));
+    const act=$('goalActivitySection');act.textContent='';if(Array.isArray(plan.activityGuidance)&&plan.activityGuidance.length)act.appendChild(goalListSection(coachLanguage==='am'?'የእንቅስቃሴ ምክሮች':'Activity guidance',plan.activityGuidance));
+    const safe=$('goalSafetySection');safe.textContent='';if(plan.safetyNote)safe.appendChild(goalListSection(coachLanguage==='am'?'የደህንነት ማስታወሻ':'Safety note',[String(plan.safetyNote)]));
+    const list=$('goalDayList');list.textContent='';const start=challengeDay();const days=Math.max(1,Math.min(30,Number(plan.durationDays)||Number($('goalPlanDuration').value)||7));
+    const dayGroups=new Map();
+    (Array.isArray(plan.habits)?plan.habits:[]).slice(0,90).forEach(item=>{if(!item||typeof item!=='object')return;const off=Number(item.dayOffset);if(!Number.isInteger(off)||off<0||off>=days)return;const key=off+1;if(!dayGroups.has(key))dayGroups.set(key,[]);if(dayGroups.get(key).length<4)dayGroups.get(key).push(item);});
+    for(let offset=0;offset<days;offset++){
+      const box=document.createElement('div');box.className='goal-day-item';
+      const head=document.createElement('div');head.className='goal-day-head';head.textContent=(coachLanguage==='am'?'ቀን ':'DAY ')+(start+offset)+' · '+formatDate(checkDate(start+offset),{weekday:'short',month:'short',day:'numeric'});box.appendChild(head);
+      const items=dayGroups.get(offset+1)||[];
+      if(!items.length){const p=document.createElement('div');p.textContent=coachLanguage==='am'?'የቀላል ዕለታዊ ግምገማ አድርግ።':'Review your progress and plan tomorrow.';box.appendChild(p);}
+      items.forEach(h=>{const row=document.createElement('div');row.textContent=(h.emoji?String(h.emoji).slice(0,5)+' ':'')+String(h.name||h.title||'Daily action').slice(0,100)+(h.details?' — '+String(h.details).slice(0,160):'');box.appendChild(row);});
+      list.appendChild(box);
+    }
+  }
+  function renderSavedGoalPlans(){
+    const wrap=$('savedGoalPlans');if(!wrap)return;wrap.textContent='';const goals=Array.isArray(state.goals)?state.goals.slice(-4).reverse():[];if(!goals.length)return;
+    const title=document.createElement('div');title.className='saved-goal-title';title.textContent=coachLanguage==='am'?'የተቀመጡ ግቦች':'Saved goal plans';wrap.appendChild(title);
+    goals.forEach(g=>{const item=document.createElement('div');item.className='saved-goal-item';const strong=document.createElement('strong');strong.textContent=String(g.title||g.goal||'Goal').slice(0,160);const small=document.createElement('small');small.textContent=(Number(g.durationDays)||7)+' '+(coachLanguage==='am'?'ቀናት':'days')+' · '+(Number(g.habitCount)||0)+' '+(coachLanguage==='am'?'ልማዶች':'habits');item.append(strong,small);wrap.appendChild(item);});
+  }
+  function normaliseGeneratedPlan(raw,duration,goal){
+    if(!raw||!Array.isArray(raw.habits))throw new Error(coachLanguage==='am'?'AI ትክክለኛ የልማድ ዝርዝር አልመለሰም።':'AI did not return a valid habit list.');
+    const days=Math.max(1,Math.min(30,Number(raw.durationDays)||duration));
+    const habits=raw.habits.slice(0,90).map((h,i)=>({dayOffset:Number(h.dayOffset),name:String(h.name||h.title||'').trim().slice(0,90),details:String(h.details||'').trim().slice(0,220),emoji:String(h.emoji||'⭐').slice(0,5),color:['yellow','blue','mint','pink','lav'].includes(h.color)?h.color:['yellow','blue','mint','pink','lav'][i%5]})).filter(h=>Number.isInteger(h.dayOffset)&&h.dayOffset>=0&&h.dayOffset<days&&h.name).reduce((acc,h)=>{const count=acc.filter(x=>x.dayOffset===h.dayOffset).length;if(count<4)acc.push(h);return acc;},[]);
+    if(!habits.length)throw new Error(coachLanguage==='am'?'የእቅዱ የዕለት ልማዶች ባዶ ናቸው።':'The generated plan contains no daily habits.');
+    return {goal:String(goal||'').trim().slice(0,600),title:String(raw.title||raw.summary||goal||'Goal plan').slice(0,180),summary:String(raw.summary||'').slice(0,1200),durationDays:days,nutritionGuidance:Array.isArray(raw.nutritionGuidance)?raw.nutritionGuidance.filter(x=>typeof x==='string').slice(0,8):[],activityGuidance:Array.isArray(raw.activityGuidance)?raw.activityGuidance.filter(x=>typeof x==='string').slice(0,8):[],safetyNote:String(raw.safetyNote||'').slice(0,700),habits};
+  }
+  async function coachGenerateGoalPlan(){
+    const goal=$('goalPlanInput').value.trim();if(!goal){setGoalPlanStatus(coachLanguage==='am'?'መጀመሪያ ግብህን ጻፍ።':'Enter your goal first.','error');$('goalPlanInput').focus();return;}
+    const duration=Math.max(7,Math.min(30,Number($('goalPlanDuration').value)||30));const button=$('goalGenerateBtn');button.disabled=true;button.textContent=coachLanguage==='am'?'እየተዘጋጀ ነው…':'Generating…';$('goalPlanPreview').hidden=true;
+    if(!String(window.__30DAY_AI_COACH_ENDPOINT||'').trim()){
+      setGoalPlanStatus(coachLanguage==='am'?'የቀጥታ AI ግንኙነት ገና አልተዋቀረም። የSupabase Project URL/Publishable key አስገባ፣ Edge Function አስጀምር እና AI_API_KEY በserver secrets ውስጥ አስቀምጥ።':'Live AI is not configured yet. Add the Supabase project URL/publishable key, deploy the Edge Function, and set AI_API_KEY as a server-side secret.','error');button.disabled=false;button.textContent=coachLanguage==='am'?'✦ እቅድ አዘጋጅ':'✦ Generate plan';return;
+    }
+    setGoalPlanStatus(coachLanguage==='am'?'AI ግብህን እየመረመረ የዕለት እቅድ እያዘጋጀ ነው…':'The live AI is building your day-by-day plan…');
+    try{
+      const result=await coachRemoteReply(goal,coachLanguage,coachContext(),'plan',{goal,durationDays:duration,startDay:challengeDay()});
+      pendingCoachPlan=normaliseGeneratedPlan(result,duration,goal);renderGoalPlanPreview(pendingCoachPlan);
+      setGoalPlanStatus(coachLanguage==='am'?'እቅዱ ተዘጋጅቷል። ቀኖቹን ገምግመህ “የዕለት ልማዶችን ጨምር” ሲል ብቻ ወደ app ይጨመራል።':'Plan ready. Review the daily tasks; nothing is added until you tap “Add daily habits”.','success');
+    }catch(err){console.warn('Goal planner failed:',err);setGoalPlanStatus(coachLanguage==='am'?'እቅዱ አልተሳካም። በመለያ መግባትህ፣ Supabase Edge Function እና AI_API_KEY አረጋግጥ።':'Could not generate the plan. Check your sign-in session, Supabase Edge Function deployment, and AI_API_KEY secret.','error');}
+    finally{button.disabled=false;button.textContent=coachLanguage==='am'?'✦ እቅድ አዘጋጅ':'✦ Generate plan';}
+  }
+  function applyCoachGoalPlan(){
+    const plan=pendingCoachPlan;if(!plan||!Array.isArray(plan.habits)||!plan.habits.length)return;
+    const startDay=challengeDay();const neededDuration=Math.min(365,startDay+plan.durationDays-1);if(neededDuration>challengeDuration())state.duration=neededDuration;
+    const goalId=cryptoId();let added=0;
+    plan.habits.forEach(h=>{
+      const day=startDay+h.dayOffset;if(day<1||day>challengeDuration())return;
+      state.habits.push({id:cryptoId(),name:h.name,details:h.details||'',emoji:h.emoji||'⭐',color:h.color||'yellow',createdAt:new Date().toISOString(),days:[day],goalId,goalDayOffset:h.dayOffset,origin:'ai-goal'});added++;
+    });
+    state.goals=Array.isArray(state.goals)?state.goals:[];state.goals.push({id:goalId,title:plan.title||plan.goal,goal:plan.goal,durationDays:plan.durationDays,startDay,habitCount:added,summary:plan.summary,nutritionGuidance:plan.nutritionGuidance,activityGuidance:plan.activityGuidance,safetyNote:plan.safetyNote,createdAt:new Date().toISOString()});state.goals=state.goals.slice(-30);
+    persist();selectedDay=startDay;pendingCoachPlan=null;$('goalPlanPreview').hidden=true;setGoalPlanStatus(coachLanguage==='am'?`${added} ዕለታዊ ልማዶች ተጨመሩ። የአንድ ቀን ልማድ ሲያርትዑ የሌሎች ቀናት ልማዶች አይቀየሩም።`:`Added ${added} day-specific habits. Editing one day's habit will not change the other days.`,'success');renderAll();renderSavedGoalPlans();
+  }
+  $('goalGenerateBtn').addEventListener('click',coachGenerateGoalPlan);
+  $('goalApplyBtn').addEventListener('click',applyCoachGoalPlan);
+  $('goalCancelBtn').addEventListener('click',()=>{$('goalPlanPreview').hidden=true;pendingCoachPlan=null;});
+  // Draggable orb. A drag is never treated as a click that opens the page.
+  (function initCoachFab(){
+    const fab=$('coachFab');let startX=0,startY=0,startLeft=0,startTop=0,dragged=false,pointerId=null;
+    try{const p=JSON.parse(localStorage.getItem('30day_ai_coach_fab_pos_v1')||'null');if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y)){fab.style.left=Math.max(4,Math.min(innerWidth-72,p.x))+'px';fab.style.top=Math.max(4,Math.min(innerHeight-72,p.y))+'px';fab.style.right='auto';fab.style.bottom='auto';}}catch(e){}
+    fab.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;pointerId=e.pointerId;startX=e.clientX;startY=e.clientY;const r=fab.getBoundingClientRect();startLeft=r.left;startTop=r.top;dragged=false;try{fab.setPointerCapture(pointerId);}catch(err){};});
+    fab.addEventListener('pointermove',e=>{if(pointerId===null||e.pointerId!==pointerId)return;const dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dx)>5||Math.abs(dy)>5)dragged=true;if(!dragged)return;fab.classList.add('dragging');const x=Math.max(4,Math.min(innerWidth-fab.offsetWidth-4,startLeft+dx));const y=Math.max(4,Math.min(innerHeight-fab.offsetHeight-4,startTop+dy));fab.style.left=x+'px';fab.style.top=y+'px';fab.style.right='auto';fab.style.bottom='auto';});
+    const end=e=>{if(pointerId===null||e.pointerId!==pointerId)return;pointerId=null;fab.classList.remove('dragging');if(dragged){try{localStorage.setItem('30day_ai_coach_fab_pos_v1',JSON.stringify({x:parseFloat(fab.style.left)||0,y:parseFloat(fab.style.top)||0}));}catch(err){}setTimeout(()=>{dragged=false;},80);}else goPage('coach');};
+    fab.addEventListener('pointerup',end);fab.addEventListener('pointercancel',e=>{pointerId=null;fab.classList.remove('dragging');});
+    window.addEventListener('resize',()=>{if(fab.style.left){const r=fab.getBoundingClientRect();fab.style.left=Math.max(4,Math.min(innerWidth-fab.offsetWidth-4,r.left))+'px';fab.style.top=Math.max(4,Math.min(innerHeight-fab.offsetHeight-4,r.top))+'px';}});
+  })();
+
+  $('coachLangAm').addEventListener('click',()=>{coachLanguage='am';try{localStorage.setItem(COACH_LANG_KEY,coachLanguage);}catch(e){}renderCoachPage();});
+  $('coachLangEn').addEventListener('click',()=>{coachLanguage='en';try{localStorage.setItem(COACH_LANG_KEY,coachLanguage);}catch(e){}renderCoachPage();});
+  $('coachForm').addEventListener('submit',e=>{e.preventDefault();coachSendMessage($('coachInput').value);});
+  $('coachInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();coachSendMessage($('coachInput').value);}});
+  $('coachQuickPrompts').addEventListener('click',e=>{const b=e.target.closest('[data-coach-prompt]');if(b)coachSendMessage(b.dataset.coachPrompt);});
+  $('coachClearBtn').addEventListener('click',()=>{if(confirm(coachT('Clear the saved coach conversation on this device?','በዚህ መሣሪያ የተቀመጠውን የኮች ውይይት ማጽዳት ትፈልጋለህ?'))){coachHistory=[];coachSaveHistory();coachRenderHistory();}});
+
   function renderAll(){
-    applyTheme();renderHeader();renderHome();renderHabits();renderStats();renderJournal();renderProfile();renderSettings();
+    applyTheme();renderHeader();renderHome();renderHabits();renderStats();renderJournal();renderCoachPage();renderProfile();renderSettings();
     // Keep only one page visible after refreshing all page models.
     const active=document.querySelector('.page.active')?.dataset.page||'home';
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===active));
@@ -1377,41 +1709,13 @@ html[data-theme="dark"] .app-loading{
   $('backupFileInput').addEventListener('change',e=>importDataFile(e.target.files?.[0]));
   $('clearDataBtn').addEventListener('click',resetData);
   $('clearDataBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetData();}});
-  let authMode='signin';
-  function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';$('authConfirm').setCustomValidity('');$('forgotPasswordBtn').hidden=signup;authMessage('');}
-  $('openAuthBtn').addEventListener('click',async()=>{if(authSession){await signOutUser();}else goPage('auth');});
+  $('openAuthBtn').addEventListener('click',async()=>{if(supabaseClient&&currentSupabaseSession){try{const result=await supabaseClient.auth.signOut();if(result.error)throw result.error;currentSupabaseSession=null;renderCoachPage();notify('Signed out.');}catch(err){notify('Could not sign out.');}}else goPage('auth');});
   $('backFromAuth').addEventListener('click',()=>goPage('home'));
+  let authMode='signin';
+  function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';$('authConfirm').setCustomValidity('');}
   $('authSignInTab').addEventListener('click',()=>setAuthMode('signin'));
   $('authSignUpTab').addEventListener('click',()=>setAuthMode('signup'));
-  $('authSignOutBtn').addEventListener('click',signOutUser);
-  $('forgotPasswordBtn').addEventListener('click',async()=>{
-    const email=$('authEmail').value.trim();
-    if(!email){authMessage('Enter your email address first.',true);$('authEmail').focus();return;}
-    const client=await getSupabase();if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
-    authMessage('Sending password reset email...');$('forgotPasswordBtn').disabled=true;
-    const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:(isNativeAndroid()?'https://fdzocxwwdpovkfdlihws.supabase.co':location.href.split('#')[0])});
-    $('forgotPasswordBtn').disabled=false;
-    authMessage(error?readableAuthError(error):'Password reset email sent. Check your inbox.');
-  });
-  async function signOutUser(){
-    const client=await getSupabase();
-    if(client){const {error}=await client.auth.signOut();if(error){authMessage(readableAuthError(error),true);return;}}
-    authSession=null;cloudSyncReady=false;updateAuthUI();authMessage('Signed out. Local progress remains on this device and is not uploaded.');notify('Signed out successfully.');goPage('home');
-  }
-  $('authForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}
-    const client=await getSupabase();if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
-    const email=$('authEmail').value.trim(),password=$('authPassword').value;
-    $('authSubmit').disabled=true;authMessage(authMode==='signup'?'Creating your account...':'Signing you in...');
-    const authRedirect=isNativeAndroid()?'https://fdzocxwwdpovkfdlihws.supabase.co':location.href.split('#')[0];
-    const result=authMode==='signup'?await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}}):await client.auth.signInWithPassword({email,password});
-    $('authSubmit').disabled=false;
-    if(result.error){authMessage(readableAuthError(result.error),true);return;}
-    authSession=result.data.session;
-    if(authMode==='signup'&&!authSession){authMessage('Account created. Check your email to verify it, then sign in.');return;}
-    updateAuthUI();if(authSession)await reconcileCloud(authSession.user);notify(authMode==='signup'?'Account created successfully.':'Signed in successfully.');
-  });
+  $('authForm').addEventListener('submit',async e=>{e.preventDefault();if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}if(!supabaseClient){notify('Supabase is not configured yet. Add the project URL and publishable key in ai-coach-config.js.');return;}const email=$('authEmail').value.trim(),password=$('authPassword').value,submit=$('authSubmit');submit.disabled=true;submit.textContent=authMode==='signup'?'Creating account…':'Signing in…';try{const authRedirect=isNativeAndroid()?'https://fdzocxwwdpovkfdlihws.supabase.co':location.href.split('#')[0];if(authMode==='signup'){const result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}});if(result.error)throw result.error;if(result.data.session){currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Account created and signed in.');goPage('coach');}else{notify('Account created. Check your email to confirm it, then sign in.');setAuthMode('signin');}}else{const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Signed in successfully.');goPage('coach');}renderCoachPage();}catch(err){notify(String(err?.message||'Sign-in failed. Check your email and password.').slice(0,180));}finally{submit.disabled=false;submit.textContent=authMode==='signup'?'Create account':'Sign in';}});
   $('backFromSettings').addEventListener('click',()=>goPage('home'));
   $('saveReminderBtn').addEventListener('click',saveReminderSettings);
   $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);
@@ -1425,10 +1729,10 @@ html[data-theme="dark"] .app-loading{
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&modalMode==='habit'&&$('modalBack').classList.contains('show')&&document.activeElement===$('habitName'))saveHabit();});
   loadState();
   selectedDay=challengeDay();
-  refreshAuthSession();
   const loadingElapsedMs = Date.now() - (window.__30DayLoadingStartedAt || Date.now());
-  window.setTimeout(()=>document.getElementById('appLoading')?.classList.add('hidden'),Math.max(0,5000-loadingElapsedMs));
+  window.setTimeout(()=>document.getElementById('appLoading')?.classList.add('hidden'),Math.max(0,1200-loadingElapsedMs));
   renderAll();
+  if(window.__30DayRecovered)setTimeout(()=>notify('Saved data could not be read. A copy was kept on this device; you can restore from a backup.'),5200);
   nativeNotificationPlugin=getNativeNotificationPlugin();
   if(nativeNotificationPlugin && state.settings.dailyReminderEnabled) scheduleNativeReminder();
   // Browser timers are best-effort; Android may pause them when the app is closed/suspended.

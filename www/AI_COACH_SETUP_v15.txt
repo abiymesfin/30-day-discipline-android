@@ -1,0 +1,20 @@
+30 DAY CHALLENGE v15 — PATCH NOTES & LIVE AI SETUP
+
+PATCHED IN THIS SOURCE ZIP
+- AI Coach floating circle is hidden while the Coach page is open and returns on other pages. Its stored drag position is preserved.
+- Removed the decorative star/sparkle from behind the Coach hero/language control area.
+- In the Habit edit modal for a habit appearing on several dates, the default is “This day only”. That creates a new date-specific copy and excludes that date from the repeating record. “Every day this habit appears” allows an intentional whole-series edit.
+- When splitting a habit, an existing checkmark for the selected day is transferred to the new day-specific habit. The delete action also offers a clear DAY vs ALL choice for repeating habits.
+- Existing saved data remains compatible; repeating-habit date exclusions are preserved.
+- Root, www, and Android web-asset copies are synchronized and the service worker cache version is bumped to v15. The UI only labels Live AI as connected after a successful authenticated response; the request sends the project publishable/anon key plus the user access token.
+
+REAL-TIME AI IS NOT YET ACTIVATED BY THIS ZIP ALONE
+The app currently has a client integration and an Edge Function source, but no user-specific credentials are embedded in this ZIP. To activate real live AI:
+1. In Supabase, use the correct project URL and publishable/anon key in ai-coach-config.js. This is public client configuration, not a secret. Do not use a service_role/secret key in the app.
+2. Deploy `supabase/functions/ai-coach/index.ts` as the `ai-coach` Edge Function with JWT verification enabled.
+3. Add your AI provider key to Supabase Edge Function secrets as `AI_API_KEY`. Keep it server-side. Configure `AI_API_URL` / `AI_MODEL` as server secrets if your provider requires them; the existing source defaults to an OpenAI-compatible endpoint, so adapt it securely if your provided API key is for another provider.
+4. Enable email authentication in Supabase, configure allowed Site URL/redirect URLs, then rebuild/redeploy the app.
+5. Sign in, send a real test message in Amharic and English, create a weekly and monthly goal, and inspect Edge Function logs for genuine successful requests. Do not claim live AI works until those checks pass.
+
+SECURITY
+Never place the AI provider key, Supabase service_role key, or any server-side secret in index.html, ai-coach-config.js, GitHub, logs, or the Android APK. Do not send Journal text to the AI. Use reasonable server-side rate/usage limits before public launch.

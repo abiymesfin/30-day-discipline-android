@@ -1,0 +1,40 @@
+30 DAY CHALLENGE — MANUS AI IMPLEMENTATION PROMPT (v15)
+
+Please continue from the existing 30 DAY Challenge project / attached v15 source ZIP. Make the requested changes in the real project files; do not only explain or generate mockups. Preserve the current design, theme, 30 logo, 5-second loading screen, navigation, existing data, and unrelated features. Do not redesign the app.
+
+A. FIX THE AI COACH FLOATING BUTTON
+1. The animated/draggable circular “AI COACH” shortcut should appear on normal app pages.
+2. When the user opens the AI Coach page, completely hide the floating shortcut so it never covers the Coach page controls or chat. When the user leaves the Coach page, show it again. Do not reset the user's saved drag position.
+3. Remove the decorative Gemini-like four-point star/sparkle sitting in the background behind the AI Coach hero/language control area. Do not remove the real AI Coach button, the app logo, or unrelated icons.
+
+B. FIX HABIT EDITING BY DAY (IMPORTANT)
+1. The bug is that a repeating habit uses one shared record across many days, so editing it on Sunday changes Friday and other days too.
+2. In the Edit Habit modal for a habit that appears on multiple dates, add an “Apply edits to” selector with:
+   - “This day only” (default and recommended)
+   - “Every day this habit appears”
+3. When “This day only” is selected, create a separate habit instance for the selected challenge day, exclude that date from the old repeating instance, and apply the edits only to the new day-specific instance. Every other date must retain its previous name/details/icon/color and check-in status.
+4. Keep a generated Weekly Goal or Monthly Goal habit that already belongs to one date as a single-date item; editing it must not change any other day.
+5. Preserve an existing checkmark when splitting a habit to a date-specific instance. Ensure the calendar, daily counts, overall progress, and streak calculations count only habits actually scheduled for each date.
+6. If a repeating habit is deleted from the Habits page, provide a clear choice to remove it from “This day only” or “Every day”; do not silently delete all days when the user intends to remove one day.
+7. Keep old saved local data compatible. Sanitize/preserve any new per-day exclusion data when loading and saving.
+
+C. WEEKLY / MONTHLY GOAL PLANNER
+1. Keep the 7-day Weekly Goal and 30-day Monthly Goal choices.
+2. AI-created daily habits must be independent per date, with unique IDs and separate check-in state. Editing the Sunday item must never update the Friday item.
+3. The AI plan must be previewed first. Only add any generated habits to the user's challenge after the user explicitly confirms “Add daily habits”.
+4. When health, weight, food, or exercise goals are requested, return cautious general guidance only, no diagnosis, no extreme diet or guaranteed outcomes. For example, a weight-gain goal should include balanced meal/snack ideas and reasonable strength/activity guidance plus an appropriate safety note.
+
+D. REAL-TIME AI COACH VIA SUPABASE
+1. Use the Supabase Project URL and publishable/anon client key that I supply for this project. Put these only in the public client config file (ai-coach-config.js / equivalent). Never use a Supabase service_role or secret key in client code.
+2. Deploy and connect the existing Supabase Edge Function named `ai-coach`; verify the user's Supabase Auth session server-side. Keep JWT verification on. The AI request must be made through the Edge Function, not directly from the browser or Android app.
+3. Store the provider API credential only as a Supabase Edge Function secret named `AI_API_KEY`. Never put this secret in index.html, JavaScript, GitHub, public config, logs, or the APK. If the supplied key belongs to a different provider than the current default, adapt the server-side Edge Function to that provider's documented API and configure `AI_API_URL` / `AI_MODEL` as server secrets where needed.
+4. Ensure Amharic user messages receive Amharic replies and English messages receive English replies, including goal-plan JSON fields. Chat advice should use only aggregate progress context needed for coaching; never transmit private Journal text.
+5. Add reasonable server-side input limits and error handling. Do not show a “Live AI ready” status unless the configuration and authenticated Edge Function are actually reachable. If configuration is missing, explain what is missing instead of returning a fake AI answer.
+6. Do not overwrite or erase existing local app data. This task does not authorize silent cloud migration or syncing.
+
+E. RELEASE / TEST CHECKLIST
+1. Keep these files in sync: root `index.html`, `www/index.html`, and `android/app/src/main/assets/public/index.html`; also synchronize service worker cache version and package version.
+2. Test: open AI Coach => floating button disappears; leave Coach => it returns at its prior position; background sparkle is gone; change a repeating habit on Sunday => Friday is unchanged; switch to “Every day” => all intended days update; AI goal plan => one unique habit item per date; check-in remains on the correct date; calendar/progress counts stay correct; Amharic and English live chat; 7-day and 30-day plan preview/apply; offline startup still works.
+3. Do not claim real live AI, deployed backend, or successful tests unless the request was actually deployed and verified. Provide a concise list of what was changed, what tests passed, and any exact credential/deployment step still required.
+
+Only make the changes listed above plus directly necessary fixes. Keep the rest of the app exactly as it is.

@@ -1,0 +1,15 @@
+30 DAY CHALLENGE — MANUS AI IMPLEMENTATION / VERIFICATION PROMPT (v16)
+
+Use the attached v16 ZIP to update my existing 30 DAY Challenge project. Preserve the existing design, data, 30 logo, 5-second loading screen, navigation, colors, and unrelated features. Do not redesign the app.
+
+1) APPLY THE AI COACH LANGUAGE LAYOUT FIX. On small Android screens, changing the Coach language from English to Amharic must not cut off or push the English button outside the container. Keep both language buttons fully visible on one line; constrain/ellipsis only long status text. Verify both languages at 320px, 360px, and 390px widths in light and dark themes.
+
+2) KEEP EXISTING v15 FIXES: hide the floating AI Coach circle on the Coach page, remove the decorative background star, and keep date-specific habit edits independent so Sunday edits do not change Friday.
+
+3) USE THE INCLUDED OPENAI RESPONSES API EDGE FUNCTION. The current v16 server function is configured for https://api.openai.com/v1/responses with default model gpt-6-luna. Do not switch it to Gemini or Anthropic unless I explicitly provide a key for that provider and approve a provider-specific integration. This is the OpenAI API, not the ChatGPT website subscription.
+
+4) CONNECT USING MY REAL SUPABASE PROJECT. Use the Supabase Project URL and publishable/anon key I provide only in public client config. Deploy supabase/functions/ai-coach/index.ts to that project with JWT verification enabled. Set AI_API_KEY to my OpenAI API key in Supabase Edge Function Secrets. Optionally set AI_MODEL=gpt-6-luna and AI_API_URL=https://api.openai.com/v1/responses. Never put the AI_API_KEY or Supabase service_role key in the frontend, GitHub, APK, browser logs, or any public file.
+
+5) VERIFY LIVE AI HONESTLY. Sign in with Supabase Auth and make actual English and Amharic requests. Test a 7-day Weekly Goal and 30-day Monthly Goal, preview before applying, and prove each date has independent habit/check-in state. The app must not say “Live AI connected” unless a real successful authenticated response happened. If credentials, API entitlement, billing, deployment access, or a model permission are missing, state exactly which one; do not fake success.
+
+6) Preserve existing saved user data. Keep root index.html, www/index.html, and android/app/src/main/assets/public/index.html synchronized. Run JavaScript/build checks and report which real tests passed and which require my live credentials.

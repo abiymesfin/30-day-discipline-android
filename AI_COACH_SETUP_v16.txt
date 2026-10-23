@@ -1,0 +1,31 @@
+30 DAY CHALLENGE v16 — LANGUAGE LAYOUT FIX + OPENAI LIVE AI BACKEND
+
+FIXED
+- The AI Coach header now uses a constrained grid: language buttons keep their full width and stay visible when switching Amharic/English; long status text ellipsizes instead of pushing the English button off-screen.
+- On narrow phones, language buttons remain on one line and padding/font sizes adapt. The header layout stays stable across the two language choices.
+- Root, www, and Android assets are synchronized; service worker cache is now discipline30-static-v16-language-ai.
+
+AI PROVIDER (CODE CONFIGURATION)
+- The current v16 Edge Function is implemented for the OpenAI API Responses endpoint: https://api.openai.com/v1/responses.
+- Default model: gpt-6-luna (OpenAI API), a cost-conscious model intended for higher-volume tasks. This is NOT the ChatGPT website subscription, and it is NOT Gemini or Claude.
+- The previous v15 default was OpenAI Chat Completions with gpt-4o-mini; the current OpenAI catalog marks GPT-4o mini as deprecated, so v16 defaults to the current Responses API/model.
+
+IMPORTANT: NOT LIVE UNTIL CONFIGURED AND DEPLOYED
+This source ZIP intentionally does not include your credentials and cannot prove a hosted endpoint is running. `ai-coach-config.js` has blank Supabase Project URL and publishable/anon key. Set both in the client config only (never use `service_role`). Deploy `supabase/functions/ai-coach/index.ts` to the same Supabase project with JWT verification enabled. In Supabase Edge Function Secrets, set `AI_API_KEY` to an OpenAI API key; optionally set `AI_MODEL=gpt-6-luna` and `AI_API_URL=https://api.openai.com/v1/responses`.
+
+SUPABASE KEY VS AI API KEY
+- Supabase Project URL + publishable/anon key: identify the project and let a signed-in user call Supabase. These are separate from the AI model credential.
+- `AI_API_KEY`: an OpenAI API credential, stored only as a Supabase Edge Function secret. Do not put it in HTML, JavaScript, GitHub, APK, or send it in chat.
+- OpenAI API usage/billing is separate from a ChatGPT subscription. Check your OpenAI API account's access and billing before testing.
+- This v16 function defaults specifically to OpenAI Responses API. A Gemini or Anthropic/Claude key will NOT work with this endpoint or request format; selecting either provider requires the corresponding provider-specific server integration.
+
+TEST CHECKLIST
+1. Set the project URL and publishable/anon key in `ai-coach-config.js`.
+2. Deploy the Edge Function and set `AI_API_KEY` as a Supabase secret. Keep JWT verification enabled.
+3. Sign up/sign in through Supabase Auth.
+4. Send a short English message and a separate Amharic message; verify real responses.
+5. Generate a 7-day and a 30-day plan, review before applying, and verify one day's edits do not modify other days.
+6. If the request fails, read Supabase Edge Function logs and check API key, model availability, and API billing. Do not claim live AI until an actual successful response is verified.
+
+PRIVACY / SAFETY
+The Edge Function verifies the Supabase user's access token and does not send Journal text. It sends only the chat message/goal and aggregate challenge statistics. It sets `store:false` for API requests. Before public launch, add per-user rate limits, budget caps/monitoring, and review your provider's data controls. The AI gives general habit/nutrition/activity advice only, not medical diagnosis or treatment.
