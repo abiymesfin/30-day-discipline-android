@@ -1400,17 +1400,19 @@ html[data-theme="dark"] .coach-send{color:#171821}
   // Android WebView cannot download blobs or print, so write the file to cache and open the Android share sheet.
   async function shareFileNative(filename,content,title){
     const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
-    if(!FS||!SH)throw new Error('Sharing is not available.');
-    await FS.writeFile({path:filename,data:content,directory:'CACHE',encoding:'utf8'});
-    const res=await FS.getUri({path:filename,directory:'CACHE'});
-    await SH.share({title,dialogTitle:title,url:res.uri,type:filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html'});
+    if(!FS)throw new Error('File storage is not available.');
+    const type=filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html';
+    await FS.writeFile({path:filename,data:content,directory:'DOCUMENTS',encoding:'utf8',recursive:true});
+    if(SH){const res=await FS.getUri({path:filename,directory:'DOCUMENTS'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
+    return true;
   }
   async function shareBase64Native(filename,base64,title){
     const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
-    if(!FS||!SH)throw new Error('Sharing is not available.');
-    await FS.writeFile({path:filename,data:base64,directory:'CACHE',encoding:'base64'});
-    const res=await FS.getUri({path:filename,directory:'CACHE'});
-    await SH.share({title,dialogTitle:title,url:res.uri,type:filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html'});
+    if(!FS)throw new Error('File storage is not available.');
+    const type=filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html';
+    await FS.writeFile({path:filename,data:base64,directory:'DOCUMENTS',encoding:'base64',recursive:true});
+    if(SH){const res=await FS.getUri({path:filename,directory:'DOCUMENTS'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
+    return true;
   }
   async function blobToBase64(blob){
     const bytes=new Uint8Array(await blob.arrayBuffer());
@@ -1420,7 +1422,13 @@ html[data-theme="dark"] .coach-send{color:#171821}
   }
   async function makePdfBlob(text,title){
     const jsPDF=window.jspdf?.jsPDF;
-    if(!jsPDF)throw new Error('PDF engine is unavailable in this app build.');
+    if(!jsPDF){
+      const lines=String(text||'').split(/\r?\n/).flatMap(row=>{const clean=row.replace(/[\\()]/g,' ').slice(0,110);return [clean||' '];});
+      const objects=[];const stream=['BT','/F1 10 Tf','40 800 Td',...lines.map((line,i)=>`(${line}) Tj 0 -14 Td`),'ET'].join('\n');
+      objects.push('<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+      let pdf='%PDF-1.4\n',offsets=[0];objects.forEach((obj,i)=>{offsets.push(pdf.length);pdf+=`${i+1} 0 obj\n${obj}\nendobj\n`;});const xref=pdf.length;pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n${offsets.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n ').join('\n')}\ntrailer\n<< /Size ${objects.length+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      return new Blob([pdf],{type:'application/pdf'});
+    }
     const pdf=new jsPDF({unit:'pt',format:'a4'});
     pdf.setProperties({title:String(title||'30 DAY report'),subject:'30 DAY Challenge progress report'});
     const margin=40,lineHeight=15,maxWidth=515;
@@ -1438,7 +1446,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
     if(isNativeAndroid()){
       try{await shareFileNative(`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`,content,'30 DAY backup');notify('Choose where to save your backup (Drive, Files, email…).');}
-      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not create the backup file.');}
+      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not save the JSON backup. Please check the Files app permission.');}
       return;
     }
     const blob=new Blob([content],{type:'application/json'});
@@ -1470,8 +1478,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
       report.remove();
       return;
     }catch(err){
-      // Keep a browser print fallback if a network connection prevents the small jsPDF module from loading.
-      if(isNativeAndroid()){report.remove();notify('Could not create the PDF. Check your internet connection and try again.');return;}
+      if(isNativeAndroid()){report.remove();notify('Could not save the PDF report. Please check the Files app permission.');return;}
     }
     document.body.appendChild(report);
     const cleanup=()=>{document.body.classList.remove('printing-report');report.remove();window.removeEventListener('afterprint',cleanup);};
