@@ -1,0 +1,8 @@
+30 DAY Challenge App v9 — Browser notes
+
+- The Settings button uses a professional inline SVG cog icon, not a gear photo.
+- The launch screen is visible for five seconds from the early document start on each full page/app load.
+- The loading screen includes the black square with only the white “30”, a spinner, and a progress line.
+- The service worker cache name is discipline30-static-v9.
+
+To verify the update in Chrome: publish the updated project, open the deployed URL in an Incognito tab, and refresh. If an installed PWA still shows old assets, close it and clear that site's cached data in Chrome, then reopen it.

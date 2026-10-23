@@ -1,0 +1,5 @@
+30 DAY — v11 STARTUP THEME FIX
+
+Default theme is Light, so a fresh browser shows a white luxury loader. The app reads personal_discipline_challenge_v2.settings.theme before first paint: "dark" = black loader; "light" or no saved theme = white loader. The app keeps the five-second startup duration and does not show loading on internal navigation.
+
+After replacing files in Manus AI, publish/deploy the project. Test the deployed HTTPS URL in Chrome. If old assets remain, test Incognito first; then update/clear site cache if needed. The ZIP download by itself does not change a live website.

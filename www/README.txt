@@ -1,39 +1,42 @@
-30 DAY — 30 Day Discipline Challenge, source v5
+30 DAY Challenge — v8
 
-This archive preserves the supplied pastel single-page source and adds:
-- Dedicated Settings page and reliable gear navigation.
-- Local phone time picker, saved reminder time, OFF-by-default toggle.
-- Permission status, enable-permission flow and test notification button.
-- Duplicate-safe daily reminder state (one local calendar date at most in PWA mode).
-- Capacitor Android bridge for native local notifications, including explicit plugin registration, an Android notification channel, and a single fixed reminder ID that is cancelled/replaced on changes.
-- Service-worker cache v5, local-only user data migration, and the black-background launcher logo showing only 30, plus a white 30 notification glyph required by Android status bars.
+This package includes the web/PWA source, Capacitor Android project and icon assets.
 
-PWA installation
-1. Serve this folder over HTTPS.
-2. Open the URL in Chrome on Android and choose Install app / Add to Home screen.
-3. Open Settings, choose a local time, enable Daily notification, allow notifications, then use Test notification.
-4. In PWA mode, browser timers and service-worker notifications are best effort and cannot reliably fire after the browser process is fully closed. The Settings page says this explicitly.
+Important v8 fixes:
+- The app mark is a plain black square with only the white number 30, matching the supplied image. No calendar or added decoration.
+- Logo and Settings gear images used by the web page are embedded directly into HTML so they still display in Chrome/hosted previews if relative asset paths are missed.
+- The Settings button uses the provided gear artwork. The Sign In and account surfaces use the 30-only logo with square corners.
+- Service worker cache is v8 and requests an update on page load.
 
-Native Android build (Capacitor)
-1. Install Node.js, the Android SDK (API 35), Android Studio and a JDK supported by the installed Android Gradle Plugin.
-2. From this directory run: npm install
-3. Generate the native project once: npx cap add android
-4. Sync web assets/plugins: npx cap sync android
-5. Open android/ in Android Studio, install/run on a physical Android 13+ phone, or run: npm run cap:build
-6. On first run, grant POST_NOTIFICATIONS when prompted. Android local notifications are scheduled through @capacitor/local-notifications using a single notification ID and daily repeat schedule. Reboot/reschedule behavior must be verified on the target Android version before release; this sandbox did not have an Android SDK, Gradle, ADB or a test phone, so no APK or closed-app test is claimed.
+To see these changes on your deployed URL, import/upload this entire ZIP into your builder and redeploy all files. The old site open in Chrome will not change just because the ZIP was downloaded.
 
-Data and migration
-User data remains in localStorage under the existing key personal_discipline_challenge_v2. Existing habits, profile, notes and check-ins are retained. Missing reminder settings are migrated to OFF with 09:00. A fresh install starts with no user data, no demo content and reminders OFF.
+Do not clear site storage unless you have exported a backup first: the app currently saves challenge data locally in the browser.
 
-Suggested acceptance test on a physical Android build
-- Gear opens Settings; Back to Home returns Home; bottom navigation keeps Home, Habits, Progress and Profile separate.
-- Change time, reload, and verify it persists. Toggle OFF/ON and verify it persists.
-- Verify permission status changes, send a test notification, then disable notifications in Android Settings and verify the blocked status.
-- Enable a reminder, inspect that only one scheduled reminder exists after changing time repeatedly, force-stop/reopen, and reboot the phone; verify one notification on the next local day.
-- Install fresh and verify empty habits/profile/check-ins and zero progress.
+To run locally as a web app, serve the project folder over HTTP (for example via a static host); opening file:// disables service worker/offline behavior. To build Android, use npm install, npm run cap:sync, then npm run cap:build in an environment with Android build requirements.
+
+VERSION 9 UPDATE
+- Replaced the Settings gear photo with an inline scalable SVG Settings icon.
+- Added a polished launch/loading overlay with a five-second minimum display on each full page/app load.
+- Added an animated progress line and accessibility status text.
+- Updated the service-worker cache to v9 and synchronized web/Capacitor assets.
+
+VERSION 10 UPDATE
+- Replaced the minimal launch loader with an obsidian-black/champagne-gold luxury loading experience.
+- Added restrained animated orbit rings, elevated typography, and a fine gold progress line.
+- Preserved the plain black-square logo with white “30” only and the five-second launch duration.
+- Incremented the service-worker cache to v10 and synchronized all web/Capacitor copies.
 
 
-UI-only account screen
-- Profile → Sign in opens a professional Sign in/Create account screen.
-- Includes Google, Apple, Facebook and Telegram provider buttons.
-- This screen is visual UI only; buttons do not authenticate or sync data.
+VERSION 11 UPDATE
+- The loader follows the saved app theme before first paint. New users/no saved preference use the app's default Light theme (white background); saved Dark mode uses an obsidian-black loader.
+- Keeps the premium gold animation and five-second launch display.
+- Cache version discipline30-static-v11; package version 11.0.0.
+- Includes MANUS_AI_PROMPT_v11.txt and CHROME_THEME_FIX_v11.txt.
+- Supabase authentication is not yet live: configure your own Supabase project, public client key and secure RLS before enabling real sign-in/cloud sync.
+
+VERSION 12 UPDATE (fixes)
+- Saved/imported data is normalized; unreadable data is kept as a copy instead of being overwritten.
+- Future days can no longer be checked off.
+- Android: backup and report are shared through the share sheet (@capacitor/filesystem + @capacitor/share).
+- Android: daily reminder uses a true daily schedule (hour/minute).
+- Service worker is removed inside the Android app; web version loads the page network-first. Cache v12.

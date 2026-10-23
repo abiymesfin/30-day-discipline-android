@@ -1,0 +1,1 @@
+Superseded by MANUS_AI_PROMPT_v10.txt. Use the v10 prompt for the current project.

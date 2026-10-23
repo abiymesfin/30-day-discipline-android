@@ -1,0 +1,8 @@
+30 DAY Challenge App v10 — Luxury Loading Screen
+
+- Startup uses an obsidian-black and champagne-gold luxury loading screen with elegant orbital rings and a fine progress line.
+- The logo remains a plain black square containing only the white “30”.
+- The loading overlay appears for five seconds from the early document timestamp on full app/page launch; it is not triggered by internal navigation.
+- Cache version: discipline30-static-v10.
+
+After updating/publishing the project in Manus AI, check the deployed URL in Chrome. For a clean browser check, use Incognito. If an installed PWA keeps old assets, close it and clear that site's cached data before reopening.

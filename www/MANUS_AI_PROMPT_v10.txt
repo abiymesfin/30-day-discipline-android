@@ -1,0 +1,10 @@
+30 DAY Challenge App — Manus AI Update Prompt (v10)
+
+Apply the luxury loading-screen upgrade to the provided project. Preserve all existing features and do not redesign unrelated screens.
+
+1. Loading screen visual: use a premium obsidian-black background with subtle champagne-gold lighting, a faint understated grid/texture, a thin inset frame, restrained circular orbit animations around the existing black square logo containing only white “30”, the wordmark “30 DAY — CHALLENGE”, elegant tracking, and a fine gold progress line. The logo itself must remain a plain black square with white “30” only; do not add a calendar, border decoration inside the logo, or extra symbols to the logo.
+2. Copy: include “THE DISCIPLINE EXPERIENCE”, “PREPARING YOUR CHALLENGE”, “Discipline in motion. Progress in focus.” and a small subtle footer “DISCIPLINE • CONSISTENCY • GROWTH”. Keep contrast readable on small Android screens.
+3. Timing: show the full launch overlay for 5 seconds from the early document timestamp, then fade it away. Do not show the loader on ordinary internal navigation. Keep the progress bar animation synchronized with the five-second launch wait. Respect safe-area insets and prefers-reduced-motion where appropriate, while keeping the required five-second display duration.
+4. Keep the Settings button as an inline SVG cog, not an image. Retain all current local data, habits, Edit/Delete, journal, statistics, reminders, backup/restore, PDF print, theme, and sign-in placeholder behavior. Do not claim real authentication exists unless a backend is configured.
+5. Synchronize root index.html, www/index.html, and android/app/src/main/assets/public/index.html. Update the service-worker cache to discipline30-static-v10 so Chrome fetches the new design. Update the package version and project notes.
+6. Validate JavaScript syntax, HTML structure/IDs, all three HTML copies, the cache version, and the five-second timer. Do not claim the app was deployed or tested on a physical phone unless actually done.

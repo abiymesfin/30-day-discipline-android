@@ -1,0 +1,12 @@
+30 DAY Challenge App — Manus AI Update Prompt (v11)
+
+Apply the launch-theme behavior below to this project. Preserve the existing design and every current feature.
+
+1. The app's default theme for a new install/user is LIGHT. Therefore, on a fresh browser with no saved preference, the startup/loading background must be white with readable premium champagne-gold accents.
+2. Before the first paint, read the existing localStorage object named personal_discipline_challenge_v2 and inspect settings.theme. If it is exactly "dark", show the luxury loader with a black/obsidian background and light readable text. If it is "light", missing, invalid or unavailable, use the white/light loader. Avoid a flash of the wrong theme. Do not create a second theme store.
+3. When the user changes App theme in Settings, the saved setting must continue to drive the whole app and the loader on later launches. Keep the 5-second launch timing, premium motion, logo (plain black square with white “30” only), and no loader on ordinary internal navigation.
+4. Keep the Settings control as an inline SVG cog, not a photo. Do not change unrelated screens or app data.
+5. Synchronize root index.html, www/index.html, and android/app/src/main/assets/public/index.html. Use service-worker cache discipline30-static-v11 and package version 11.0.0. Make the PWA's default theme/background white; runtime theme-color can follow the stored theme.
+6. Do not connect fake authentication or pretend it works. The current Sign In page is still a placeholder until Supabase is configured.
+7. Before production launch, integrate Supabase Auth + a private user data row only after the owner has created a Supabase project and configured the Project URL and public/publishable client key. Implement email/password sign-up, sign-in, confirmation feedback, password reset, auth-state restore, and sign-out. Keep secret/service_role keys out of all client files. Enable RLS and enforce user_id = auth.uid() for every read/write. Preserve existing local progress: before first sync, ask whether to upload existing local data, restore cloud data, or review/merge if both sides contain data. Do not silently overwrite.
+8. Test first launch (white), saved light mode (white), saved dark mode (black), reload after theme change, exactly five-second loader duration, sign-up, valid/invalid sign-in, reset email, sign-out/reload, and RLS with two separate accounts. Do not claim deployment or successful authentication until truly tested.

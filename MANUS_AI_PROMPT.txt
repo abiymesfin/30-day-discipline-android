@@ -1,20 +1,12 @@
-MANUS AI — UPDATE THE EXISTING 30 DAY DISCIPLINE CHALLENGE APP
+30 DAY Challenge App — Manus AI Update Prompt (v11)
 
-Use the attached ZIP/project as the source of truth. Continue editing this project; do not rebuild it from an unrelated template and do not add sample data.
+Apply the launch-theme behavior below to this project. Preserve the existing design and every current feature.
 
-REQUIRED FIXES
-1. Fix the top-right gear/settings button. It must be a clearly visible 44×44 px tap target, with an accessible label and a reliable click handler that opens the dedicated Settings page. Test it on Android-size screens. Do not link it to Profile or Search. Ensure the Service Worker cache is versioned so installed users receive the updated code instead of an old cached version.
-2. Add an interactive 30-day calendar to the Progress page. Lay out the real start-date weekday and dates in a seven-column grid. Show challenge day numbers D1–D30 and indicate completed, partial, current, selected and future days. Calendar completion states must be computed only from real user check-ins; do not fabricate progress.
-3. When a date/day is tapped, select that challenge day, update its visual state and show the selected day's progress. The “View day” action should open Habits with that day selected.
-4. Remove redundant helper paragraphs and overlong explanations. Keep labels and short status messages needed to use controls; retain important permission feedback.
-5. Preserve the existing pastel style, rounded cards, font sizes, mobile layout and separate Home, Habits, Progress, Profile and Settings pages.
-6. Preserve existing user-entered habits, profile and check-ins during updates. For a fresh install, profile fields/habits/notes/check-ins must be empty, completion statistics must be zero, and reminders must be OFF by default.
-7. Keep the daily reminder time setting and enable/disable notification controls. Do not claim a reminder will fire while the app is fully closed unless native Android scheduled notifications or a reliable push solution has actually been implemented and tested.
-
-ACCEPTANCE TESTS BEFORE DELIVERY
-- Tap the top-right gear: Settings opens every time; Back to Home returns home.
-- Navigate to Progress: the 30-day calendar is visible with the correct dates.
-- Tap different calendar days: selection and daily summary update; “View day” opens Habits on the chosen day.
-- Complete a habit: Progress calendar state and statistics update correctly.
-- Reload and reopen the app: real data persists; a clean installation has no demo data.
-- Provide the changed source files and a new ZIP. Provide an installable APK only if the platform actually builds one, and state what was tested.
+1. The app's default theme for a new install/user is LIGHT. Therefore, on a fresh browser with no saved preference, the startup/loading background must be white with readable premium champagne-gold accents.
+2. Before the first paint, read the existing localStorage object named personal_discipline_challenge_v2 and inspect settings.theme. If it is exactly "dark", show the luxury loader with a black/obsidian background and light readable text. If it is "light", missing, invalid or unavailable, use the white/light loader. Avoid a flash of the wrong theme. Do not create a second theme store.
+3. When the user changes App theme in Settings, the saved setting must continue to drive the whole app and the loader on later launches. Keep the 5-second launch timing, premium motion, logo (plain black square with white “30” only), and no loader on ordinary internal navigation.
+4. Keep the Settings control as an inline SVG cog, not a photo. Do not change unrelated screens or app data.
+5. Synchronize root index.html, www/index.html, and android/app/src/main/assets/public/index.html. Use service-worker cache discipline30-static-v11 and package version 11.0.0. Make the PWA's default theme/background white; runtime theme-color can follow the stored theme.
+6. Do not connect fake authentication or pretend it works. The current Sign In page is still a placeholder until Supabase is configured.
+7. Before production launch, integrate Supabase Auth + a private user data row only after the owner has created a Supabase project and configured the Project URL and public/publishable client key. Implement email/password sign-up, sign-in, confirmation feedback, password reset, auth-state restore, and sign-out. Keep secret/service_role keys out of all client files. Enable RLS and enforce user_id = auth.uid() for every read/write. Preserve existing local progress: before first sync, ask whether to upload existing local data, restore cloud data, or review/merge if both sides contain data. Do not silently overwrite.
+8. Test first launch (white), saved light mode (white), saved dark mode (black), reload after theme change, exactly five-second loader duration, sign-up, valid/invalid sign-in, reset email, sign-out/reload, and RLS with two separate accounts. Do not claim deployment or successful authentication until truly tested.

@@ -3,14 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f2edff">
-<meta name="description" content="A personal 30-day discipline challenge with habits, progress, settings and reminders.">
+<meta name="theme-color" content="#ffffff" id="themeColorMeta">
+<script>
+(function () {
+  // Keep the launch screen in sync with the locally saved app theme before first paint.
+  try {
+    var raw = localStorage.getItem('personal_discipline_challenge_v2');
+    var saved = raw ? JSON.parse(raw) : null;
+    var theme = saved && saved.settings && saved.settings.theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    var meta = document.getElementById('themeColorMeta');
+    if (meta) meta.content = theme === 'dark' ? '#111218' : '#ffffff';
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+  window.__30DayLoadingStartedAt = Date.now();
+})();
+</script>
+<meta name="description" content="A personal challenge tracker with flexible duration, daily habits, journal, progress and reminders.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAXg0lEQVR42u2de1BU5fvAD8vZXdjljnIRIcUQTAHv91G8UN7NNC3NC1mZzuSkY6ihNTrfQrNxRiubpmxGzWxGycxIRVEHUEwRBCZQUBEJBYEFlssuezu/P57pnfNbEM55zwEWej5/4Xpuz/M+7/M+7/PeGAZBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEEQ+nBz3y5yc2vyD4zhyDfzN/6Unqd7JqU0x7eRycOmcHE2nAMdxNptN4F0KhQJuARzfbhQKBcMwVqu1F0jnEAZEdGRnNB4eHlqt1tvb293dXaVSqdVqJycnk8nU0tJiMBhqamoaGxsNBkNLS4td8TigukFGm83G/yp3d3cvLy8/Pz+NRuPq6qrRaGw2W2Njo9ForK2tra6urq+vN5lM5HpnZ2eGYewe8t81IChsvjo8PDzCwsLGjBkTGRk5ePDgAQMGeHt7u7q6qlQqhUIBFRfszGKxNDc36/X6ysrKvLy8oqKivLy8vLy8p0+f8tUtypN1noz8z+jXr9/w4cMnT54cFRU1aNAgf39/rVarVCr5TZjVam1paamvry8tLb13715OTk5GRkZBQYHBYHAc0brZgMB04O/g4ODp06e//PLLI0eOHDhwoFqtpntmeXl5bm5uZmbmhQsXbt++Dc8nDql7ZXzxxRdnzJgxa9ascePGBQYGtnk9fCTfkggmk6mgoODatWt//vlnamoqON1uFK37nTnDMC4uLq+//vrZs2d1Oh3Hw2q1WiwWi8VitVptPOB/+b9YrVZysd0Tbt26lZCQMGTIEL7z70rHA290dnaePXt2UlKSXq/nf2FrAcl/2QkIl/HvLSws/PTTTwcPHtwtonVz/EikXb16dVZWlp3RgEI5WqBp4xuTXq///PPP+/bty49eOxsi48SJEy9dumRnNHQCEmMit+t0up07d7q6usIb2/Rbvc164I8hQ4b8/PPPfLuRYjTtqxv+WVRUtGbNGuL/Otu/Mgzj5ua2bdu2xsZGYtYyysgXLSMjY+bMmV0jWjc3WwzDKJXKXbt21dXVkTLmOhkoPPj71KlTAwYM6Dyf7+TkxLIswzDTp0/PyckhXqfzRAMF2my2AwcOaLXaXtucgVTe3t7JycmdrdbnVVnQdVlZ2ezZsztD0aR9fOutt0wmE8gou2dtUzR4y6VLl4KCgnqhDYFag4ODIRowm81doNY2MZvNHMfV19fHxMTIq2hiPZs2bTIajV1cQ2w2G4iWk5MTERHRq2wI1BoZGXn//v2udzytgQ+oqamZNm2aXEED6RkkJiaSEu0u0R4+fBgeHt5LbAi6635+fnfv3iUOoNuBtqyysjI6OloWG4Ki2rx5c5c1W+272L///htCvZ4dUxOvfuLECcexHn5lvXbtmlKpJEkpKS528eLFJpNJYg5CRtGuX7/u7e0No4o9u/H65JNPHKHlep6i3333XSneHmQcP348JAm73Xr4fujo0aM9uCGD7545cyZ0NSXmBvnpZkg2Sq/r8ISSkhJPT0+6mgou1sfHp6CgwNEqCdjQO++801NtCIrk/Pnz1JqF/E37iaIOLxASDL355pt0WuYHzhIbaJKF51cVKTUEqkdFRUW/fv06Oxhy6gz3Y7Vap0yZkpqaSpdi5ziO3NXc3FxeXq7T6WpqaiwWi7u7u6+vr4+PT79+/UAvNpuNzoVYrVaFQpGSkjJv3jyYmiN8VBJGSSMjI9PS0jw8PKijjfY/3mazUZe91Wp1dnY+evRoXFwciNZjxlxB5iNHjtC5H+JUrly5snLlyoiICBju4Ruor6/v2LFjExIS8vPzqXvOcEtTU9Po0aNFVVMoco1Gc+XKFf4H08VhHMfdunVr3759cXFx8+bNW7x48YcffvjLL7/U1taSgVUpz1+xYkVPasigGPr3719VVUVRriBzWVnZwoUL2yw2u8qq0WgSEhKgBaFQNJT95s2bRakYrnz//felhD5w46NHj9auXatSqVq/JTw8/Mcff5SSWALp8vLyYCJez+iRgXI3bNhAUTVBp9nZ2TBRARJ00M3mCw//VCgUpMjfeOMNg8FAba/ff/+9cAOCt6tUqpycHOrhPHjv2bNng4ODid74EHe4atUqMiJLbUNz5szpMU4ISj05OZk/iim8Qbl+/ToM6MCopPDxy2XLlhkMBrEOH/SblpZmN7+9wxry2muvUTdeoJZff/1VqVS2MxOD1JD58+c3NDTQtWXwrpSUFInpri5tv4KCgsS2X6AdnU43aNAg4dZDgOsPHToktk0hTh4aESEqBhn/+OMPKRFebm6ut7e3EK8Aoq1evZrO20ERmEwmsXFedxrQ5MmTQbPCDQiu37NnD4X1kEo8YsQIGAYX/l4okvv378NciA4NCAQMDQ2tr6+naFagntTV1Y0aNUpgm0Jc7LFjx+hMlq9bRzcg0EhcXJwoUaEYmpubw8PD6SYNQsGzLJuXlyeqZYEri4qKNBqNEAMCAbds2SLF/Xz88ceiIhJQSEhISFVVFUVDBi999OiRn5+fQC8rzmvIbkZ+fn42MUDSLDs7+/79+wzVOjrIG1ksluLiYoon1NbW8hcGtWOmVqvV1dV16dKlFCUBSZ2ysrJDhw7BGibhNzo7Oz9+/Pjw4cOwMEhss2Cz2V544QUIpWV3QvIbkL+/v0KhgHFKIcCVVVVVVqtVlGZbOyG9Xi/W8hiGqaurE5JIhFeMHj06KiqKn+oU9a7Tp0/X1dWJtQN43YkTJ1paWmBBj9hXcxwHM+lkXwnEym5AlZWVubm5ZrNZoJe22Wwsy167dk0GYVgacSoqKkgCvUMDmjlzplqthjyv2PbdbDYfP36cIiUDCev8/PzU1NQ5c+aATxI7sjR+/Hhvb+/a2lrqWtqbgSKBSY9iwy+Bg47wisuXL1MEQBCIXL9+HUycIhCBz1u6dKmUnNCECRNkTwgpeo31uLm5hYWFCS8eaBf0en16erqQ9ovjOD8/P5gzKjaSgIdfvHjRYrHAakCKOI9hmIyMjPLycgoXAhFYZGSk/F3vzivRzru+dZzIcdzUqVNDQkKED0BCNJCenv7gwYMOiwSeOWTIEFhUKuqDOY5zdnY2Go0XLlyglhFasSdPnty4cYMilIHrIRvUAwyIIsqTaD0eHh67du0Sa7VWq/XgwYPCvcLQoUMZwbtq2En3+PHj3NxcKcKCEd+8eZP63sjISJBaxs58z27CyB4DiYmJo0aNEu5+QIlZWVmpqanC+0T9+/enrh4FBQVNTU3SA9jCwkLq3nhgYCBkvP67MRB/JBUqk0Kh2LNnz4YNG+BvUY/av38/3NVhoYKFkVFeCgMC9yMlgIXn3L9/32g0ijVE+OY+ffqEhIR0RjrR4Uzkedi55djY2NTUVLHjmjD94+DBgwKrMrxXoVDcuXOHYgwVrl+1apVEA4LP8PHxKSsro+iLwWfMnTtX3o4Y62gG1H7FYllWq9X27dt34sSJK1euhGXhombuWSwWlmVTUlLi4+NF1WOtVuvu7k4df5SVlcmiH71eX1FR0b9/f4pkJtifoycSqSNEm80WHR39v//9r836wXEcy7Jubm4+Pj6BgYGenp7MvzlWgdYDtZBl2fT09Li4OOENAVzm5eXl4eFB0QWDYZbq6mqJ3QWJj4Lr/f39e6cBQakEBgbOmzdPoDrAdAQWJ3SDWZY9c+bMypUrGxoa+Ls/CcHX19fLy4tOuqampvr6elmqmdVqra2tpX4CXT+gxzRhsCABanyblkFmfgkcEOD+3QcORhI+++yzxMREk8kkynrgRZ6enizL0jUcDQ0NsDudLCXX2NhI/ahe64FIUUH3iq6c2rQbaBCzsrK2bt16+fJleAvFmKKLiwvz/1eMCG93YN9MubQEzoxOPzDzqdcakLyGCG3HhQsXTpw4kZycbDAYpGwqKCWDYreVrETq6uroy5tle3MTJlc7WFJScvv27Rs3bly9ehUSMIyA8XYhHoiOlpYWi8Uil4DNzc3U98LkXfCLsphRrzIg0EtlZeXu3buvXr36zz//tNnXo3u43fI0UX0fWCoqYw2h7qao1WqJFak3GxDoKCgo6MiRI3V1dTqdrrS0NC0t7cqVK9nZ2U1NTeCH6Dbqhs2H6WqtjAXGMIzZbKa+V6lUqlQqst+0DB3DXhkDwbYHsDXzrl270tLScnJy9u3bN3DgQEjIUqRipRiBvBNJZeleoAEJ0hTZHTEsLGzLli3p6enbtm3TarUwBCaqJKAbRTdTRd5teOkmXoLvNBqNUhzYf8iAyJgrFB4YU1BQUGJiYmZmZmxsLDRkwstVSj+cZVm6Um8nEKZu/sADydURczgDan8JBxkapGhEYO6H1WqNjIw8f/783r174YQKgTYkJW5wcXGBdaiyQDckB8DRLXK6Q0eLXQRGJxCRiG2GID8Ewxrx8fFeXl7r1q0jZ7h0ngfSarVqtVpK95sPDMnRuRBiQHJ5IEcxIJCnqamppKQE0n12lgGRr1qtdnFx8fDwIHZGsT8QPN9isbz33ns6nW779u1CbAgGEMSGw/BhWq1WShrJDlgWTUdNTY28BecoBgQNc2Zm5vDhw59XRViW1Wg0Wq3Wz88vNDR04sSJc+fOhc0YxO7FBK7IarVu27bNaDTu2rWrnWllZPlYc3OzRqOhGGbx8PBwc3OTq+qTR1HcC8dh9f6DNQTSt2/fDz74APZiolhrTI7UGDlyZDveBdQdEBDw5MkTsTO54GKbzTZmzBjp/Xm61Uv8CWXr169nZJ1Q5nBBtFNHkL6Vs7NzVVXVV199FRMTk5GRAcGN2HdByxgfH9/hxXq9nmIYnAwMS1+aDo9Sq9Xk8CFHaMJ6fF8dKpNGozl69CjFfFPo3JlMprFjx3boITIyMqg3ztq4cSN1CofvfgIDAyl2fyPbEMDaQhkTmz07DwTF6ezs3NzcvG7duuLiYrFTNeB6pVK5bNmydqo1aLyoqIi6+zNw4ECJ2RfSksJsTIrba2pqHjx4wMg6Gt8bEokwUdVgMBw4cIBux2eGYaZNm+bq6vq8NVPwY2lpKfVHwqpQKeMh8A1hYWFKpRL6nmI7ubW1tVJmM/ZaAyKd+aSkpOrqarFrhyG2GDp0KMS57RQMeCC60YyXXnoJOowSe0DQS6WbEF1YWGg2m+nWVneRAUGEqxADf09JiVmAiooKmP0jthXjOE6lUrVjQGRxIMXidrg+ICBg9OjRUo7dBKHGjRtHnWbLz89n5B7ZVcjuCexOyu0QuebKQMHTrZ4B/cLeDG0aB/z48OFDaMUo9jZwcnKaMWMG9XxIsMJBgwaBBxJrBNDVyM7OljcAkjmRqFKphg4dqlKphKfaYGWFwWAoKCiQOEoMb6yqqqJ+ApyS9DwDUigUDQ0NWVlZoaGhYssAvm3OnDk7duzQ6/UU6UR4woIFC3x8fMRmTaE4Ghoa8vLyZDcg2brTDMP4+vrCokmxNDY2wvncUrwr3Pvtt99SJNng+rS0tA4rMfX+4tD5f/XVV/lHV4tSr1qthnOu6ZbG3rx5E94rbxpaziassbGxqalJ1JQlkFCr1fbr10/ibupQsWDdk5Rq0H4YdP369cbGRrp95hiGWbJkCUUrBmPGo0ePjo6Opt5dLz09XeBGAN1mQCaTqbq6WpR/hjQMx3ETJkyQmCPhOM7T0zMqKoq6krU/Uk32mbt48SIjfoceKLn58+eHh4cLX03Lr2br169nWZaiA69QKIxG48mTJx26Iw0a+e677+h2+75z545arabeUB1mjS1evJhuA3n44N9//71944MmALwI9Vt++uknRvzRHGPHjm1paaHY5hc2wT137pyjb1YPcn700UfU43xr1qxhGIZi4hVRzbVr16QU7aFDh9qPw8gmKZWVlXTDJlar1Ww2wxYZQoY1SLf/7NmzUmKvdevWMQ5+XAZ8XGxsLN3OIzabrby8nAxZC68rpLx37NhBfX6FcC3D6yiOVeAPzpeXlw8bNqxDGyLh9s6dO+lEg1vKy8uljL92aUfM09OztLSUrnZyHFdTUwNHCDL/rkpuM7KGH8myZXd398OHD1NvXwp3tbS0TJo0SaABjRgxorm5me4AFNBMQUEBZA1Ylm3t88hJRQzDbN++ndQxOs/62WefMT3itB7+Mc1Sjpr78ssv7SbdkVkcrZ1TVFRUZmamlIPfyAEoMGmww2oKF6SkpFCfFwZ35efnQ8hPLIZlWbu8fHx8PLX1gH0bDAbYWK0HnAIONr5o0SLq4iR1uqioaP/+/ZMmTfLx8WldogqFIiAgYMGCBcePH9fpdBLPvIV7YcMyIdUUrpk7d66U439BP9XV1bt374Zt5+xSsrGxsRD3UB9aCHIdP368U63HSd5WjOM4jUZz+fLlcePGUR/5yb+xvLz86dOnT5480ev1zc3Nrq6u3t7egYGBwcHBMEWLkXa2KPTYzWZzTExMZmamwGW/sET6wIEDGzdulC5mbW1tdnb23bt39Xo9y7IBAQEjRoyAIIl6lxLIMjx79mzKlCnFxcVS1nR3Qyu2cOFCiQd+w0xTIddIPP8bnnDlyhVRw5wQhPn6+paUlFCfW0gOpxb7X8LdTw/ofD2vU52cnCzLaep2h8aTo+Ml2o2dopcvXy5W0fzDPSWKCbZisVjMZrPZbJZ4nDl/ZMbV1bVnnFXY2glFR0c3NDTIWNKdASj6zJkz4H7EKhqmoyQlJclSVeQCqlxNTY304UWHSCrCnroOaz337t2Dk28pqimUTUBAQElJiZRuoIyQhm/Dhg09r/Gy63Wr1epz5845VO20S12azebp06dLUTTY0NSpU2tqahzBhsg51G2mPHqYDUFeEfqiDuWHoJitVuvbb78tvZrC7bNmzYJjo7vRhkDJP/zwQ+uz0nskUDvd3d1hM3nYF8JBWi6j0QhDb7I4eRiRWLFiBTy86z0ueFOO406fPi1qx4ieYUN9+vRJT08no4ndHh9UV1cvWrRI3hABHrV8+fK6urou9rikp/Lbb7/Bip8eGTi3b0Nubm579+4F65GevKF2PBzH/fXXXyNGjOiMABMeOHny5EePHlGPP1DLlZiYCBMZeuG6dyLSggULiouL+Rm8rvE68KKKioqNGzfCVoed0T0hZ7wHBQXBgGCnNtxk87XHjx8vWbLETtW90IagzIKCgr755hvSkMmbFWydmiO/nD59Gk6r7GwPT0xz7dq10DUjYspeJTiOS0pKGjRoECP3LnoOnR9iGCYmJubkyZN6vZ7viqVbUmu70el0x44di42NJR/QBVom/eeIiIivv/4alrJLFJNsJEJ+yczMJI6np+Z76JRLHEB4eHhCQkJ2dja/dvIHLshwd5uryeyGOPil0tDQcP78+U2bNoWGhvJTU91SW0JCQrZu3ZqXl2cXu7QvI5EOBjf4VeLo0aOvvPIKOQC6V4XMFGbk6uoaGxv7xRdf3Llzx2g0SvFAZWVlp06d2rp1KxxuSt7VXRWUL6ZGo5k3b97hw4chbS2WhoaGy5cvx8fHk4bYQRyPU/eaERxbSVQcFhYWERERHh4+bNiwPn36+Pj4+Pr6uri4qNVqSG/AnGKz2dzU1KTT6err62trawsLCx88eFBaWpqfn//s2TO+y+Hk3hZZupg+Pj7Dhg2Ljo6OjIwMCQnx9/f39fWFrfvUajVMAWtpaWlsbHz27FlFRcXdu3cLCgpu375dXFwMssAD6bZL71UGREoaaD0RR6VSeXl5qVQqlUrFNyCLxWIwGOrr61tv+u84diPww5RKpZeXl1KpVKvVYEBGo9FkMoGArZtFRxPNyaFUTFKoxHULvAXmsjlIpRRiSfDBHVoDiccFKuQ/bUDPSyC1s07U8c1FeJKML2avkQ5BEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEEQc/wf7Fob+hr3w8gAAAABJRU5ErkJggg==">
 <title>30 Day — Personal Challenge</title>
 <style>
 :root{
@@ -82,7 +98,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .primary-btn svg{width:16px;height:16px}
 .wide-btn{width:100%;margin-top:12px;background:#fff;border:1px solid var(--line);color:#24242f;border-radius:14px;padding:13px;font-size:12px;font-weight:800}
 .wide-btn svg{width:16px;height:16px;vertical-align:middle;margin-right:7px}
-.bottom-nav{position:fixed;z-index:5;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 36px),420px);border-radius:999px;background:#171821;padding:7px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;box-shadow:0 11px 35px #17182128}
+.bottom-nav{position:fixed;z-index:5;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),440px);border-radius:999px;background:#171821;padding:7px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;box-shadow:0 11px 35px #17182128}
 .nav-btn{border:0;background:transparent;color:#a8a8b2;border-radius:50px;min-height:51px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700}
 .nav-btn svg{width:20px;height:20px;stroke-width:1.8}
 .nav-btn.active{background:#fff;color:#171821}
@@ -105,6 +121,17 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .row-name{font-size:13px;font-weight:800;overflow-wrap:anywhere}
 .row-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
 .more-btn{border:0;background:transparent;width:32px;height:35px;color:#8b8c96;font-size:21px;border-radius:9px}
+.habit-actions{display:flex;align-items:center;justify-content:center;gap:3px;flex:none}
+.habit-action{width:35px;height:35px;padding:0;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;color:#777585;box-shadow:none;transition:background .15s,color .15s,transform .15s;flex:none}
+.habit-action svg{width:18px;height:18px;stroke-width:1.9;pointer-events:none}
+.habit-action:hover,.habit-action:focus-visible{background:#f0eaff;color:#7555cf}
+.habit-action.delete{color:#c05c68}
+.habit-action.delete:hover,.habit-action.delete:focus-visible{background:#fff0f1;color:#b72f40}
+ .settings-icon-btn{background:#fff;border-color:#ded9e8;color:#262731;padding:0;overflow:visible;transition:background .15s,border-color .15s,transform .15s}
+.settings-icon-btn:hover{background:#f5f2fa;border-color:#c9c0df}
+.settings-icon-btn:active{transform:scale(.96)}
+.settings-icon-btn svg{width:22px;height:22px;pointer-events:none;flex:none}
+
 .list-empty{border:1px dashed #dfdbe5;background:#fff8;border-radius:20px;text-align:center;padding:28px 17px}
 .list-empty .empty-icon{margin-bottom:13px}
 .list-empty h3{margin:0 0 6px;font-size:15px}
@@ -190,22 +217,201 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.settings-actions .primary-btn,.settings-actions .secondary-btn{width:100%;min-width:0}.settings-back{width:100%;margin:1px 0 12px;background:#fff;border:1px solid var(--line);color:#292833;border-radius:13px;padding:12px;font-weight:800;font-size:12px}
 .reminder-note{font-size:11px;color:#777481;line-height:1.6;margin:10px 2px 0}.inline-status{font-size:11px;color:var(--muted);margin-top:8px;min-height:15px}
 
+
+/* Optional dark theme; user data stays local on this device. */
+html[data-theme="dark"]{--bg:#111218;--surface:#1b1c25;--ink:#f3f1fa;--muted:#aaa8b8;--line:#30313d;--nav:#c7b2ff;--shadow:0 12px 35px rgba(0,0,0,.24)}
+html[data-theme="dark"],html[data-theme="dark"] body,html[data-theme="dark"] .app{background:var(--bg);color:var(--ink)}
+html[data-theme="dark"] .icon-btn,html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-box,html[data-theme="dark"] .profile-top,html[data-theme="dark"] .habit-row,html[data-theme="dark"] .settings-card,html[data-theme="dark"] .settings-back,html[data-theme="dark"] .secondary-btn,html[data-theme="dark"] .auth-card,html[data-theme="dark"] .auth-input,html[data-theme="dark"] .time-setting input,html[data-theme="dark"] .calendar-day,html[data-theme="dark"] .wide-btn{background:#1c1d26;border-color:#323342;color:#f3f1fa}
+html[data-theme="dark"] .week-day{border-color:#323342;color:#aaa8b8}
+html[data-theme="dark"] .week-day .date-num{color:#e7e4f0}
+html[data-theme="dark"] .week-day.active{background:#c7b2ff;border-color:#c7b2ff;color:#171821}
+html[data-theme="dark"] .week-day.active .date-num{color:#171821}
+html[data-theme="dark"] .habit-row,html[data-theme="dark"] .empty-card,html[data-theme="dark"] .list-empty{background:#1b1c25;border-color:#343542}
+html[data-theme="dark"] .empty-icon,html[data-theme="dark"] .row-icon,html[data-theme="dark"] .profile-avatar{background:#302940;color:#c7b2ff}
+html[data-theme="dark"] .check-btn{background:#242530;border-color:#494a59;color:#171821}
+html[data-theme="dark"] .check-btn.checked{background:#c7b2ff;border-color:#c7b2ff}
+html[data-theme="dark"] .calendar-day{background:#1c1d26;border-color:#323342}
+html[data-theme="dark"] .calendar-day.complete{background:#244333;border-color:#386c4c}
+html[data-theme="dark"] .calendar-day.complete .calendar-index{color:#a3e3b8}
+html[data-theme="dark"] .calendar-day.partial{background:#302640;border-color:#5a467f}
+html[data-theme="dark"] .calendar-day.partial .calendar-index{color:#d5c0ff}
+html[data-theme="dark"] .calendar-day.selected{background:#c7b2ff;border-color:#c7b2ff;color:#171821}
+html[data-theme="dark"] .calendar-day.selected .calendar-index{color:#312447}
+html[data-theme="dark"] .calendar-day.future:not(.selected){background:#181920;color:#696a78}
+html[data-theme="dark"] .bottom-nav{background:#08090d;box-shadow:0 11px 35px #0007}
+html[data-theme="dark"] .nav-btn.active{background:#c7b2ff;color:#171821}
+html[data-theme="dark"] .permission-status{background:#242530;color:#d3d1de}
+html[data-theme="dark"] .switch-row{border-color:#30313d}
+html[data-theme="dark"] .toggle input:checked+.toggle-track{background:#c7b2ff}
+html[data-theme="dark"] .toggle input:checked+.toggle-track:before{background:#171821}
+html[data-theme="dark"] .auth-tabs{background:#272833}
+html[data-theme="dark"] .auth-tab.active{background:#3a3b49;color:#fff}
+html[data-theme="dark"] .settings-icon-btn{background:#1c1d26;border-color:#323342;color:#f3f1fa}
+html[data-theme="dark"] .settings-icon-btn:hover{background:#282936;border-color:#494a5b}
+html[data-theme="dark"] .habit-action{background:transparent;color:#b5b2c3}
+html[data-theme="dark"] .habit-action:hover,html[data-theme="dark"] .habit-action:focus-visible{background:#302940;color:#d2c5ff}
+html[data-theme="dark"] .habit-action.delete{color:#ff9ba4}
+html[data-theme="dark"] .habit-action.delete:hover,html[data-theme="dark"] .habit-action.delete:focus-visible{background:#3a242a;color:#ffb1b8}
+
+html[data-theme="dark"] .social-btn{background:#242530;border-color:#3b3c49;color:#eee}
+html[data-theme="dark"] .account-card{background:#08090d}
+html[data-theme="dark"] .calendar-selected{border-color:#30313d}
+html[data-theme="dark"] .mood-choice.active{background:#302640;color:#e5d8ff}
+html[data-theme="dark"] .modal{background:#1b1c25;color:#f3f1fa}
+html[data-theme="dark"] .form-field input,html[data-theme="dark"] .form-field textarea,html[data-theme="dark"] .form-field select,html[data-theme="dark"] #themeSelect{background:#1c1d26!important;border-color:#323342!important;color:#f3f1fa!important;color-scheme:dark}
+html[data-theme="dark"] .form-field label{color:#d0cedb}
+html[data-theme="dark"] .close-btn{background:#30313d;color:#f3f1fa}
+.journal-area{width:100%;min-height:115px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:13px;background:var(--surface);color:var(--ink);font-size:13px;line-height:1.5}
+.journal-field-label{display:block;font-size:11px;font-weight:850;margin:0 0 7px;color:var(--ink)}
+.journal-field{margin:13px 0}
+.journal-mood{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.mood-choice{border:1px solid var(--line);border-radius:13px;background:var(--surface);padding:10px 2px;color:var(--ink);font-size:10px;font-weight:750}
+.mood-choice .mood-emoji{display:block;font-size:20px;margin-bottom:5px}
+.mood-choice.active{border-color:#9a7cf5;background:#f0eaff;color:#5c3eaa;box-shadow:inset 0 0 0 1px #9a7cf5}
+.template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.template-btn{display:flex;align-items:center;gap:9px;text-align:left;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:11px;font-weight:800;min-width:0}
+.template-btn span:first-child{font-size:20px}
+.template-btn small{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-top:3px}
+.data-file-input{display:none}
+.print-report{display:none}
+@media print{
+  body.printing-report{background:#fff!important}
+  body.printing-report>*:not(#printReport){display:none!important}
+  body.printing-report #printReport{display:block!important;position:static!important;padding:0!important;margin:0!important;color:#111!important;background:#fff!important;font:12px/1.45 Arial,sans-serif!important}
+  #printReport h1{font-size:24px;margin:0 0 6px} #printReport h2{font-size:16px;margin:18px 0 8px}
+  #printReport .report-meta{color:#555;margin-bottom:16px}
+  #printReport table{width:100%;border-collapse:collapse;margin:8px 0 14px;page-break-inside:auto}
+  #printReport th,#printReport td{border:1px solid #ddd;padding:6px 7px;text-align:left;vertical-align:top;word-break:break-word}
+  #printReport th{background:#f2effa!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printReport .report-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  #printReport .report-stat{border:1px solid #ddd;padding:10px;border-radius:8px}
+  #printReport .report-muted{color:#666;font-size:10px}
+}
+
 @media(min-width:600px){body{padding:24px 0}.app{min-height:calc(100vh - 48px);border:1px solid #eeebf5;border-radius:32px;box-shadow:0 18px 70px #33234d0a;padding-top:22px;padding-bottom:125px}.bottom-nav{bottom:28px}.modal-back{align-items:center}.modal{border-radius:25px;padding-bottom:22px}}
 @media(max-width:365px){.app{padding-left:13px;padding-right:13px}.hero{padding:18px 15px}.hero-copy{max-width:74%}.hero h1{font-size:25px}.hero:after{right:-25px}.floating-shape{right:37px}.week-day{min-height:68px}.week-day .dow{font-size:9px}.habit-card{padding:12px;min-height:164px}.habit-card .habit-card-name{font-size:18px}.nav-btn{font-size:8px}}
-.app-loading{position:fixed;inset:0;z-index:100;background:#f8f7fa;display:grid;place-items:center;transition:opacity .22s ease,visibility .22s ease}.app-loading.hidden{opacity:0;visibility:hidden;pointer-events:none}.loading-card{text-align:center}.loading-mark{width:64px;height:64px;border-radius:19px;background:#000;color:#fff;display:grid;place-items:center;font-size:27px;font-weight:900;letter-spacing:-2px;margin:0 auto 15px;box-shadow:0 10px 26px rgba(23,24,33,.16)}.loading-spinner{width:18px;height:18px;border:2px solid #ddd7ee;border-top-color:#171821;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 9px}.loading-label{font-size:11px;color:#8b8c96;font-weight:700}@keyframes spin{to{transform:rotate(360deg)}}
+/* Launch loader defaults to Light because the app defaults to Light for new users. */
+.app-loading{
+  --loader-text:#222126;
+  --loader-kicker:#80612f;
+  --loader-brand:#211f1c;
+  --loader-accent:#89662d;
+  --loader-label:#292722;
+  --loader-muted:#6b6860;
+  --loader-meta:#77736a;
+  --loader-footer:#77736d;
+  --loader-frame:rgba(151,117,58,.22);
+  --loader-grid:rgba(151,117,58,.055);
+  --loader-glow:rgba(177,139,72,.095);
+  --loader-glow-bottom:rgba(95,71,38,.045);
+  --loader-orbit:rgba(130,99,49,.27);
+  --loader-dot:#9a7439;
+  --loader-track:rgba(90,70,40,.15);
+  --loader-progress:linear-gradient(90deg,#80613b 0%,#c4a05d 48%,#8c662e 100%);
+  --loader-shadow:rgba(0,0,0,.12);
+  position:fixed;inset:0;z-index:10000;isolation:isolate;overflow:hidden;
+  display:grid;place-items:center;padding:28px 24px;
+  color:var(--loader-text);color-scheme:light;
+  background:
+    radial-gradient(ellipse 70% 44% at 50% 43%,var(--loader-glow) 0%,transparent 74%),
+    radial-gradient(ellipse 70% 65% at 50% 100%,var(--loader-glow-bottom) 0%,transparent 70%),
+    #fff;
+  opacity:1;visibility:visible;
+  transition:opacity .42s cubic-bezier(.2,.7,.2,1),visibility .42s ease;
+}
+html[data-theme="dark"] .app-loading{
+  --loader-text:#f6f1e7;
+  --loader-kicker:#bba06b;
+  --loader-brand:#f5efe3;
+  --loader-accent:#c7a66a;
+  --loader-label:#e9e1d1;
+  --loader-muted:#88877f;
+  --loader-meta:#74736d;
+  --loader-footer:#696a65;
+  --loader-frame:rgba(211,177,112,.12);
+  --loader-grid:rgba(220,190,133,.035);
+  --loader-glow:rgba(177,139,72,.11);
+  --loader-glow-bottom:rgba(95,71,38,.10);
+  --loader-orbit:rgba(207,173,108,.23);
+  --loader-dot:#e4c888;
+  --loader-track:rgba(231,220,198,.13);
+  --loader-progress:linear-gradient(90deg,#80613b 0%,#e5ca8e 48%,#a67e43 100%);
+  --loader-shadow:rgba(0,0,0,.52);
+  color-scheme:dark;
+  background:
+    radial-gradient(ellipse 70% 44% at 50% 43%,var(--loader-glow) 0%,rgba(177,139,72,0) 74%),
+    radial-gradient(ellipse 70% 65% at 50% 100%,var(--loader-glow-bottom) 0%,transparent 70%),
+    #070809;
+}
+.app-loading.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.app-loading::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.75;
+  background-image:linear-gradient(var(--loader-grid) 1px,transparent 1px),linear-gradient(90deg,var(--loader-grid) 1px,transparent 1px);
+  background-size:42px 42px;mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 78%,transparent);
+}
+.app-loading::after{
+  content:"";position:absolute;inset:11px;pointer-events:none;border:1px solid var(--loader-frame);border-radius:17px;
+  box-shadow:inset 0 0 34px var(--loader-glow-bottom);
+}
+.loading-card{position:relative;z-index:1;text-align:center;width:min(100%,340px);padding:12px 8px 30px;animation:luxury-arrive .8s cubic-bezier(.2,.75,.2,1) both}
+.loading-kicker{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 26px;color:var(--loader-kicker);font-size:8px;font-weight:750;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap}
+.loading-kicker::before,.loading-kicker::after{content:"";display:block;width:18px;height:1px;background:linear-gradient(90deg,transparent,var(--loader-kicker))}
+.loading-kicker::after{transform:scaleX(-1)}
+.loading-visual{position:relative;width:154px;height:154px;margin:0 auto;display:grid;place-items:center}
+.loading-orbit{position:absolute;inset:3px;border:1px solid var(--loader-orbit);border-radius:50%;animation:luxury-orbit 8s linear infinite}
+.loading-orbit::before{content:"";position:absolute;top:16px;right:20px;width:5px;height:5px;border-radius:50%;background:var(--loader-dot);box-shadow:0 0 12px 2px var(--loader-glow)}
+.loading-orbit--inner{inset:16px;border-color:var(--loader-orbit);border-style:dashed;animation-duration:19s;animation-direction:reverse}
+.loading-orbit--inner::before{top:auto;right:auto;bottom:10px;left:18px;width:3px;height:3px;background:var(--loader-dot);box-shadow:0 0 9px var(--loader-glow)}
+.loading-mark{position:relative;z-index:2;width:80px;height:80px;border:0;border-radius:0;background:#000;color:#fff;display:grid;place-items:center;font-family:Arial,Helvetica,sans-serif;font-size:42px;font-weight:950;line-height:1;letter-spacing:-4px;padding:0 3px 2px 0;margin:0;box-shadow:0 15px 42px var(--loader-shadow);filter:drop-shadow(0 0 18px var(--loader-glow-bottom))}
+.loading-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px 0 0;color:var(--loader-brand);font-size:13px;font-weight:850;letter-spacing:.22em;text-transform:uppercase}
+.loading-brand span:last-child{font-weight:500;color:var(--loader-accent)}
+.loading-brand-rule{display:inline-block;width:18px;height:1px;background:linear-gradient(90deg,var(--loader-accent),var(--loader-kicker));flex:none}
+.loading-label{margin:25px 0 0;color:var(--loader-label);font-size:10px;line-height:1.5;font-weight:800;letter-spacing:.17em;text-transform:uppercase}
+.loading-subtitle{max-width:245px;margin:9px auto 0;color:var(--loader-muted);font-size:11px;line-height:1.7;font-weight:450;letter-spacing:.015em}
+.loading-progress{position:relative;width:min(194px,72%);height:2px;overflow:hidden;background:var(--loader-track);margin:28px auto 0;border-radius:0}
+.loading-progress span{position:absolute;inset:0;display:block;width:100%;height:100%;background:var(--loader-progress);transform:scaleX(0);transform-origin:left center;animation:loading-progress 5s cubic-bezier(.18,.72,.25,1) forwards;box-shadow:0 0 10px var(--loader-glow)}
+.loading-progress-meta{width:min(194px,72%);display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px auto 0;color:var(--loader-meta);font-size:7px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.loading-live{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.loading-live::before{content:"";width:4px;height:4px;display:block;border-radius:50%;background:var(--loader-dot);box-shadow:0 0 8px var(--loader-glow);animation:luxury-pulse 1.8s ease-in-out infinite}
+.loading-footer{position:absolute;z-index:1;left:24px;right:24px;bottom:calc(25px + env(safe-area-inset-bottom));text-align:center;color:var(--loader-footer);font-size:7px;font-weight:650;letter-spacing:.22em;text-transform:uppercase}
+.loading-footer span{padding:0 8px;color:var(--loader-accent)}
+@keyframes loading-progress{to{transform:scaleX(1)}}
+@keyframes luxury-orbit{to{transform:rotate(360deg)}}
+@keyframes luxury-pulse{0%,100%{opacity:.5;transform:scale(.84)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes luxury-arrive{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-height:620px){.loading-card{padding-top:2px;padding-bottom:22px}.loading-kicker{margin-bottom:14px}.loading-visual{width:118px;height:118px}.loading-mark{width:66px;height:66px;font-size:35px}.loading-brand{margin-top:14px}.loading-label{margin-top:17px}.loading-progress{margin-top:18px}.loading-footer{bottom:calc(16px + env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){.loading-card,.loading-orbit,.loading-live::before{animation-duration:.01ms!important;animation-iteration-count:1!important}.loading-progress span{animation-duration:5s!important}}
 
-.auth-shell{padding:8px 2px 20px}.auth-brand{text-align:center;margin:5px 0 24px}.auth-mark{width:58px;height:58px;background:#171821;color:#fff;border-radius:18px;display:grid;place-items:center;margin:0 auto 13px;font-size:24px;font-weight:900;letter-spacing:-2px}.auth-brand h1{font-size:24px;margin:0;letter-spacing:-.8px}.auth-brand p{font-size:12px;color:var(--muted);margin:7px 0 0}.auth-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px 16px;box-shadow:0 10px 28px rgba(33,25,61,.05)}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f5f2fa;border-radius:12px;padding:4px;margin-bottom:18px}.auth-tab{border:0;background:transparent;border-radius:9px;color:#8b8894;padding:10px;font-size:12px;font-weight:850}.auth-tab.active{background:#fff;color:#171821;box-shadow:0 2px 8px rgba(33,25,61,.08)}.auth-label{display:block;font-size:10px;color:#696976;font-weight:850;letter-spacing:.7px;margin:13px 0 7px;text-transform:uppercase}.auth-input{width:100%;padding:13px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;font-size:13px;color:var(--ink);outline:none}.auth-input:focus{border-color:#aa90fb;box-shadow:0 0 0 3px #aa90fb22}.auth-submit{width:100%;margin-top:16px}.auth-divider{display:flex;align-items:center;gap:10px;color:#aaa6b1;font-size:10px;margin:19px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#eeeaf2;flex:1}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e8e4ef;background:#fff;border-radius:12px;padding:11px 8px;color:#292833;font-size:11px;font-weight:800}.social-btn svg{width:17px;height:17px}.social-btn:active{transform:scale(.98)}.auth-foot{text-align:center;font-size:10px;line-height:1.5;color:var(--muted);margin:14px 3px 0}.auth-back{width:100%;margin-top:12px}.account-card{background:#171821;color:#fff;border-radius:21px;padding:17px;margin:0 0 14px;display:flex;align-items:center;gap:13px}.account-card .auth-mini-mark{width:42px;height:42px;border-radius:13px;background:#fff;color:#171821;display:grid;place-items:center;font-weight:900;letter-spacing:-1px;flex:none}.account-card .account-copy{min-width:0;flex:1}.account-card h3{font-size:14px;margin:0 0 4px}.account-card p{font-size:11px;color:#c5c4cd;margin:0;line-height:1.4}.account-cta{border:0;background:#c7b2ff;color:#171821;border-radius:10px;padding:9px 10px;font-size:10px;font-weight:900;white-space:nowrap}
+.auth-shell{padding:8px 2px 20px}.auth-brand{text-align:center;margin:5px 0 24px}.auth-mark{width:68px;height:68px;background:#000;border-radius:0;display:block;object-fit:contain;margin:0 auto 13px;box-shadow:none}.auth-brand h1{font-size:24px;margin:0;letter-spacing:-.8px}.auth-brand p{font-size:12px;color:var(--muted);margin:7px 0 0}.auth-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px 16px;box-shadow:0 10px 28px rgba(33,25,61,.05)}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f5f2fa;border-radius:12px;padding:4px;margin-bottom:18px}.auth-tab{border:0;background:transparent;border-radius:9px;color:#8b8894;padding:10px;font-size:12px;font-weight:850}.auth-tab.active{background:#fff;color:#171821;box-shadow:0 2px 8px rgba(33,25,61,.08)}.auth-label{display:block;font-size:10px;color:#696976;font-weight:850;letter-spacing:.7px;margin:13px 0 7px;text-transform:uppercase}.auth-input{width:100%;padding:13px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;font-size:13px;color:var(--ink);outline:none}.auth-input:focus{border-color:#aa90fb;box-shadow:0 0 0 3px #aa90fb22}.auth-submit{width:100%;margin-top:16px}.auth-divider{display:flex;align-items:center;gap:10px;color:#aaa6b1;font-size:10px;margin:19px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#eeeaf2;flex:1}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e8e4ef;background:#fff;border-radius:12px;padding:11px 8px;color:#292833;font-size:11px;font-weight:800}.social-btn svg{width:17px;height:17px}.social-btn:active{transform:scale(.98)}.auth-foot{text-align:center;font-size:10px;line-height:1.5;color:var(--muted);margin:14px 3px 0}.auth-back{width:100%;margin-top:12px}.account-card{background:#171821;color:#fff;border-radius:21px;padding:17px;margin:0 0 14px;display:flex;align-items:center;gap:13px}.account-card .auth-mini-mark{width:42px;height:42px;border-radius:0;background:#000;display:block;object-fit:contain;flex:none}.account-card .account-copy{min-width:0;flex:1}.account-card h3{font-size:14px;margin:0 0 4px}.account-card p{font-size:11px;color:#c5c4cd;margin:0;line-height:1.4}.account-cta{border:0;background:#c7b2ff;color:#171821;border-radius:10px;padding:9px 10px;font-size:10px;font-weight:900;white-space:nowrap}
 </style>
+
 </head>
 <body>
-<div class="app-loading" id="appLoading" role="status" aria-label="Loading 30 DAY"><div class="loading-card"><div class="loading-mark">30</div><div class="loading-spinner"></div><div class="loading-label">Loading your challenge</div></div></div>
+<div class="app-loading" id="appLoading" role="status" aria-live="polite" aria-label="Loading 30 DAY">
+  <div class="loading-card">
+    <div class="loading-kicker">THE DISCIPLINE EXPERIENCE</div>
+    <div class="loading-visual" aria-hidden="true">
+      <div class="loading-orbit loading-orbit--outer"></div>
+      <div class="loading-orbit loading-orbit--inner"></div>
+      <div class="loading-mark">30</div>
+    </div>
+    <div class="loading-brand"><span>30 DAY</span><span class="loading-brand-rule" aria-hidden="true"></span><span>CHALLENGE</span></div>
+    <div class="loading-label">PREPARING YOUR CHALLENGE</div>
+    <div class="loading-subtitle">Discipline in motion. Progress in focus.</div>
+    <div class="loading-progress" aria-hidden="true"><span></span></div>
+    <div class="loading-progress-meta" aria-hidden="true"><span>INITIALIZING YOUR JOURNEY</span><span class="loading-live">ACTIVE</span></div>
+  </div>
+  <div class="loading-footer">DISCIPLINE <span>•</span> CONSISTENCY <span>•</span> GROWTH</div>
+</div>
 <main class="app">
   <header class="topbar">
     <div class="greeting">
       <div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg></div>
       <div style="min-width:0"><div class="hello" id="greetingText">Hello there</div><div class="today-date" id="headerDate"></div></div>
     </div>
-    <button type="button" class="icon-btn settings-icon-btn" id="headerAction" aria-label="Open Settings" title="Settings" data-destination="settings" aria-controls="page-settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3H3.7a1.8 1.8 0 0 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3Z"/></svg></button>
+    <button type="button" class="icon-btn settings-icon-btn" id="headerAction" aria-label="Open Settings" title="Settings" data-destination="settings" aria-controls="page-settings">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.49.49 0 0 0-.6-.22l-2.39.96c-.5-.38-1.03-.69-1.62-.92L14.39 2.8a.49.49 0 0 0-.49-.42h-3.84a.49.49 0 0 0-.49.42l-.36 2.54c-.59.23-1.13.55-1.62.92l-2.39-.96a.49.49 0 0 0-.6.22L2.68 8.84a.5.5 0 0 0 .12.64L4.83 11.06c-.04.3-.07.62-.07.94s.02.64.07.94L2.8 14.52a.5.5 0 0 0-.12.64l1.92 3.32c.12.21.36.3.6.22l2.39-.96c.5.38 1.03.69 1.62.92l.36 2.54c.04.24.24.42.49.42h3.84c.25 0 .45-.18.49-.42l.36-2.54c.59-.23 1.13-.55 1.62-.92l2.39.96c.24.09.48-.01.6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.02-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Z"/></svg>
+    </button>
   </header>
 
   <section class="page active" id="page-home" data-page="home">
@@ -238,12 +444,23 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="toolbar"><h3 id="habitsTitle">Daily habits</h3><span class="count-label" id="habitsCount">0 habits</span></div>
     <div id="habitsPageList"></div>
     <button class="primary-btn" style="width:100%;margin-top:14px" id="habitsAddBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Create a habit</button>
-    <div class="small-note">Habits you add are saved on this device. Nothing is pre-filled.</div>
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-title"><h3>Quick-start templates</h3><span class="count-label">Tap to add</span></div>
+      <div class="template-grid" id="habitTemplateGrid">
+        <button class="template-btn" type="button" data-template="reading"><span>📚</span><span>Reading<small>Read 10 pages</small></span></button>
+        <button class="template-btn" type="button" data-template="movement"><span>🏃</span><span>Movement<small>Move for 20 minutes</small></span></button>
+        <button class="template-btn" type="button" data-template="water"><span>💧</span><span>Drink water<small>Drink water mindfully</small></span></button>
+        <button class="template-btn" type="button" data-template="meditation"><span>🧘</span><span>Meditation<small>Take 5 quiet minutes</small></span></button>
+        <button class="template-btn" type="button" data-template="writing"><span>✍️</span><span>Reflection<small>Write a daily note</small></span></button>
+        <button class="template-btn" type="button" data-template="focus"><span>📵</span><span>Focus time<small>One hour distraction-free</small></span></button>
+      </div>
+    </div>
+    <div class="small-note">Habits you add are saved on this device. Templates only add a habit; you can edit or remove it anytime.</div>
   </section>
 
   <section class="page" id="page-progress" data-page="progress">
     <div class="page-title">Your progress</div>
-    <p class="page-subtitle">Your 30-day activity at a glance.</p>
+    <p class="page-subtitle" id="progressSubtitle">Your 30-day activity at a glance.</p>
     <div class="stats-hero">
       <div class="label">CHALLENGE COMPLETION</div>
       <div class="big-stat" id="statPercent">0%</div>
@@ -257,7 +474,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <div class="stat-box"><div class="label">DAYS COMPLETED</div><div class="stat-num" id="statDays">0</div><div class="stat-name">All habits done</div></div>
     </div>
     <div class="panel">
-      <div class="panel-title"><h3>30-day calendar</h3><span class="count-label" id="calendarRangeLabel">Challenge days</span></div>
+      <div class="panel-title"><h3 id="calendarPanelTitle">30-day calendar</h3><span class="count-label" id="calendarRangeLabel">Challenge days</span></div>
       <div class="progress-calendar" id="progressCalendar" aria-label="30-day challenge calendar"></div>
       <div class="calendar-selected">
         <div class="calendar-selected-main"><div class="calendar-selected-title" id="calendarSelectedTitle">Day 1</div><div class="calendar-selected-sub" id="calendarSelectedSub">No habits completed</div></div>
@@ -265,9 +482,33 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
     <div class="panel">
-      <div class="panel-title"><h3>Daily consistency</h3><span class="count-label">30 days</span></div>
+      <div class="panel-title"><h3>Daily consistency</h3><span class="count-label" id="chartRangeLabel">30 days</span></div>
       <div class="chart" id="progressChart"></div>
     </div>
+  </section>
+
+  <section class="page" id="page-journal" data-page="journal">
+    <div class="page-title">Daily journal</div>
+    <p class="page-subtitle">Reflect on your day, record your mood, and plan your next step.</p>
+    <div class="panel">
+      <div class="panel-title"><h3 id="journalDayTitle">Day 1 reflection</h3><span class="count-label" id="journalDateLabel"></span></div>
+      <div class="journal-field">
+        <span class="journal-field-label">HOW DID TODAY FEEL?</span>
+        <div class="journal-mood" id="journalMoodChoices">
+          <button type="button" class="mood-choice" data-mood="great"><span class="mood-emoji">😄</span>Great</button>
+          <button type="button" class="mood-choice" data-mood="good"><span class="mood-emoji">🙂</span>Good</button>
+          <button type="button" class="mood-choice" data-mood="okay"><span class="mood-emoji">😐</span>Okay</button>
+          <button type="button" class="mood-choice" data-mood="low"><span class="mood-emoji">😔</span>Low</button>
+          <button type="button" class="mood-choice" data-mood="tough"><span class="mood-emoji">😣</span>Tough</button>
+        </div>
+      </div>
+      <div class="journal-field"><label class="journal-field-label" for="journalEntry">DAILY REFLECTION</label><textarea class="journal-area" id="journalEntry" maxlength="3000" placeholder="What went well today? What did you learn? What was difficult?"></textarea></div>
+      <div class="journal-field"><label class="journal-field-label" for="journalWin">ONE WIN TODAY</label><textarea class="journal-area" id="journalWin" rows="2" maxlength="500" placeholder="Write one thing you are proud of..."></textarea></div>
+      <div class="journal-field"><label class="journal-field-label" for="journalTomorrow">TOMORROW'S FOCUS</label><textarea class="journal-area" id="journalTomorrow" rows="2" maxlength="500" placeholder="What is one thing you will focus on tomorrow?"></textarea></div>
+      <button type="button" class="primary-btn" id="saveJournalBtn" style="width:100%">Save today's reflection</button>
+      <div class="small-note" id="journalSavedNote">Your journal is saved on this device.</div>
+    </div>
+    <button type="button" class="settings-back" id="journalToProgressBtn">← Back to Progress Calendar</button>
   </section>
 
   <section class="page" id="page-profile" data-page="profile">
@@ -278,16 +519,19 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <div style="min-width:0;flex:1"><div class="profile-name" id="profileDisplayName">Your profile</div><div class="profile-sub" id="profileDisplaySub">Personal 30-day challenge</div></div>
       <button class="icon-btn" id="editProfileBtn" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button>
     </div>
-    <div class="account-card"><div class="auth-mini-mark">30</div><div class="account-copy"><h3>Protect your progress</h3><p>Sign in to keep your challenge connected across devices.</p></div><button class="account-cta" id="openAuthBtn" type="button">Sign in</button></div>
+    <div class="account-card"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAXg0lEQVR42u2de1BU5fvAD8vZXdjljnIRIcUQTAHv91G8UN7NNC3NC1mZzuSkY6ihNTrfQrNxRiubpmxGzWxGycxIRVEHUEwRBCZQUBEJBYEFlssuezu/P57pnfNbEM55zwEWej5/4Xpuz/M+7/M+7/PeGAZBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEEQ+nBz3y5yc2vyD4zhyDfzN/6Unqd7JqU0x7eRycOmcHE2nAMdxNptN4F0KhQJuARzfbhQKBcMwVqu1F0jnEAZEdGRnNB4eHlqt1tvb293dXaVSqdVqJycnk8nU0tJiMBhqamoaGxsNBkNLS4td8TigukFGm83G/yp3d3cvLy8/Pz+NRuPq6qrRaGw2W2Njo9ForK2tra6urq+vN5lM5HpnZ2eGYewe8t81IChsvjo8PDzCwsLGjBkTGRk5ePDgAQMGeHt7u7q6qlQqhUIBFRfszGKxNDc36/X6ysrKvLy8oqKivLy8vLy8p0+f8tUtypN1noz8z+jXr9/w4cMnT54cFRU1aNAgf39/rVarVCr5TZjVam1paamvry8tLb13715OTk5GRkZBQYHBYHAc0brZgMB04O/g4ODp06e//PLLI0eOHDhwoFqtpntmeXl5bm5uZmbmhQsXbt++Dc8nDql7ZXzxxRdnzJgxa9ascePGBQYGtnk9fCTfkggmk6mgoODatWt//vlnamoqON1uFK37nTnDMC4uLq+//vrZs2d1Oh3Hw2q1WiwWi8VitVptPOB/+b9YrVZysd0Tbt26lZCQMGTIEL7z70rHA290dnaePXt2UlKSXq/nf2FrAcl/2QkIl/HvLSws/PTTTwcPHtwtonVz/EikXb16dVZWlp3RgEI5WqBp4xuTXq///PPP+/bty49eOxsi48SJEy9dumRnNHQCEmMit+t0up07d7q6usIb2/Rbvc164I8hQ4b8/PPPfLuRYjTtqxv+WVRUtGbNGuL/Otu/Mgzj5ua2bdu2xsZGYtYyysgXLSMjY+bMmV0jWjc3WwzDKJXKXbt21dXVkTLmOhkoPPj71KlTAwYM6Dyf7+TkxLIswzDTp0/PyckhXqfzRAMF2my2AwcOaLXaXtucgVTe3t7JycmdrdbnVVnQdVlZ2ezZsztD0aR9fOutt0wmE8gou2dtUzR4y6VLl4KCgnqhDYFag4ODIRowm81doNY2MZvNHMfV19fHxMTIq2hiPZs2bTIajV1cQ2w2G4iWk5MTERHRq2wI1BoZGXn//v2udzytgQ+oqamZNm2aXEED6RkkJiaSEu0u0R4+fBgeHt5LbAi6635+fnfv3iUOoNuBtqyysjI6OloWG4Ki2rx5c5c1W+272L///htCvZ4dUxOvfuLECcexHn5lvXbtmlKpJEkpKS528eLFJpNJYg5CRtGuX7/u7e0No4o9u/H65JNPHKHlep6i3333XSneHmQcP348JAm73Xr4fujo0aM9uCGD7545cyZ0NSXmBvnpZkg2Sq/r8ISSkhJPT0+6mgou1sfHp6CgwNEqCdjQO++801NtCIrk/Pnz1JqF/E37iaIOLxASDL355pt0WuYHzhIbaJKF51cVKTUEqkdFRUW/fv06Oxhy6gz3Y7Vap0yZkpqaSpdi5ziO3NXc3FxeXq7T6WpqaiwWi7u7u6+vr4+PT79+/UAvNpuNzoVYrVaFQpGSkjJv3jyYmiN8VBJGSSMjI9PS0jw8PKijjfY/3mazUZe91Wp1dnY+evRoXFwciNZjxlxB5iNHjtC5H+JUrly5snLlyoiICBju4Ruor6/v2LFjExIS8vPzqXvOcEtTU9Po0aNFVVMoco1Gc+XKFf4H08VhHMfdunVr3759cXFx8+bNW7x48YcffvjLL7/U1taSgVUpz1+xYkVPasigGPr3719VVUVRriBzWVnZwoUL2yw2u8qq0WgSEhKgBaFQNJT95s2bRakYrnz//felhD5w46NHj9auXatSqVq/JTw8/Mcff5SSWALp8vLyYCJez+iRgXI3bNhAUTVBp9nZ2TBRARJ00M3mCw//VCgUpMjfeOMNg8FAba/ff/+9cAOCt6tUqpycHOrhPHjv2bNng4ODid74EHe4atUqMiJLbUNz5szpMU4ISj05OZk/iim8Qbl+/ToM6MCopPDxy2XLlhkMBrEOH/SblpZmN7+9wxry2muvUTdeoJZff/1VqVS2MxOD1JD58+c3NDTQtWXwrpSUFInpri5tv4KCgsS2X6AdnU43aNAg4dZDgOsPHToktk0hTh4aESEqBhn/+OMPKRFebm6ut7e3EK8Aoq1evZrO20ERmEwmsXFedxrQ5MmTQbPCDQiu37NnD4X1kEo8YsQIGAYX/l4okvv378NciA4NCAQMDQ2tr6+naFagntTV1Y0aNUpgm0Jc7LFjx+hMlq9bRzcg0EhcXJwoUaEYmpubw8PD6SYNQsGzLJuXlyeqZYEri4qKNBqNEAMCAbds2SLF/Xz88ceiIhJQSEhISFVVFUVDBi999OiRn5+fQC8rzmvIbkZ+fn42MUDSLDs7+/79+wzVOjrIG1ksluLiYoon1NbW8hcGtWOmVqvV1dV16dKlFCUBSZ2ysrJDhw7BGibhNzo7Oz9+/Pjw4cOwMEhss2Cz2V544QUIpWV3QvIbkL+/v0KhgHFKIcCVVVVVVqtVlGZbOyG9Xi/W8hiGqaurE5JIhFeMHj06KiqKn+oU9a7Tp0/X1dWJtQN43YkTJ1paWmBBj9hXcxwHM+lkXwnEym5AlZWVubm5ZrNZoJe22Wwsy167dk0GYVgacSoqKkgCvUMDmjlzplqthjyv2PbdbDYfP36cIiUDCev8/PzU1NQ5c+aATxI7sjR+/Hhvb+/a2lrqWtqbgSKBSY9iwy+Bg47wisuXL1MEQBCIXL9+HUycIhCBz1u6dKmUnNCECRNkTwgpeo31uLm5hYWFCS8eaBf0en16erqQ9ovjOD8/P5gzKjaSgIdfvHjRYrHAakCKOI9hmIyMjPLycgoXAhFYZGSk/F3vzivRzru+dZzIcdzUqVNDQkKED0BCNJCenv7gwYMOiwSeOWTIEFhUKuqDOY5zdnY2Go0XLlyglhFasSdPnty4cYMilIHrIRvUAwyIIsqTaD0eHh67du0Sa7VWq/XgwYPCvcLQoUMZwbtq2En3+PHj3NxcKcKCEd+8eZP63sjISJBaxs58z27CyB4DiYmJo0aNEu5+QIlZWVmpqanC+0T9+/enrh4FBQVNTU3SA9jCwkLq3nhgYCBkvP67MRB/JBUqk0Kh2LNnz4YNG+BvUY/av38/3NVhoYKFkVFeCgMC9yMlgIXn3L9/32g0ijVE+OY+ffqEhIR0RjrR4Uzkedi55djY2NTUVLHjmjD94+DBgwKrMrxXoVDcuXOHYgwVrl+1apVEA4LP8PHxKSsro+iLwWfMnTtX3o4Y62gG1H7FYllWq9X27dt34sSJK1euhGXhombuWSwWlmVTUlLi4+NF1WOtVuvu7k4df5SVlcmiH71eX1FR0b9/f4pkJtifoycSqSNEm80WHR39v//9r836wXEcy7Jubm4+Pj6BgYGenp7MvzlWgdYDtZBl2fT09Li4OOENAVzm5eXl4eFB0QWDYZbq6mqJ3QWJj4Lr/f39e6cBQakEBgbOmzdPoDrAdAQWJ3SDWZY9c+bMypUrGxoa+Ls/CcHX19fLy4tOuqampvr6elmqmdVqra2tpX4CXT+gxzRhsCABanyblkFmfgkcEOD+3QcORhI+++yzxMREk8kkynrgRZ6enizL0jUcDQ0NsDudLCXX2NhI/ahe64FIUUH3iq6c2rQbaBCzsrK2bt16+fJleAvFmKKLiwvz/1eMCG93YN9MubQEzoxOPzDzqdcakLyGCG3HhQsXTpw4kZycbDAYpGwqKCWDYreVrETq6uroy5tle3MTJlc7WFJScvv27Rs3bly9ehUSMIyA8XYhHoiOlpYWi8Uil4DNzc3U98LkXfCLsphRrzIg0EtlZeXu3buvXr36zz//tNnXo3u43fI0UX0fWCoqYw2h7qao1WqJFak3GxDoKCgo6MiRI3V1dTqdrrS0NC0t7cqVK9nZ2U1NTeCH6Dbqhs2H6WqtjAXGMIzZbKa+V6lUqlQqst+0DB3DXhkDwbYHsDXzrl270tLScnJy9u3bN3DgQEjIUqRipRiBvBNJZeleoAEJ0hTZHTEsLGzLli3p6enbtm3TarUwBCaqJKAbRTdTRd5teOkmXoLvNBqNUhzYf8iAyJgrFB4YU1BQUGJiYmZmZmxsLDRkwstVSj+cZVm6Um8nEKZu/sADydURczgDan8JBxkapGhEYO6H1WqNjIw8f/783r174YQKgTYkJW5wcXGBdaiyQDckB8DRLXK6Q0eLXQRGJxCRiG2GID8Ewxrx8fFeXl7r1q0jZ7h0ngfSarVqtVpK95sPDMnRuRBiQHJ5IEcxIJCnqamppKQE0n12lgGRr1qtdnFx8fDwIHZGsT8QPN9isbz33ns6nW779u1CbAgGEMSGw/BhWq1WShrJDlgWTUdNTY28BecoBgQNc2Zm5vDhw59XRViW1Wg0Wq3Wz88vNDR04sSJc+fOhc0YxO7FBK7IarVu27bNaDTu2rWrnWllZPlYc3OzRqOhGGbx8PBwc3OTq+qTR1HcC8dh9f6DNQTSt2/fDz74APZiolhrTI7UGDlyZDveBdQdEBDw5MkTsTO54GKbzTZmzBjp/Xm61Uv8CWXr169nZJ1Q5nBBtFNHkL6Vs7NzVVXVV199FRMTk5GRAcGN2HdByxgfH9/hxXq9nmIYnAwMS1+aDo9Sq9Xk8CFHaMJ6fF8dKpNGozl69CjFfFPo3JlMprFjx3boITIyMqg3ztq4cSN1CofvfgIDAyl2fyPbEMDaQhkTmz07DwTF6ezs3NzcvG7duuLiYrFTNeB6pVK5bNmydqo1aLyoqIi6+zNw4ECJ2RfSksJsTIrba2pqHjx4wMg6Gt8bEokwUdVgMBw4cIBux2eGYaZNm+bq6vq8NVPwY2lpKfVHwqpQKeMh8A1hYWFKpRL6nmI7ubW1tVJmM/ZaAyKd+aSkpOrqarFrhyG2GDp0KMS57RQMeCC60YyXXnoJOowSe0DQS6WbEF1YWGg2m+nWVneRAUGEqxADf09JiVmAiooKmP0jthXjOE6lUrVjQGRxIMXidrg+ICBg9OjRUo7dBKHGjRtHnWbLz89n5B7ZVcjuCexOyu0QuebKQMHTrZ4B/cLeDG0aB/z48OFDaMUo9jZwcnKaMWMG9XxIsMJBgwaBBxJrBNDVyM7OljcAkjmRqFKphg4dqlKphKfaYGWFwWAoKCiQOEoMb6yqqqJ+ApyS9DwDUigUDQ0NWVlZoaGhYssAvm3OnDk7duzQ6/UU6UR4woIFC3x8fMRmTaE4Ghoa8vLyZDcg2brTDMP4+vrCokmxNDY2wvncUrwr3Pvtt99SJNng+rS0tA4rMfX+4tD5f/XVV/lHV4tSr1qthnOu6ZbG3rx5E94rbxpaziassbGxqalJ1JQlkFCr1fbr10/ibupQsWDdk5Rq0H4YdP369cbGRrp95hiGWbJkCUUrBmPGo0ePjo6Opt5dLz09XeBGAN1mQCaTqbq6WpR/hjQMx3ETJkyQmCPhOM7T0zMqKoq6krU/Uk32mbt48SIjfoceKLn58+eHh4cLX03Lr2br169nWZaiA69QKIxG48mTJx26Iw0a+e677+h2+75z545arabeUB1mjS1evJhuA3n44N9//71944MmALwI9Vt++uknRvzRHGPHjm1paaHY5hc2wT137pyjb1YPcn700UfU43xr1qxhGIZi4hVRzbVr16QU7aFDh9qPw8gmKZWVlXTDJlar1Ww2wxYZQoY1SLf/7NmzUmKvdevWMQ5+XAZ8XGxsLN3OIzabrby8nAxZC68rpLx37NhBfX6FcC3D6yiOVeAPzpeXlw8bNqxDGyLh9s6dO+lEg1vKy8uljL92aUfM09OztLSUrnZyHFdTUwNHCDL/rkpuM7KGH8myZXd398OHD1NvXwp3tbS0TJo0SaABjRgxorm5me4AFNBMQUEBZA1Ylm3t88hJRQzDbN++ndQxOs/62WefMT3itB7+Mc1Sjpr78ssv7SbdkVkcrZ1TVFRUZmamlIPfyAEoMGmww2oKF6SkpFCfFwZ35efnQ8hPLIZlWbu8fHx8PLX1gH0bDAbYWK0HnAIONr5o0SLq4iR1uqioaP/+/ZMmTfLx8WldogqFIiAgYMGCBcePH9fpdBLPvIV7YcMyIdUUrpk7d66U439BP9XV1bt374Zt5+xSsrGxsRD3UB9aCHIdP368U63HSd5WjOM4jUZz+fLlcePGUR/5yb+xvLz86dOnT5480ev1zc3Nrq6u3t7egYGBwcHBMEWLkXa2KPTYzWZzTExMZmamwGW/sET6wIEDGzdulC5mbW1tdnb23bt39Xo9y7IBAQEjRoyAIIl6lxLIMjx79mzKlCnFxcVS1nR3Qyu2cOFCiQd+w0xTIddIPP8bnnDlyhVRw5wQhPn6+paUlFCfW0gOpxb7X8LdTw/ofD2vU52cnCzLaep2h8aTo+Ml2o2dopcvXy5W0fzDPSWKCbZisVjMZrPZbJZ4nDl/ZMbV1bVnnFXY2glFR0c3NDTIWNKdASj6zJkz4H7EKhqmoyQlJclSVeQCqlxNTY304UWHSCrCnroOaz337t2Dk28pqimUTUBAQElJiZRuoIyQhm/Dhg09r/Gy63Wr1epz5845VO20S12azebp06dLUTTY0NSpU2tqahzBhsg51G2mPHqYDUFeEfqiDuWHoJitVuvbb78tvZrC7bNmzYJjo7vRhkDJP/zwQ+uz0nskUDvd3d1hM3nYF8JBWi6j0QhDb7I4eRiRWLFiBTy86z0ueFOO406fPi1qx4ieYUN9+vRJT08no4ndHh9UV1cvWrRI3hABHrV8+fK6urou9rikp/Lbb7/Bip8eGTi3b0Nubm579+4F65GevKF2PBzH/fXXXyNGjOiMABMeOHny5EePHlGPP1DLlZiYCBMZeuG6dyLSggULiouL+Rm8rvE68KKKioqNGzfCVoed0T0hZ7wHBQXBgGCnNtxk87XHjx8vWbLETtW90IagzIKCgr755hvSkMmbFWydmiO/nD59Gk6r7GwPT0xz7dq10DUjYspeJTiOS0pKGjRoECP3LnoOnR9iGCYmJubkyZN6vZ7viqVbUmu70el0x44di42NJR/QBVom/eeIiIivv/4alrJLFJNsJEJ+yczMJI6np+Z76JRLHEB4eHhCQkJ2dja/dvIHLshwd5uryeyGOPil0tDQcP78+U2bNoWGhvJTU91SW0JCQrZu3ZqXl2cXu7QvI5EOBjf4VeLo0aOvvPIKOQC6V4XMFGbk6uoaGxv7xRdf3Llzx2g0SvFAZWVlp06d2rp1KxxuSt7VXRWUL6ZGo5k3b97hw4chbS2WhoaGy5cvx8fHk4bYQRyPU/eaERxbSVQcFhYWERERHh4+bNiwPn36+Pj4+Pr6uri4qNVqSG/AnGKz2dzU1KTT6err62trawsLCx88eFBaWpqfn//s2TO+y+Hk3hZZupg+Pj7Dhg2Ljo6OjIwMCQnx9/f39fWFrfvUajVMAWtpaWlsbHz27FlFRcXdu3cLCgpu375dXFwMssAD6bZL71UGREoaaD0RR6VSeXl5qVQqlUrFNyCLxWIwGOrr61tv+u84diPww5RKpZeXl1KpVKvVYEBGo9FkMoGArZtFRxPNyaFUTFKoxHULvAXmsjlIpRRiSfDBHVoDiccFKuQ/bUDPSyC1s07U8c1FeJKML2avkQ5BEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEEQc/wf7Fob+hr3w8gAAAABJRU5ErkJggg==" class="auth-mini-mark" alt="30 DAY app logo"><div class="account-copy"><h3>Protect your progress</h3><p>Sign in to keep your challenge connected across devices.</p></div><button class="account-cta" id="openAuthBtn" type="button">Sign in</button></div>
     <div class="panel">
       <div class="panel-title"><h3>Challenge details</h3><button class="text-btn" id="editChallengeBtn">EDIT</button></div>
       <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg></div><div class="info-main"><div class="info-title">Start date</div><div class="info-desc" id="profileStartDate"></div></div><div class="arrow">›</div></div>
-      <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="info-main"><div class="info-title">Challenge length</div><div class="info-desc">30 days</div></div></div>
+      <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="info-main"><div class="info-title">Challenge length</div><div class="info-desc" id="profileDuration">30 days</div></div></div>
       <div class="info-row"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/></svg></div><div class="info-main"><div class="info-title">Your daily habits</div><div class="info-desc" id="profileHabitsInfo">No habits added yet</div></div></div>
     </div>
     <div class="panel">
       <div class="panel-title"><h3>Your data</h3></div>
-      <div class="info-row" id="exportBtn" role="button" tabindex="0"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 17v3h14v-3"/></svg></div><div class="info-main"><div class="info-title">Export my data</div><div class="info-desc">Download your habits, check-ins and notes</div></div><div class="arrow">›</div></div>
+      <div class="info-row" id="exportPdfBtn" role="button" tabindex="0"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M8.5 15h7M8.5 18h5"/></svg></div><div class="info-main"><div class="info-title">Download progress report (PDF)</div><div class="info-desc">Open print options, then choose “Save as PDF”</div></div><div class="arrow">›</div></div>
+      <div class="info-row" id="exportBtn" role="button" tabindex="0"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 17v3h14v-3"/></svg></div><div class="info-main"><div class="info-title">Download backup (JSON)</div><div class="info-desc">Save a backup to restore your progress later</div></div><div class="arrow">›</div></div>
+      <div class="info-row" id="importDataBtn" role="button" tabindex="0"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m-5 5 5-5 5 5"/><path d="M5 14v6h14v-6"/></svg></div><div class="info-main"><div class="info-title">Restore from backup</div><div class="info-desc">Choose a previously exported JSON file</div></div><div class="arrow">›</div></div>
+      <input type="file" id="backupFileInput" class="data-file-input" accept="application/json,.json">
       <div class="info-row" id="clearDataBtn" role="button" tabindex="0"><div class="info-icon" style="background:#fff0f0;color:#c24958"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg></div><div class="info-main"><div class="info-title">Reset my challenge</div><div class="info-desc">Remove saved habits, notes and progress</div></div><div class="arrow">›</div></div>
     </div>
     <div class="small-note">Your information stays in local storage in this browser on this device. Clearing browser storage or using another browser may remove or not show it.</div>
@@ -295,30 +539,37 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
   <section class="page" id="page-auth" data-page="auth">
     <div class="auth-shell">
-      <div class="auth-brand"><div class="auth-mark">30</div><h1>Welcome to 30 DAY</h1><p>Build discipline. Keep your promise.</p></div>
+      <div class="auth-brand"><img src="data:image/png;base64,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" class="auth-mark" alt="30 DAY app logo"><h1>Welcome to 30 DAY</h1><p>Build discipline. Keep your promise.</p></div>
       <div class="auth-card">
         <div class="auth-tabs"><button class="auth-tab active" id="authSignInTab" type="button">Sign in</button><button class="auth-tab" id="authSignUpTab" type="button">Create account</button></div>
-        <form id="authForm" novalidate>
-          <label class="auth-label" for="authEmail">Email address</label><input class="auth-input" id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
-          <label class="auth-label" for="authPassword">Password</label><input class="auth-input" id="authPassword" type="password" placeholder="Enter your password" autocomplete="current-password">
-          <div id="authConfirmWrap" hidden><label class="auth-label" for="authConfirm">Confirm password</label><input class="auth-input" id="authConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password"></div>
+        <form id="authForm">
+          <label class="auth-label" for="authEmail">Email address</label><input class="auth-input" id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+          <label class="auth-label" for="authPassword">Password</label><input class="auth-input" id="authPassword" type="password" placeholder="Enter your password" autocomplete="current-password" minlength="8" required>
+          <div id="authConfirmWrap" hidden><label class="auth-label" for="authConfirm">Confirm password</label><input class="auth-input" id="authConfirm" type="password" placeholder="Repeat your password" autocomplete="new-password" minlength="8"></div>
           <button class="primary-btn auth-submit" id="authSubmit" type="submit">Sign in</button>
         </form>
+        <button class="text-btn" id="forgotPasswordBtn" type="button">Forgot password?</button>
+        <div id="authMessage" class="inline-status" role="status" aria-live="polite"></div>
+        <button class="secondary-btn auth-back" id="authSignOutBtn" type="button" hidden>Sign out</button>
         <div class="auth-divider">or continue with</div>
         <div class="social-grid">
-          <button class="social-btn" data-provider="Google" type="button"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.25-.2-1.8H12v3.41h5.37a4.58 4.58 0 0 1-1.99 3.01v2.5h3.22c1.88-1.73 2.75-4.28 2.75-7.12Z"/><path fill="#34A853" d="M12 21.5c2.7 0 4.96-.9 6.61-2.43l-3.22-2.5c-.9.6-2.04.96-3.39.96-2.6 0-4.8-1.76-5.59-4.12H3.08v2.58A9.99 9.99 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.41 13.41A6 6 0 0 1 6.1 12c0-.49.11-.97.3-1.41V8.01H3.08A9.5 9.5 0 0 0 2 12c0 1.44.34 2.8 1.08 3.99l3.33-2.58Z"/><path fill="#EA4335" d="M12 6.47c1.47 0 2.78.5 3.82 1.5l2.86-2.86C16.95 3.43 14.7 2.5 12 2.5a9.99 9.99 0 0 0-8.92 5.51l3.33 2.58C7.2 8.23 9.4 6.47 12 6.47Z"/></svg>Google</button>
-          <button class="social-btn" data-provider="Apple" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.02-2.1 1.72-3.12 1.8-3.17a3.87 3.87 0 0 0-3.05-1.65c-1.29-.13-2.53.77-3.18.77-.66 0-1.68-.75-2.76-.73a4.07 4.07 0 0 0-3.42 2.09c-1.47 2.54-.38 6.28 1.04 8.34.7 1 1.52 2.12 2.61 2.08 1.05-.04 1.45-.67 2.73-.67 1.27 0 1.64.67 2.75.64 1.14-.02 1.85-1.01 2.55-2.02.81-1.16 1.14-2.28 1.16-2.34-.03-.01-2.21-.85-2.23-3.34ZM14.9 6.32c.58-.7.97-1.67.86-2.64-.84.03-1.86.56-2.46 1.25-.54.62-1.01 1.62-.88 2.57.94.07 1.9-.48 2.48-1.18Z"/></svg>Apple</button>
-          <button class="social-btn" data-provider="Facebook" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1877F2"/><path fill="#fff" d="M13.3 19v-6h2l.3-2.3h-2.3V9.2c0-.67.19-1.1 1.12-1.1h1.2V6.05c-.2-.03-.9-.09-1.72-.09-1.7 0-2.86 1.04-2.86 2.95v1.79H9.1V13h1.94v6h2.26Z"/></svg>Facebook</button>
-          <button class="social-btn" data-provider="Telegram" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="m17.9 7.5-2.23 10.53c-.17.75-.61.94-1.24.58l-3.43-2.53-1.66 1.6c-.18.18-.33.33-.68.33l.24-3.49 6.35-5.74c.28-.24-.06-.38-.43-.14L7 13.1l-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14 1.06.53Z"/></svg>Telegram</button>
+          <button class="social-btn" disabled data-provider="Google" type="button"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.25-.2-1.8H12v3.41h5.37a4.58 4.58 0 0 1-1.99 3.01v2.5h3.22c1.88-1.73 2.75-4.28 2.75-7.12Z"/><path fill="#34A853" d="M12 21.5c2.7 0 4.96-.9 6.61-2.43l-3.22-2.5c-.9.6-2.04.96-3.39.96-2.6 0-4.8-1.76-5.59-4.12H3.08v2.58A9.99 9.99 0 0 0 12 21.5Z"/><path fill="#FBBC05" d="M6.41 13.41A6 6 0 0 1 6.1 12c0-.49.11-.97.3-1.41V8.01H3.08A9.5 9.5 0 0 0 2 12c0 1.44.34 2.8 1.08 3.99l3.33-2.58Z"/><path fill="#EA4335" d="M12 6.47c1.47 0 2.78.5 3.82 1.5l2.86-2.86C16.95 3.43 14.7 2.5 12 2.5a9.99 9.99 0 0 0-8.92 5.51l3.33 2.58C7.2 8.23 9.4 6.47 12 6.47Z"/></svg>Google</button>
+          <button class="social-btn" disabled data-provider="Apple" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.02-2.1 1.72-3.12 1.8-3.17a3.87 3.87 0 0 0-3.05-1.65c-1.29-.13-2.53.77-3.18.77-.66 0-1.68-.75-2.76-.73a4.07 4.07 0 0 0-3.42 2.09c-1.47 2.54-.38 6.28 1.04 8.34.7 1 1.52 2.12 2.61 2.08 1.05-.04 1.45-.67 2.73-.67 1.27 0 1.64.67 2.75.64 1.14-.02 1.85-1.01 2.55-2.02.81-1.16 1.14-2.28 1.16-2.34-.03-.01-2.21-.85-2.23-3.34ZM14.9 6.32c.58-.7.97-1.67.86-2.64-.84.03-1.86.56-2.46 1.25-.54.62-1.01 1.62-.88 2.57.94.07 1.9-.48 2.48-1.18Z"/></svg>Apple</button>
+          <button class="social-btn" disabled data-provider="Facebook" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1877F2"/><path fill="#fff" d="M13.3 19v-6h2l.3-2.3h-2.3V9.2c0-.67.19-1.1 1.12-1.1h1.2V6.05c-.2-.03-.9-.09-1.72-.09-1.7 0-2.86 1.04-2.86 2.95v1.79H9.1V13h1.94v6h2.26Z"/></svg>Facebook</button>
+          <button class="social-btn" disabled data-provider="Telegram" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="m17.9 7.5-2.23 10.53c-.17.75-.61.94-1.24.58l-3.43-2.53-1.66 1.6c-.18.18-.33.33-.68.33l.24-3.49 6.35-5.74c.28-.24-.06-.38-.43-.14L7 13.1l-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14 1.06.53Z"/></svg>Telegram</button>
         </div>
-        <p class="auth-foot">UI preview only. Account providers can be connected later without changing this design.</p>
+        <p class="auth-foot">Your password is handled by Supabase. Challenge progress stays local until you sign in and choose to sync it.</p>
       </div>
       <button class="secondary-btn auth-back" id="backFromAuth" type="button">← Continue without signing in</button>
     </div>
   </section>
   <section class="page" id="page-settings" data-page="settings">
     <div class="page-title">Settings</div>
-    <p class="page-subtitle">Reminder time and notification controls.</p>
+    <p class="page-subtitle">Personalize the app and manage your daily reminders.</p>
+    <div class="settings-card">
+      <div class="settings-card-head"><div><h3>Appearance</h3><p>Choose a comfortable look for day or night.</p></div><div class="info-icon">🎨</div></div>
+      <div class="time-setting" style="grid-template-columns:1fr 145px;padding-top:0"><div><label for="themeSelect">App theme</label><small>Saved on this device.</small></div><select id="themeSelect" aria-label="App theme" style="width:100%;padding:12px 10px;border:1px solid #e6e3eb;border-radius:13px;background:#fff;color:#171821;font-size:13px;font-weight:800"><option value="light">Light mode</option><option value="dark">Dark mode</option></select></div>
+    </div>
     <div class="settings-card">
       <div class="settings-card-head"><div><h3>Daily reminder</h3><p>Get a notification at the time you choose.</p></div><div class="info-icon">⏰</div></div>
       <div class="switch-row">
@@ -345,6 +596,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
   <button class="nav-btn active" data-nav="home" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2Z"/></svg><span>Home</span></button>
   <button class="nav-btn" data-nav="habits" aria-label="Habits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/></svg><span>Habits</span></button>
   <button class="nav-btn" data-nav="progress" aria-label="Progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7 15v2m5-6v6m5-10v10"/></svg><span>Progress</span></button>
+  <button class="nav-btn" data-nav="journal" aria-label="Journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h10a2 2 0 0 1 2 2v16H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg><span>Journal</span></button>
   <button class="nav-btn" data-nav="profile" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.3-5.7 7.2-5.7s6.5 2 7.2 5.7"/></svg><span>Profile</span></button>
 </nav>
 
@@ -367,13 +619,28 @@ button:disabled{opacity:.4;cursor:not-allowed}
     </div>
     <div id="dateFormWrap" hidden>
       <div class="form-field"><label for="startDateInput">CHALLENGE START DATE</label><input id="startDateInput" type="date"></div>
-      <p class="small-note">Changing the start date changes how challenge days are labelled. It does not erase your existing check-ins.</p>
-      <div class="modal-actions"><button class="secondary-btn" id="cancelDate">Cancel</button><button class="primary-btn" id="saveDate">Save date</button></div>
+      <div class="form-field"><label for="challengeDurationInput">CHALLENGE LENGTH (DAYS)</label><input id="challengeDurationInput" type="number" min="1" max="365" step="1" value="30" inputmode="numeric"><small class="small-note">Choose any duration from 1 to 365 days, including a 1-day or 30-day challenge.</small></div>
+      <p class="small-note">Changing the start date or duration will not erase existing check-ins. Days outside the selected duration stay saved in the backup but are not counted in progress.</p>
+      <div class="modal-actions"><button class="secondary-btn" id="cancelDate">Cancel</button><button class="primary-btn" id="saveDate">Save challenge</button></div>
     </div>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="./supabase-config.js"></script>
+<script type="module">
+  import('https://esm.sh/@supabase/supabase-js@2')
+    .then(({createClient}) => {
+      const config = window.SUPABASE_CONFIG || {};
+      if (!config.url || !config.publishableKey) return null;
+      window.__supabaseClient = createClient(config.url, config.publishableKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+      return window.__supabaseClient;
+    })
+    .catch(() => null)
+    .then(client => window.__resolveSupabaseReady?.(client));
+</script>
 <script>
 (() => {
   'use strict';
@@ -405,23 +672,58 @@ button:disabled{opacity:.4;cursor:not-allowed}
   let nativeNotificationPlugin = null;
   const nativeReminderId = 3001;
   const nativeTestId = 3002;
-  const newState = () => ({startDate:todayISO(),profile:{name:'',challengeTitle:''},habits:[],checks:{},notes:{},settings:{dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''}});
+  const newState = () => ({startDate:todayISO(),duration:30,profile:{name:'',challengeTitle:''},habits:[],checks:{},notes:{},settings:{dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:'',theme:'light'}});
+  const isPlainObject = v => v!==null && typeof v==='object' && !Array.isArray(v);
+  const validISO = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s||'')) && !isNaN(dateFromISO(s).getTime());
+  // Turns any saved/imported object into a complete, safe state so a missing field can never break the app.
+  function normalizeState(src){
+    const base=newState();
+    const s=isPlainObject(src)?src:{};
+    const out={
+      startDate:validISO(s.startDate)?s.startDate:todayISO(),
+      duration:Math.max(1,Math.min(365,Math.floor(Number(s.duration)||30))),
+      profile:{name:'',challengeTitle:''},
+      habits:[],checks:{},notes:{},
+      settings:{...base.settings}
+    };
+    if(isPlainObject(s.profile)){
+      out.profile.name=typeof s.profile.name==='string'?s.profile.name:'';
+      out.profile.challengeTitle=typeof s.profile.challengeTitle==='string'?s.profile.challengeTitle:'';
+    }
+    if(Array.isArray(s.habits)){
+      const seen=new Set();
+      s.habits.forEach(h=>{
+        if(!isPlainObject(h)||h.id==null)return;
+        const id=String(h.id);if(seen.has(id))return;seen.add(id);
+        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow'});
+      });
+    }
+    if(isPlainObject(s.checks))Object.keys(s.checks).forEach(k=>{if(isPlainObject(s.checks[k]))out.checks[k]=s.checks[k];});
+    if(isPlainObject(s.notes))Object.keys(s.notes).forEach(k=>{const n=s.notes[k];if(typeof n==='string'||isPlainObject(n))out.notes[k]=n;});
+    if(isPlainObject(s.settings)){
+      const st=s.settings;
+      if(typeof st.dailyReminderEnabled==='boolean')out.settings.dailyReminderEnabled=st.dailyReminderEnabled;
+      if(typeof st.reminderTime==='string'&&/^\d{2}:\d{2}$/.test(st.reminderTime))out.settings.reminderTime=st.reminderTime;
+      if(typeof st.lastReminderDate==='string')out.settings.lastReminderDate=st.lastReminderDate;
+      if(['light','dark'].includes(st.theme))out.settings.theme=st.theme;
+    }
+    return out;
+  }
   function loadState(){
-    try{
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if(stored){
-        const parsed = JSON.parse(stored);
-        if(parsed && Array.isArray(parsed.habits) && parsed.checks && parsed.notes && parsed.profile) {
-          state = parsed;
-          if(!state.startDate) state.startDate=todayISO();
-          if(!state.settings) state.settings={dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''};
-          if(typeof state.settings.dailyReminderEnabled!=='boolean') state.settings.dailyReminderEnabled=false;
-          if(!state.settings.reminderTime) state.settings.reminderTime='09:00';
-          if(!('lastReminderDate' in state.settings)) state.settings.lastReminderDate='';
+    let stored=null;
+    try{stored=localStorage.getItem(STORAGE_KEY);}catch(err){}
+    if(stored){
+      try{
+        const parsed=JSON.parse(stored);
+        if(isPlainObject(parsed)&&(Array.isArray(parsed.habits)||isPlainObject(parsed.checks))){
+          state=normalizeState(parsed);
           return;
         }
-      }
-    }catch(err){}
+      }catch(err){}
+      // The saved data could not be read. Keep a copy of it instead of overwriting it with an empty challenge.
+      try{localStorage.setItem(STORAGE_KEY+'_unreadable_backup',stored);}catch(err){}
+      window.__30DayRecovered=true;
+    }
     state = newState();
     persist();
   }
@@ -467,29 +769,104 @@ button:disabled{opacity:.4;cursor:not-allowed}
       await ensureNativeChannel(plugin);
       await cancelNativeReminder();
       const [hour,minute]=String(state.settings.reminderTime||'09:00').split(':').map(Number);
-      const now=new Date();
-      const at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),hour,minute,0,0);
-      if(at<=now)at.setDate(at.getDate()+1);
-      await plugin.schedule({notifications:[{id:nativeReminderId,title:'30 Day Challenge Reminder',body:'Time for your daily commitment. Open your challenge and check in.',schedule:{at,repeats:true,allowWhileIdle:true},channelId:'discipline30-reminders',smallIcon:'notification_icon_30',sound:'default',extra:{kind:'daily-reminder'}}]});
+      if(!Number.isInteger(hour)||!Number.isInteger(minute))return false;
+      await plugin.schedule({notifications:[{id:nativeReminderId,title:'30 Day Challenge Reminder',body:'Time for your daily commitment. Open your challenge and check in.',schedule:{on:{hour,minute},allowWhileIdle:true},channelId:'discipline30-reminders',smallIcon:'notification_icon_30',sound:'default',extra:{kind:'daily-reminder'}}]});
       return true;
     }catch(err){return false;}
   }
-  function persist(){
+  let authSession = null;
+  let cloudSyncReady = false;
+  let cloudSaveTimer = null;
+  let cloudErrorShown = false;
+  function authMessage(text, error=false){
+    const el=$('authMessage');
+    if(el){el.textContent=text||'';el.style.color=error?'#c24958':'';}
+  }
+  function readableAuthError(error){
+    const message=String(error?.message||error||'');
+    const lower=message.toLowerCase();
+    if(lower.includes('invalid login credentials'))return 'Email or password is incorrect.';
+    if(lower.includes('email not confirmed'))return 'Please confirm your email before signing in.';
+    if(lower.includes('already registered')||lower.includes('user already registered'))return 'This email is already registered. Try signing in.';
+    if(lower.includes('rate limit'))return 'Too many attempts. Please wait and try again.';
+    if(lower.includes('failed to fetch')||lower.includes('network'))return 'Network error. Check your connection and try again.';
+    if(lower.includes('challenge_data')||lower.includes('relation'))return 'Authentication works, but the cloud data table is not configured yet.';
+    return message||'Something went wrong. Please try again.';
+  }
+  async function getSupabase(){
+    try{return await (window.__supabaseReady||Promise.resolve(null));}catch(err){return null;}
+  }
+  function hasLocalProgress(){return state.habits.length>0||Object.keys(state.checks).length>0||Object.keys(state.notes).length>0||Boolean(state.profile.name||state.profile.challengeTitle);}
+  async function saveCloudState(user, quiet=false){
+    const client=await getSupabase();
+    if(!client||!user)return false;
+    const {error}=await client.from('challenge_data').upsert({user_id:user.id,payload:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    if(error){if(!quiet&&!cloudErrorShown){notify(readableAuthError(error));cloudErrorShown=true;}return false;}
+    return true;
+  }
+  function queueCloudSave(){
+    if(!cloudSyncReady||!authSession)return;
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer=setTimeout(()=>saveCloudState(authSession.user,true),700);
+  }
+  async function reconcileCloud(user){
+    const client=await getSupabase();
+    if(!client)return;
+    const {data,error}=await client.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();
+    if(error){authMessage(readableAuthError(error),true);return;}
+    const cloudPayload=data?.payload && isPlainObject(data.payload)?data.payload:null;
+    if(cloudPayload && Object.keys(cloudPayload).length && hasLocalProgress()){
+      const restore=window.confirm("Cloud progress was found for this account. Press OK to restore it, or Cancel to keep this device's local progress and upload it.");
+      if(restore){state=normalizeState(cloudPayload);persist({sync:false});}
+      else await saveCloudState(user);
+    }else if(cloudPayload && Object.keys(cloudPayload).length){
+      state=normalizeState(cloudPayload);persist({sync:false});
+    }else if(hasLocalProgress()){
+      const upload=window.confirm("Upload this device's existing challenge progress to your account?");
+      if(upload)await saveCloudState(user);
+    }
+    cloudSyncReady=true;
+    const page=document.querySelector('.page.active')?.dataset.page||'home';
+    renderHeader();goPage(page);
+  }
+  function updateAuthUI(){
+    const signedIn=Boolean(authSession?.user);
+    const email=authSession?.user?.email||'';
+    $('openAuthBtn').textContent=signedIn?'Sign out':'Sign in';
+    $('authSignOutBtn').hidden=!signedIn;
+    $('forgotPasswordBtn').hidden=authMode==='signup';
+    if(signedIn){authMessage(`Signed in as ${email}. Your cloud progress is protected by your account.`);}
+  }
+  async function refreshAuthSession(){
+    const client=await getSupabase();
+    if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
+    const {data,error}=await client.auth.getSession();
+    if(error){authMessage(readableAuthError(error),true);return;}
+    authSession=data.session;
+    updateAuthUI();
+    if(authSession){await reconcileCloud(authSession.user);}
+    client.auth.onAuthStateChange((_event,session)=>{
+      authSession=session;updateAuthUI();
+    });
+  }
+  function persist(options={}){
     try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
     catch(err){notify('Could not save. Check browser storage settings.');}
+    if(options.sync!==false)queueCloudSave();
   }
+  function challengeDuration(){return Math.max(1,Math.min(365,Math.floor(Number(state.duration)||30)));}
+  function clampDay(n){return Math.max(1,Math.min(challengeDuration(),Number(n)||1));}
   function challengeDay(){
     const d = dayDiff(todayISO(), state.startDate)+1;
-    return Math.max(1, Math.min(30, d));
+    return Math.max(1, Math.min(challengeDuration(), d));
   }
-  function clampDay(n){return Math.max(1,Math.min(30,Number(n)||1));}
   function checkDate(day){return isoDate(addDays(dateFromISO(state.startDate), day-1));}
   function isFuture(day){return checkDate(day)>todayISO();}
   function dayChecks(day){return state.checks[String(day)] || {};}
   function doneCount(day){return state.habits.filter(h=>Boolean(dayChecks(day)[h.id])).length;}
   function isDayDone(day){return state.habits.length>0 && doneCount(day)===state.habits.length;}
-  function totalChecked(){let n=0;for(let d=1;d<=30;d++)n+=doneCount(d);return n;}
-  function overallPercent(){const possible=state.habits.length*30;return possible?Math.round(totalChecked()/possible*100):0;}
+  function totalChecked(){let n=0;for(let d=1;d<=challengeDuration();d++)n+=doneCount(d);return n;}
+  function overallPercent(){const possible=state.habits.length*challengeDuration();return possible?Math.round(totalChecked()/possible*100):0;}
   function currentStreak(){
     let n=0;
     // A streak is counted backwards from today, using challenge-day indexes.
@@ -498,13 +875,18 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
   function bestStreak(){
     let best=0, run=0;
-    for(let d=1;d<=30;d++){if(isDayDone(d)){run++;best=Math.max(best,run)}else run=0;}
+    for(let d=1;d<=challengeDuration();d++){if(isDayDone(d)){run++;best=Math.max(best,run)}else run=0;}
     return best;
   }
-  function allDoneDays(){let n=0;for(let d=1;d<=30;d++)if(isDayDone(d))n++;return n;}
+  function allDoneDays(){let n=0;for(let d=1;d<=challengeDuration();d++)if(isDayDone(d))n++;return n;}
+  function applyTheme(){
+    const theme=state.settings?.theme==='dark'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',theme);
+    const meta=$('themeColorMeta');if(meta)meta.content=theme==='dark'?'#111218':'#f2edff';
+  }
   function notify(message){
     const el=$('toast');el.textContent=message;el.classList.add('show');
-    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2100);
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
   }
   function goPage(name){
     if(!document.querySelector(`.page[data-page="${name}"]`)){name='home';}
@@ -513,6 +895,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     if(name==='home') renderHome();
     if(name==='habits') renderHabits();
     if(name==='progress') renderStats();
+    if(name==='journal') renderJournal();
     if(name==='profile') renderProfile();
     if(name==='settings') renderSettings();
     window.scrollTo({top:0,behavior:'smooth'});
@@ -528,19 +911,22 @@ button:disabled{opacity:.4;cursor:not-allowed}
     const day=challengeDay();
     const title=state.profile.challengeTitle.trim();
     $('heroTitle').innerHTML=title?escapeHTML(title):'30 day<br>challenge';
-    $('heroCaption').textContent=state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} chosen by you. Keep showing up for yourself.`:'Build discipline, one small promise at a time.';
-    $('heroDay').innerHTML=icons.calendar+`<span>Day ${day} / 30</span>`;
+    const endDate=checkDate(challengeDuration());
+    const finished=todayISO()>endDate;
+    $('heroCaption').textContent=finished?`Your ${challengeDuration()}-day challenge has reached its end date. Review your progress or adjust your next goal.`:state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} chosen by you. Keep showing up for yourself.`:'Build discipline, one small promise at a time.';
+    $('heroDay').innerHTML=icons.calendar+`<span>Day ${day} / ${challengeDuration()}</span>`;
     $('heroCta').textContent=state.habits.length?'View my habits ↗':'Set my first habit ↗';
   }
   function renderWeek(){
     const d=challengeDay();
+    const total=challengeDuration();
     let start=Math.floor((d-1)/7)*7+1;
-    if(start>24)start=24;
+    if(start>total)start=Math.max(1,total-6);
     const wrap=$('weekStrip');wrap.innerHTML='';
-    for(let day=start;day<Math.min(start+7,31);day++){
+    for(let day=start;day<Math.min(start+7,total+1);day++){
       const date=checkDate(day);
       const button=document.createElement('button');
-      button.className='week-day'+(day===selectedDay?' active':'')+(isFuture(day)?' future':'');
+      button.className='week-day'+(day===selectedDay?' active':'')+(isFuture(day)?' future':'')+(isDayDone(day)?' complete':'');
       button.setAttribute('aria-label',`Day ${day}, ${formatDate(date)}`);
       button.innerHTML=`<span class="dow">${formatDate(date,{weekday:'short'}).slice(0,3)}</span><span class="date-num">${dateFromISO(date).getDate()}</span><span class="dot"></span>`;
       button.addEventListener('click',()=>{selectedDay=day;renderHome();});
@@ -597,10 +983,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
     $('statStreak').textContent=bestStreak();
     $('statHabits').textContent=state.habits.length;
     $('statDays').textContent=allDoneDays();
+    const duration=challengeDuration();
+    $('progressSubtitle').textContent=`Your ${duration}-day activity at a glance.`;
+    $('calendarPanelTitle').textContent=`${duration}-day calendar`;
+    $('chartRangeLabel').textContent=`${duration} day${duration===1?'':'s'}`;
     $('statSummary').textContent=state.habits.length?`${totalChecked()} check-ins · ${state.habits.length} habit${state.habits.length===1?'':'s'}`:'No check-ins yet';
     renderChallengeCalendar();
-    const chart=$('progressChart');chart.innerHTML='';
-    for(let d=1;d<=30;d++){
+    const chart=$('progressChart');chart.innerHTML='';chart.style.gap=duration>180?'1px':duration>90?'2px':duration>45?'4px':'7px';
+    for(let d=1;d<=duration;d++){
       const wrap=document.createElement('div');wrap.className='bar-wrap';
       const bar=document.createElement('div');bar.className='bar';
       const count=doneCount(d),ratio=state.habits.length?count/state.habits.length:0;
@@ -608,7 +998,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       if(count)bar.classList.add('filled');
       if(d===challengeDay())bar.classList.add('today');
       bar.title=`Day ${d}: ${count} of ${state.habits.length}`;
-      const label=document.createElement('div');label.className='bar-label';label.textContent=d%5===1||d===30?d:'';
+      const label=document.createElement('div');label.className='bar-label';const labelStep=Math.max(1,Math.ceil(duration/6));label.textContent=d===1||d===duration||d%labelStep===0?d:'';
       wrap.append(bar,label);chart.append(wrap);
     }
   }
@@ -623,15 +1013,15 @@ button:disabled{opacity:.4;cursor:not-allowed}
       calendar.append(label);
     });
     const startDate=dateFromISO(state.startDate);
-    const endDate=addDays(startDate,29);
+    const endDate=addDays(startDate,challengeDuration()-1);
     const startMonth=startDate.toLocaleDateString(undefined,{month:'short',year:'numeric'});
     const endMonth=endDate.toLocaleDateString(undefined,{month:'short',year:'numeric'});
     $('calendarRangeLabel').textContent=startMonth===endMonth?startMonth:`${startMonth} – ${endMonth}`;
-    // Pad the first week to the correct weekday, then draw only the 30 challenge days.
+    // Pad the first week to the correct weekday, then draw the selected challenge length.
     for(let i=0;i<startDate.getDay();i++){
       const blank=document.createElement('div');blank.className='calendar-day empty';blank.setAttribute('aria-hidden','true');calendar.append(blank);
     }
-    for(let day=1;day<=30;day++){
+    for(let day=1;day<=challengeDuration();day++){
       const date=checkDate(day),count=doneCount(day),complete=isDayDone(day);
       const button=document.createElement('button');
       button.type='button';
@@ -649,19 +1039,52 @@ button:disabled{opacity:.4;cursor:not-allowed}
     $('calendarSelectedTitle').textContent=`Day ${selectedDay} · ${formatDate(checkDate(selectedDay),{weekday:'short',month:'short',day:'numeric'})}`;
     const completeCount=doneCount(selectedDay);
     $('calendarSelectedSub').textContent=state.habits.length?`${completeCount} of ${state.habits.length} habits completed${isDayDone(selectedDay)?' · Complete':''}`:'No habits added';
-    $('calendarViewHabits').onclick=()=>goPage('habits');
+    $('calendarViewHabits').textContent='Open journal ↗';
+    $('calendarViewHabits').onclick=()=>goPage('journal');
   }
   function renderProfile(){
     renderHeader();
     $('profileDisplayName').textContent=state.profile.name.trim()||'Your profile';
-    $('profileDisplaySub').textContent=state.profile.challengeTitle.trim()||'Personal 30-day challenge';
+    $('profileDisplaySub').textContent=state.profile.challengeTitle.trim()||`Personal ${challengeDuration()}-day challenge`;
     $('profileStartDate').textContent=formatDate(state.startDate,{year:'numeric',month:'long',day:'numeric'});
+    $('profileDuration').textContent=`${challengeDuration()} day${challengeDuration()===1?'':'s'}`;
     $('profileHabitsInfo').textContent=state.habits.length?`${state.habits.length} habit${state.habits.length===1?'':'s'} created`:'No habits added yet';
   }
+  function getDayNote(day=selectedDay){const note=state.notes[String(day)];if(typeof note==='string')return {entry:note,mood:'',win:'',tomorrow:''};return note&&typeof note==='object'?note:{mood:'',entry:'',win:'',tomorrow:''};}
+  function renderJournal(){
+    const note=getDayNote(selectedDay);const date=checkDate(selectedDay);
+    $('journalDayTitle').textContent=`Day ${selectedDay} reflection`;
+    $('journalDateLabel').textContent=formatDate(date,{weekday:'short',month:'short',day:'numeric'});
+    $('journalEntry').value=note.entry||'';$('journalWin').value=note.win||'';$('journalTomorrow').value=note.tomorrow||'';
+    document.querySelectorAll('.mood-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.mood===(note.mood||'')));
+    const saved=Boolean(note.entry||note.win||note.tomorrow||note.mood);
+    $('journalSavedNote').textContent=saved?'A reflection is saved for this challenge day.':'Your reflection has not been saved for this day yet.';
+    $('saveJournalBtn').textContent=`Save Day ${selectedDay} reflection`;
+  }
+  function saveJournal(){
+    state.notes[String(selectedDay)]={mood:document.querySelector('.mood-choice.active')?.dataset.mood||'',entry:$('journalEntry').value.trim(),win:$('journalWin').value.trim(),tomorrow:$('journalTomorrow').value.trim(),updatedAt:new Date().toISOString()};
+    persist();renderJournal();notify(`Day ${selectedDay} reflection saved.`);
+  }
+  function addTemplateHabit(key){
+    const templates={
+      reading:{name:'Read 10 pages',details:'Read at least 10 pages or learn for 15 minutes.',emoji:'📚',color:'blue'},
+      movement:{name:'Move for 20 minutes',details:'Walk, stretch, exercise, or do another activity.',emoji:'🏃',color:'mint'},
+      water:{name:'Drink water',details:'Stay mindful of drinking water throughout the day.',emoji:'💧',color:'blue'},
+      meditation:{name:'Meditate for 5 minutes',details:'Take five calm minutes for breathing or mindfulness.',emoji:'🧘',color:'lav'},
+      writing:{name:'Daily reflection',details:'Write one thing you learned or appreciated today.',emoji:'✍️',color:'pink'},
+      focus:{name:'One hour of focus',details:'Spend one hour away from distracting apps.',emoji:'📵',color:'yellow'}
+    };
+    const item=templates[key];if(!item)return;
+    if(state.habits.some(h=>h.name.toLowerCase()===item.name.toLowerCase())){notify('That template is already in your habit list.');return;}
+    state.habits.push({id:cryptoId(),...item,createdAt:new Date().toISOString()});persist();renderAll();goPage('habits');notify(`${item.name} added to your plan.`);
+  }
+
   async function renderSettings(){
     const cfg=state.settings||(state.settings={dailyReminderEnabled:false,reminderTime:'09:00',lastReminderDate:''});
     $('reminderToggle').checked=Boolean(cfg.dailyReminderEnabled);
     $('reminderTime').value=cfg.reminderTime||'09:00';
+    $('themeSelect').value=cfg.theme==='dark'?'dark':'light';
+    applyTheme();
     const native=isNativeAndroid(), permission=await getNotificationPermission();
     let status='Notifications are not supported by this browser.',statusClass='';
     if(native && permission==='granted'){status='Android notifications are allowed. Native reminders can be scheduled for the background.';statusClass='allowed';}
@@ -756,6 +1179,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       $('challengeNameInput').value=state.profile.challengeTitle||'';
     }else{
       $('startDateInput').value=state.startDate||todayISO();
+      $('challengeDurationInput').value=String(challengeDuration());
     }
     setTimeout(()=>{const focus=mode==='habit'?'habitName':mode==='profile'?'profileNameInput':'startDateInput';$(focus).focus();},60);
   }
@@ -777,6 +1201,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
   function cryptoId(){return 'habit_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
   function toggleHabit(id,day){
+    if(isFuture(day)){notify(`Day ${day} hasn't started yet. You can check it off on ${formatDate(checkDate(day))}.`);return;}
     const key=String(day);if(!state.checks[key])state.checks[key]={};
     if(state.checks[key][id])delete state.checks[key][id];else state.checks[key][id]=true;
     persist();renderAll();
@@ -808,22 +1233,73 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
   function saveStartDate(){
     const value=$('startDateInput').value;
+    const duration=Number($('challengeDurationInput').value);
     if(!value){notify('Choose a start date.');return;}
-    state.startDate=value;selectedDay=clampDay(challengeDay());persist();closeModal();renderAll();notify('Start date updated.');
+    if(!Number.isInteger(duration)||duration<1||duration>365){notify('Challenge length must be a whole number from 1 to 365 days.');$('challengeDurationInput').focus();return;}
+    state.startDate=value;state.duration=duration;selectedDay=clampDay(challengeDay());persist();closeModal();renderAll();notify(`Challenge updated to ${duration} day${duration===1?'':'s'}.`);
   }
-  function exportData(){
+  const pluginCache={};
+  function getCapPlugin(name){
+    try{const cap=window.Capacitor;if(!cap?.registerPlugin)return null;if(!pluginCache[name])pluginCache[name]=cap.registerPlugin(name);return pluginCache[name];}catch(err){return null;}
+  }
+  // Android WebView cannot download blobs or print, so write the file to cache and open the Android share sheet.
+  async function shareFileNative(filename,content,title){
+    const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
+    if(!FS||!SH)throw new Error('Sharing is not available.');
+    await FS.writeFile({path:filename,data:content,directory:'CACHE',encoding:'utf8'});
+    const res=await FS.getUri({path:filename,directory:'CACHE'});
+    await SH.share({title,dialogTitle:title,url:res.uri});
+  }
+  async function exportData(){
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
+    if(isNativeAndroid()){
+      try{await shareFileNative(`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`,content,'30 DAY backup');notify('Choose where to save your backup (Drive, Files, email…).');}
+      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not create the backup file.');}
+      return;
+    }
     const blob=new Blob([content],{type:'application/json'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
-    a.href=url;a.download=`my-30-day-challenge-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-    notify('Your data export was prepared.');
+    a.href=url;a.download=`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    notify('Backup JSON downloaded. Keep it somewhere safe so you can restore your progress.');
+  }
+  function printReport(){
+    const duration=challengeDuration();
+    const report=document.createElement('div');report.id='printReport';report.className='print-report';
+    const started=formatDate(state.startDate,{year:'numeric',month:'long',day:'numeric'});
+    const ended=formatDate(checkDate(duration),{year:'numeric',month:'long',day:'numeric'});
+    const habitRows=state.habits.length?state.habits.map(h=>`<tr><td>${escapeHTML(h.emoji||'⭐')} ${escapeHTML(h.name)}</td><td>${escapeHTML(h.details||'—')}</td><td>${Array.from({length:duration},(_,i)=>Boolean((state.checks[String(i+1)]||{})[h.id])).filter(Boolean).length} / ${duration}</td></tr>`).join(''):'<tr><td colspan="3">No habits added yet</td></tr>';
+    const moodLabels={great:'😄 Great',good:'🙂 Good',okay:'😐 Okay',low:'😔 Low',tough:'😣 Tough'};
+    const dayRows=Array.from({length:duration},(_,i)=>{const day=i+1, n=doneCount(day), rawNote=state.notes[String(day)]||{}, note=typeof rawNote==='string'?{entry:rawNote}:rawNote;const reflections=[note.entry?`Reflection: ${note.entry}`:'',note.win?`Win: ${note.win}`:'',note.tomorrow?`Tomorrow: ${note.tomorrow}`:''].filter(Boolean).join(' • ');return `<tr><td>Day ${day}<br><span class="report-muted">${escapeHTML(formatDate(checkDate(day),{month:'short',day:'numeric',year:'numeric'}))}</span></td><td>${n} / ${state.habits.length} habits</td><td>${escapeHTML(moodLabels[note.mood]||note.mood||'—')}</td><td>${escapeHTML(reflections||'—')}</td></tr>`;}).join('');
+    report.innerHTML=`<h1>${escapeHTML(state.profile.challengeTitle||`${duration}-Day Challenge`)} — Report</h1><div class="report-meta">${escapeHTML(state.profile.name||'Personal challenge')}<br>Period: ${escapeHTML(started)} – ${escapeHTML(ended)} · Generated ${escapeHTML(formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'}))}</div><div class="report-stat-grid"><div class="report-stat"><b>${overallPercent()}%</b><br><span>Overall completion</span></div><div class="report-stat"><b>${allDoneDays()} / ${duration}</b><br><span>Days completed</span></div><div class="report-stat"><b>${currentStreak()}</b><br><span>Current full-day streak</span></div></div><h2>Habit summary</h2><table><thead><tr><th>Habit</th><th>Purpose</th><th>Completed days</th></tr></thead><tbody>${habitRows}</tbody></table><h2>Daily check-ins & reflections</h2><table><thead><tr><th>Day</th><th>Habit check-ins</th><th>Mood</th><th>Reflection / win / tomorrow's focus</th></tr></thead><tbody>${dayRows}</tbody></table><p class="report-muted">Your data is stored locally on this device. Sign-in and cloud sync are not enabled in this version.</p>`;
+    if(isNativeAndroid()){
+      const css='body{font:14px/1.45 Arial,sans-serif;color:#111;padding:16px}h1{font-size:24px;margin:0 0 6px}h2{font-size:16px;margin:18px 0 8px}.report-meta{color:#555;margin-bottom:16px}table{width:100%;border-collapse:collapse;margin:8px 0 14px}th,td{border:1px solid #ddd;padding:6px 7px;text-align:left;vertical-align:top;word-break:break-word}th{background:#f2effa}.report-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.report-stat{border:1px solid #ddd;padding:10px;border-radius:8px}.report-muted{color:#666;font-size:10px}';
+      const doc=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(state.profile.challengeTitle||'Challenge report')}</title><style>${css}</style></head><body>${report.innerHTML}</body></html>`;
+      shareFileNative(`my-${duration}-day-challenge-report-${todayISO()}.html`,doc,'30 DAY report').then(()=>notify('Open the report in a browser, then use Print → Save as PDF.')).catch(err=>{if(!/cancel/i.test(String(err?.message||err)))notify('Could not create the report.');});
+      return;
+    }
+    document.body.appendChild(report);
+    const cleanup=()=>{document.body.classList.remove('printing-report');report.remove();window.removeEventListener('afterprint',cleanup);};
+    window.addEventListener('afterprint',cleanup,{once:true});
+    document.body.classList.add('printing-report');
+    try{if(typeof window.print!=='function')throw new Error('print unavailable');window.print();}catch(err){cleanup();notify('PDF printing is not available in this browser. Try opening the app in Chrome.');}
+  }
+  async function importDataFile(file){
+    if(!file)return;
+    try{const parsed=JSON.parse(await file.text());
+      const candidate=parsed && Array.isArray(parsed.habits) ? parsed : parsed?.state;
+      if(!isPlainObject(candidate)||!Array.isArray(candidate.habits)||!isPlainObject(candidate.checks)){throw new Error('This file is not a valid 30 DAY backup.');}
+      if(!confirm('Restore this backup? It will replace the challenge data currently stored on this device.'))return;
+      state=normalizeState(candidate);
+      selectedDay=clampDay(challengeDay());persist();renderAll();notify('Backup restored successfully.');
+    }catch(err){notify(err?.message||'Could not read this backup file.');}
+    finally{$('backupFileInput').value='';}
   }
   function resetData(){
     if(!confirm('Reset this challenge? All habits, check-ins, profile details and notes saved in this app will be deleted. This cannot be undone.'))return;
     state=newState();selectedDay=1;persist();renderAll();goPage('home');notify('Challenge reset. Start fresh whenever you are ready.');
   }
   function renderAll(){
-    renderHeader();renderHome();renderHabits();renderStats();renderProfile();renderSettings();
+    applyTheme();renderHeader();renderHome();renderHabits();renderStats();renderJournal();renderProfile();renderSettings();
     // Keep only one page visible after refreshing all page models.
     const active=document.querySelector('.page.active')?.dataset.page||'home';
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===active));
@@ -831,13 +1307,16 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
   document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>goPage(b.dataset.nav)));
   function openSettingsPage(event){if(event){event.preventDefault();event.stopPropagation();}goPage('settings');}
-  $('headerAction').addEventListener('click',openSettingsPage,true);
-  $('headerAction').addEventListener('pointerup',event=>{if(event.pointerType==='touch')openSettingsPage(event);},{passive:false});
-  $('headerAction').addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){openSettingsPage(event);}});
+  $('headerAction').addEventListener('click',openSettingsPage);
   $('heroCta').addEventListener('click',()=>state.habits.length?goPage('habits'):openHabitModal());
   $('seeHabitsBtn').addEventListener('click',()=>goPage('habits'));
   $('homeAddBtn').addEventListener('click',()=>openHabitModal());
   $('habitsAddBtn').addEventListener('click',()=>openHabitModal());
+  $('habitTemplateGrid').addEventListener('click',e=>{const button=e.target.closest('[data-template]');if(button)addTemplateHabit(button.dataset.template);});
+  $('journalMoodChoices').addEventListener('click',e=>{const button=e.target.closest('[data-mood]');if(!button)return;document.querySelectorAll('.mood-choice').forEach(item=>item.classList.toggle('active',item===button));});
+  $('saveJournalBtn').addEventListener('click',saveJournal);
+  $('journalToProgressBtn').addEventListener('click',()=>goPage('progress'));
+  $('themeSelect').addEventListener('change',e=>{state.settings.theme=e.target.value==='dark'?'dark':'light';persist();applyTheme();notify(`${state.settings.theme==='dark'?'Dark':'Light'} mode enabled.`);});
   $('closeModal').addEventListener('click',closeModal);
   $('cancelModal').addEventListener('click',closeModal);
   $('saveHabitBtn').addEventListener('click',saveHabit);
@@ -849,16 +1328,47 @@ button:disabled{opacity:.4;cursor:not-allowed}
   $('saveDate').addEventListener('click',saveStartDate);
   $('exportBtn').addEventListener('click',exportData);
   $('exportBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();exportData();}});
+  $('exportPdfBtn').addEventListener('click',printReport);
+  $('exportPdfBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();printReport();}});
+  $('importDataBtn').addEventListener('click',()=>$('backupFileInput').click());
+  $('importDataBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('backupFileInput').click();}});
+  $('backupFileInput').addEventListener('change',e=>importDataFile(e.target.files?.[0]));
   $('clearDataBtn').addEventListener('click',resetData);
   $('clearDataBtn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetData();}});
-  $('openAuthBtn').addEventListener('click',()=>goPage('auth'));
-  $('backFromAuth').addEventListener('click',()=>goPage('home'));
   let authMode='signin';
-  function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';}
+  function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';$('authConfirm').setCustomValidity('');$('forgotPasswordBtn').hidden=signup;authMessage('');}
+  $('openAuthBtn').addEventListener('click',async()=>{if(authSession){await signOutUser();}else goPage('auth');});
+  $('backFromAuth').addEventListener('click',()=>goPage('home'));
   $('authSignInTab').addEventListener('click',()=>setAuthMode('signin'));
   $('authSignUpTab').addEventListener('click',()=>setAuthMode('signup'));
-  $('authForm').addEventListener('submit',e=>{e.preventDefault();notify(authMode==='signup'?'Account creation is ready for provider connection.':'Sign-in is ready for provider connection.');});
-  document.querySelectorAll('.social-btn').forEach(btn=>btn.addEventListener('click',()=>notify(`${btn.dataset.provider} sign-in is ready for provider connection.`)));
+  $('authSignOutBtn').addEventListener('click',signOutUser);
+  $('forgotPasswordBtn').addEventListener('click',async()=>{
+    const email=$('authEmail').value.trim();
+    if(!email){authMessage('Enter your email address first.',true);$('authEmail').focus();return;}
+    const client=await getSupabase();if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
+    authMessage('Sending password reset email...');$('forgotPasswordBtn').disabled=true;
+    const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});
+    $('forgotPasswordBtn').disabled=false;
+    authMessage(error?readableAuthError(error):'Password reset email sent. Check your inbox.');
+  });
+  async function signOutUser(){
+    const client=await getSupabase();
+    if(client){const {error}=await client.auth.signOut();if(error){authMessage(readableAuthError(error),true);return;}}
+    authSession=null;cloudSyncReady=false;updateAuthUI();authMessage('Signed out. Local progress remains on this device and is not uploaded.');notify('Signed out successfully.');goPage('home');
+  }
+  $('authForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}
+    const client=await getSupabase();if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
+    const email=$('authEmail').value.trim(),password=$('authPassword').value;
+    $('authSubmit').disabled=true;authMessage(authMode==='signup'?'Creating your account...':'Signing you in...');
+    const result=authMode==='signup'?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
+    $('authSubmit').disabled=false;
+    if(result.error){authMessage(readableAuthError(result.error),true);return;}
+    authSession=result.data.session;
+    if(authMode==='signup'&&!authSession){authMessage('Account created. Check your email to verify it, then sign in.');return;}
+    updateAuthUI();if(authSession)await reconcileCloud(authSession.user);notify(authMode==='signup'?'Account created successfully.':'Signed in successfully.');
+  });
   $('backFromSettings').addEventListener('click',()=>goPage('home'));
   $('saveReminderBtn').addEventListener('click',saveReminderSettings);
   $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);
@@ -872,8 +1382,11 @@ button:disabled{opacity:.4;cursor:not-allowed}
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&modalMode==='habit'&&$('modalBack').classList.contains('show')&&document.activeElement===$('habitName'))saveHabit();});
   loadState();
   selectedDay=challengeDay();
-  window.setTimeout(()=>document.getElementById('appLoading')?.classList.add('hidden'),450);
+  refreshAuthSession();
+  const loadingElapsedMs = Date.now() - (window.__30DayLoadingStartedAt || Date.now());
+  window.setTimeout(()=>document.getElementById('appLoading')?.classList.add('hidden'),Math.max(0,5000-loadingElapsedMs));
   renderAll();
+  if(window.__30DayRecovered)setTimeout(()=>notify('Saved data could not be read. A copy was kept on this device; you can restore from a backup.'),5200);
   nativeNotificationPlugin=getNativeNotificationPlugin();
   if(nativeNotificationPlugin && state.settings.dailyReminderEnabled) scheduleNativeReminder();
   // Browser timers are best-effort; Android may pause them when the app is closed/suspended.
@@ -884,8 +1397,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
 </script>
 
 <script>
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+var __isNativeApp = false;
+try { __isNativeApp = Boolean(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch (e) {}
+if (__isNativeApp && 'serviceWorker' in navigator) {
+  // Inside the Android app the files are already bundled; remove any old service worker/caches so updates show immediately.
+  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+  if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k))).catch(() => {});
+} else if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(reg => reg.update()).catch(() => {}));
 }
 </script>
 </body>

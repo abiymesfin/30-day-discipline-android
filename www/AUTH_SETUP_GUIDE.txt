@@ -1,0 +1,62 @@
+30 DAY — MAKE SIGN-IN REAL (SUPABASE AUTH + CLOUD SYNC)
+
+CURRENT STATUS
+The Sign in / Create account screen is only a UI placeholder. The current HTML does not send credentials to a service, create accounts, or sync challenge data. That is intentional until you set up a real auth project. Do not enter a real password in this placeholder.
+
+RECOMMENDED FIRST VERSION
+Use Supabase Auth for email/password accounts, then enable Google login once email/password works. Supabase provides managed account authentication and database Row Level Security. This project does not yet have your project URL, public client key, OAuth credentials, or database schema, so authentication cannot be activated just by changing the button labels.
+
+STEP 1 — CREATE THE BACKEND
+1. Open https://supabase.com/ and create a project. Save the project database password privately; it is not the app sign-in password.
+2. In Authentication settings, enable Email provider/password sign-in. Decide whether email confirmation is required and configure the email sender before production.
+3. In project API/settings, copy the Project URL and the publishable/anon client key. These are client configuration values; keep any secret/service_role key out of HTML, JavaScript, Git, and the Android APK.
+4. Configure the Site URL and allowed Redirect URLs for the actual HTTPS website. For Google OAuth, add the exact Supabase callback URL shown in the Supabase dashboard to Google Cloud, enable Google in Supabase, and then allow the final website redirect URL in Supabase. Native Android OAuth/deep-link handling is a separate test and should not be assumed to work until verified.
+
+STEP 2 — WIRE THE FORM
+Ask Manus AI to integrate @supabase/supabase-js (current v2 SDK) into this existing project without replacing the app design. Put project URL and the public client key in a clearly named config file with non-secret placeholders, and show an obvious "Authentication not configured" status while placeholders remain. Implement: signUp({ email, password }), signInWithPassword({ email, password }), email-confirmation feedback, password reset, auth-state restore on reload, sign out, and signInWithOAuth({ provider: 'google' }) only after provider credentials are configured. Do not leave buttons that pretend login succeeded. Apple/Facebook/Telegram buttons should stay disabled or be hidden until their provider-specific integrations are genuinely configured.
+
+STEP 3 — ENABLE PRIVATE CLOUD SAVE
+The app currently stores the challenge locally on the device. Real accounts alone do NOT sync habits between devices. Create one cloud row per user with a JSON payload, enable Row Level Security (RLS), and restrict every read/write to auth.uid() = user_id. Example initial SQL for the app's existing state object:
+
+create table if not exists public.challenge_data (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  payload jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.challenge_data enable row level security;
+
+create policy "read own challenge data" on public.challenge_data
+  for select to authenticated using ((select auth.uid()) = user_id);
+create policy "insert own challenge data" on public.challenge_data
+  for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "update own challenge data" on public.challenge_data
+  for update to authenticated using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+create policy "delete own challenge data" on public.challenge_data
+  for delete to authenticated using ((select auth.uid()) = user_id);
+
+Have Manus create and test this SQL migration. The frontend upsert must always use the signed-in user's ID. Never rely on UI hiding as security; test RLS with two different accounts. Never put a Supabase service_role/secret key in the client.
+
+STEP 4 — PRESERVE LOCAL PROGRESS
+Before uploading on first sign-in, detect whether local habits/profile/check-ins/notes already exist. If local and cloud data both exist, ask the user whether to keep local data, restore cloud data, or review/merge; never silently overwrite. If cloud data is empty, offer to back up current local data to that user's new cloud row. On later sign-in from another device, load only the signed-in user's row. Sign-out must not expose the previous account's content; decide whether to retain local-only data and explain that choice.
+
+STEP 5 — VERIFY BEFORE RELEASE
+- Create account and handle the email confirmation flow.
+- Sign in with correct password; wrong password must fail.
+- Password reset email arrives and returns to the allowed URL.
+- Sign out, reload, and confirm session behavior is correct.
+- Sign in on a second browser/device and verify habits, check-ins, profile, and journal sync.
+- Use two separate test accounts and verify each can only read/write its own row.
+- Test offline app features when the auth CDN/network is unavailable; local journaling should not crash.
+- Test Google OAuth redirects on HTTPS. Test Android app links separately before advertising Android OAuth support.
+
+OFFICIAL DOCUMENTATION
+Supabase Auth overview: https://supabase.com/docs/guides/auth
+Password-based Auth: https://supabase.com/docs/guides/auth/passwords
+JavaScript sign-up: https://supabase.com/docs/reference/javascript/auth-signup
+Redirect URL configuration: https://supabase.com/docs/guides/auth/redirect-urls
+Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
+
+IMPORTANT
+Do not label Sign In, Create Account, Google, Apple, Facebook or Telegram as "working" until the backend is configured and the test list above passes. Never store plaintext passwords in localStorage or the challenge JSON backup.

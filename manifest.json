@@ -2,14 +2,14 @@
   "id": "./index.html",
   "name": "30 DAY",
   "short_name": "30 DAY",
-  "description": "A personal 30-day challenge and daily habit tracker.",
+  "description": "A personal challenge tracker with flexible duration, daily habits, journal, progress and reminders.",
   "lang": "en",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f8f7fa",
-  "theme_color": "#f2edff",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "icons/icon-192.png",
