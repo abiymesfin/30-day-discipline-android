@@ -627,6 +627,7 @@ html[data-theme="dark"] .app-loading{
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="./vendor/jspdf.umd.min.js"></script>
 <script src="./supabase-config.js"></script>
 <script type="module">
   import('https://esm.sh/@supabase/supabase-js@2')
@@ -1263,8 +1264,10 @@ html[data-theme="dark"] .app-loading{
     return btoa(binary);
   }
   async function makePdfBlob(text,title){
-    const {jsPDF}=await import('https://esm.sh/jspdf@4.0.0?bundle');
+    const jsPDF=window.jspdf?.jsPDF;
+    if(!jsPDF)throw new Error('PDF engine is unavailable in this app build.');
     const pdf=new jsPDF({unit:'pt',format:'a4'});
+    pdf.setProperties({title:String(title||'30 DAY report'),subject:'30 DAY Challenge progress report'});
     const margin=40,lineHeight=15,maxWidth=515;
     pdf.setFont('helvetica','normal');pdf.setFontSize(10);
     let y=margin;
@@ -1328,9 +1331,8 @@ html[data-theme="dark"] .app-loading{
     try{const parsed=JSON.parse(await file.text());
       const candidate=parsed && Array.isArray(parsed.habits) ? parsed : parsed?.state;
       if(!isPlainObject(candidate)||!Array.isArray(candidate.habits)||!isPlainObject(candidate.checks)){throw new Error('This file is not a valid 30 DAY backup.');}
-      if(!confirm('Restore this backup? It will replace the challenge data currently stored on this device.'))return;
       state=normalizeState(candidate);
-      selectedDay=clampDay(challengeDay());persist();renderAll();notify('Backup restored successfully.');
+      selectedDay=clampDay(challengeDay());persist();renderAll();notify('Backup restored successfully. Your local challenge is ready.');
     }catch(err){notify(err?.message||'Could not read this backup file.');}
     finally{$('backupFileInput').value='';}
   }
@@ -1402,7 +1404,8 @@ html[data-theme="dark"] .app-loading{
     const client=await getSupabase();if(!client){authMessage('Authentication is unavailable. Check your network connection.',true);return;}
     const email=$('authEmail').value.trim(),password=$('authPassword').value;
     $('authSubmit').disabled=true;authMessage(authMode==='signup'?'Creating your account...':'Signing you in...');
-    const result=authMode==='signup'?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
+    const authRedirect=isNativeAndroid()?'https://fdzocxwwdpovkfdlihws.supabase.co':location.href.split('#')[0];
+    const result=authMode==='signup'?await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}}):await client.auth.signInWithPassword({email,password});
     $('authSubmit').disabled=false;
     if(result.error){authMessage(readableAuthError(result.error),true);return;}
     authSession=result.data.session;
@@ -1426,7 +1429,6 @@ html[data-theme="dark"] .app-loading{
   const loadingElapsedMs = Date.now() - (window.__30DayLoadingStartedAt || Date.now());
   window.setTimeout(()=>document.getElementById('appLoading')?.classList.add('hidden'),Math.max(0,5000-loadingElapsedMs));
   renderAll();
-  if(window.__30DayRecovered)setTimeout(()=>notify('Saved data could not be read. A copy was kept on this device; you can restore from a backup.'),5200);
   nativeNotificationPlugin=getNativeNotificationPlugin();
   if(nativeNotificationPlugin && state.settings.dailyReminderEnabled) scheduleNativeReminder();
   // Browser timers are best-effort; Android may pause them when the app is closed/suspended.
