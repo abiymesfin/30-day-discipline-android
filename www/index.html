@@ -1402,16 +1402,16 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
     if(!FS)throw new Error('File storage is not available.');
     const type=filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html';
-    await FS.writeFile({path:filename,data:content,directory:'DOCUMENTS',encoding:'utf8',recursive:true});
-    if(SH){const res=await FS.getUri({path:filename,directory:'DOCUMENTS'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
+    await FS.writeFile({path:filename,data:content,directory:'CACHE',encoding:'utf8',recursive:true});
+    if(SH){const res=await FS.getUri({path:filename,directory:'CACHE'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
     return true;
   }
   async function shareBase64Native(filename,base64,title){
     const FS=getCapPlugin('Filesystem'),SH=getCapPlugin('Share');
     if(!FS)throw new Error('File storage is not available.');
     const type=filename.endsWith('.pdf')?'application/pdf':filename.endsWith('.json')?'application/json':'text/html';
-    await FS.writeFile({path:filename,data:base64,directory:'DOCUMENTS',encoding:'base64',recursive:true});
-    if(SH){const res=await FS.getUri({path:filename,directory:'DOCUMENTS'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
+    await FS.writeFile({path:filename,data:base64,directory:'CACHE',encoding:'base64',recursive:true});
+    if(SH){const res=await FS.getUri({path:filename,directory:'CACHE'});await SH.share({title,dialogTitle:title,url:res.uri,type});}
     return true;
   }
   async function blobToBase64(blob){
@@ -1446,7 +1446,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
     if(isNativeAndroid()){
       try{await shareFileNative(`my-${challengeDuration()}-day-challenge-backup-${todayISO()}.json`,content,'30 DAY backup');notify('Choose where to save your backup (Drive, Files, email…).');}
-      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not save the JSON backup. Please check the Files app permission.');}
+      catch(err){if(!/cancel/i.test(String(err?.message||err)))notify('Could not save the JSON backup. Use the Android share sheet to choose Files or Drive.');}
       return;
     }
     const blob=new Blob([content],{type:'application/json'});
@@ -1478,7 +1478,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
       report.remove();
       return;
     }catch(err){
-      if(isNativeAndroid()){report.remove();notify('Could not save the PDF report. Please check the Files app permission.');return;}
+      if(isNativeAndroid()){report.remove();notify('Could not save the PDF report. Use the Android share sheet to choose Files or Drive.');return;}
     }
     document.body.appendChild(report);
     const cleanup=()=>{document.body.classList.remove('printing-report');report.remove();window.removeEventListener('afterprint',cleanup);};

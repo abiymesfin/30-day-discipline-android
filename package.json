@@ -1,7 +1,7 @@
 {
   "name": "30-day-discipline-challenge",
   "private": true,
-  "version": "18.0.0",
+  "version": "19.0.0",
   "scripts": {
     "cap:add": "cap add android",
     "cap:sync": "cap sync android",
