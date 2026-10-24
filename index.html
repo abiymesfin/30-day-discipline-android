@@ -1452,6 +1452,35 @@ html[data-theme="dark"] .coach-send{color:#171821}
     }
     return pdf.output('blob');
   }
+  function makeStructuredPdf(report,title){
+    const jsPDF=window.jspdf?.jsPDF;
+    if(!jsPDF)return makePdfBlob(report.text,title);
+    const pdf=new jsPDF({unit:'pt',format:'a4'});
+    const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),M=34,W=pageW-M*2;
+    let y=M,page=1;
+    const colors={purple:[91,63,168],light:[246,243,252],line:[220,216,230],ink:[28,27,34],muted:[99,96,108]};
+    const addPage=()=>{pdf.addPage();page++;y=M;};
+    const footer=()=>{pdf.setFont('helvetica','normal');pdf.setFontSize(8);pdf.setTextColor(...colors.muted);pdf.text(`${title}  •  ${page}`,pageW-M,pageH-18,{align:'right'});};
+    const ensure=h=>{if(y+h>pageH-42){footer();addPage();}};
+    const text=(value,x,maxW,size=9,bold=false,color=colors.ink)=>{pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);pdf.setTextColor(...color);return pdf.splitTextToSize(String(value??'—'),maxW);};
+    pdf.setFillColor(...colors.purple);pdf.roundedRect(M,y,W,54,8,8,'F');
+    pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(21);pdf.text(String(title||'30 DAY Challenge Report'),M+16,y+25);pdf.setFont('helvetica','normal');pdf.setFontSize(9);pdf.text('Progress report',M+16,y+41);y+=68;
+    pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','normal');pdf.setFontSize(10);pdf.text(String(report.meta||''),M,y);y+=28;
+    const stats=report.stats||[];const gap=8,cardW=(W-gap*(stats.length-1))/Math.max(1,stats.length);
+    stats.forEach((stat,i)=>{const x=M+i*(cardW+gap);pdf.setFillColor(...colors.light);pdf.setDrawColor(...colors.line);pdf.roundedRect(x,y,cardW,50,6,6,'FD');pdf.setTextColor(...colors.purple);pdf.setFont('helvetica','bold');pdf.setFontSize(17);pdf.text(String(stat.value),x+10,y+22);pdf.setTextColor(...colors.muted);pdf.setFont('helvetica','normal');pdf.setFontSize(8);pdf.text(String(stat.label),x+10,y+38);});y+=66;
+    const drawTable=(headers,rows,widths)=>{
+      const headerH=24;
+      const drawHeader=()=>{pdf.setFillColor(...colors.purple);pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(8);let x=M;headers.forEach((h,i)=>{pdf.rect(x,y,widths[i],headerH,'F');pdf.text(String(h),x+6,y+16,{maxWidth:widths[i]-12});x+=widths[i];});y+=headerH;};
+      ensure(headerH);drawHeader();
+      rows.forEach((row,ri)=>{const lines=row.map((v,i)=>text(v,0,widths[i]-12,8,false));const rowH=Math.max(24,...lines.map(a=>a.length*10+10));if(y+rowH>pageH-42){footer();addPage();drawHeader();}let x=M;row.forEach((v,i)=>{pdf.setFillColor(...(ri%2? [255,255,255]:colors.light));pdf.setDrawColor(...colors.line);pdf.rect(x,y,widths[i],rowH,'FD');pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','normal');pdf.setFontSize(8);lines[i].forEach((line,j)=>pdf.text(line,x+6,y+14+j*10,{maxWidth:widths[i]-12}));x+=widths[i];});y+=rowH;});y+=16;
+    };
+    pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','bold');pdf.setFontSize(14);pdf.text('Habit summary',M,y);y+=10;
+    drawTable(['Habit','Purpose','Completed'],report.habits,[W*.36,W*.46,W*.18]);
+    pdf.setFont('helvetica','bold');pdf.setFontSize(14);pdf.setTextColor(...colors.ink);pdf.text('Daily check-ins & journal',M,y);y+=10;
+    drawTable(['Day','Check-ins','Mood','Reflection / win / tomorrow'],report.days,[W*.14,W*.16,W*.16,W*.54]);
+    footer();
+    return pdf.output('blob');
+  }
   async function exportData(){
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
     if(isNativeAndroid()){
@@ -1474,8 +1503,15 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const dayRows=Array.from({length:duration},(_,i)=>{const day=i+1, n=doneCount(day), rawNote=state.notes[String(day)]||{}, note=typeof rawNote==='string'?{entry:rawNote}:rawNote;const reflections=[note.entry?`Reflection: ${note.entry}`:'',note.win?`Win: ${note.win}`:'',note.tomorrow?`Tomorrow: ${note.tomorrow}`:''].filter(Boolean).join(' • ');return `<tr><td>Day ${day}<br><span class="report-muted">${escapeHTML(formatDate(checkDate(day),{month:'short',day:'numeric',year:'numeric'}))}</span></td><td>${n} / ${state.habits.length} habits</td><td>${escapeHTML(moodLabels[note.mood]||note.mood||'—')}</td><td>${escapeHTML(reflections||'—')}</td></tr>`;}).join('');
     report.innerHTML=`<h1>${escapeHTML(state.profile.challengeTitle||`${duration}-Day Challenge`)} — Report</h1><div class="report-meta">${escapeHTML(state.profile.name||'Personal challenge')}<br>Period: ${escapeHTML(started)} – ${escapeHTML(ended)} · Generated ${escapeHTML(formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'}))}</div><div class="report-stat-grid"><div class="report-stat"><b>${overallPercent()}%</b><br><span>Overall completion</span></div><div class="report-stat"><b>${allDoneDays()} / ${duration}</b><br><span>Days completed</span></div><div class="report-stat"><b>${currentStreak()}</b><br><span>Current full-day streak</span></div></div><h2>Habit summary</h2><table><thead><tr><th>Habit</th><th>Purpose</th><th>Completed days</th></tr></thead><tbody>${habitRows}</tbody></table><h2>Daily check-ins & reflections</h2><table><thead><tr><th>Day</th><th>Habit check-ins</th><th>Mood</th><th>Reflection / win / tomorrow's focus</th></tr></thead><tbody>${dayRows}</tbody></table><p class="report-muted">Your data is stored locally on this device. Sign-in and cloud sync are not enabled in this version.</p>`;
     const reportText=report.innerText || report.textContent || '';
+    const structured={
+      text:reportText,
+      meta:`${state.profile.name||'Personal challenge'}  •  ${started} – ${ended}  •  Generated ${formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'})}`,
+      stats:[{value:`${overallPercent()}%`,label:'Overall completion'},{value:`${allDoneDays()} / ${duration}`,label:'Days completed'},{value:String(currentStreak()),label:'Current full-day streak'}],
+      habits:state.habits.length?state.habits.map(h=>[`${h.emoji||'⭐'} ${h.name}`,h.details||'—',`${Array.from({length:duration},(_,i)=>Boolean((state.checks[String(i+1)]||{})[h.id])).filter(Boolean).length} / ${duration}`]):[['No habits added yet','—','—']],
+      days:Array.from({length:duration},(_,i)=>{const day=i+1,raw=state.notes[String(day)]||{},note=typeof raw==='string'?{entry:raw}:raw;const reflections=[note.entry?`Reflection: ${note.entry}`:'',note.win?`Win: ${note.win}`:'',note.tomorrow?`Tomorrow: ${note.tomorrow}`:''].filter(Boolean).join(' • ');return [`Day ${day}\n${formatDate(checkDate(day),{month:'short',day:'numeric',year:'numeric'})}`,`${doneCount(day)} / ${state.habits.length} habits`,moodLabels[note.mood]||note.mood||'—',reflections||'—'];})
+    };
     try{
-      const pdfBlob=await makePdfBlob(reportText, state.profile.challengeTitle||'Challenge report');
+      const pdfBlob=await makeStructuredPdf(structured, state.profile.challengeTitle||'30 DAY Challenge Report');
       const filename=`my-${duration}-day-challenge-report-${todayISO()}.pdf`;
       if(isNativeAndroid()){
         await saveNativeDownload(filename,await blobToBase64(pdfBlob),'application/pdf');
@@ -1744,7 +1780,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
   function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';$('authConfirm').setCustomValidity('');}
   $('authSignInTab').addEventListener('click',()=>setAuthMode('signin'));
   $('authSignUpTab').addEventListener('click',()=>setAuthMode('signup'));
-  $('authForm').addEventListener('submit',async e=>{e.preventDefault();if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}if(!supabaseClient){notify('Supabase is not configured yet. Add the project URL and publishable key in ai-coach-config.js.');return;}const email=$('authEmail').value.trim(),password=$('authPassword').value,submit=$('authSubmit');submit.disabled=true;submit.textContent=authMode==='signup'?'Creating account…':'Signing in…';try{const authRedirect=isNativeAndroid()?'com.thirtyday.discipline://auth/callback':location.href.split('#')[0];if(authMode==='signup'){const result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}});if(result.error)throw result.error;if(result.data.session){currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Account created and signed in.');goPage('coach');}else{notify('Account created. Check your email to confirm it, then sign in.');setAuthMode('signin');}}else{const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Signed in successfully.');goPage('coach');}renderCoachPage();}catch(err){notify(String(err?.message||'Sign-in failed. Check your email and password.').slice(0,180));}finally{submit.disabled=false;submit.textContent=authMode==='signup'?'Create account':'Sign in';}});
+  $('authForm').addEventListener('submit',async e=>{e.preventDefault();if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}if(!supabaseClient){notify('Supabase is not configured yet. Add the project URL and publishable key in ai-coach-config.js.');return;}const email=$('authEmail').value.trim(),password=$('authPassword').value,submit=$('authSubmit');submit.disabled=true;submit.textContent=authMode==='signup'?'Creating account…':'Signing in…';try{const authRedirect=isNativeAndroid()?'com.thirtyday.discipline://auth/callback':(location.origin&&location.origin!=='null'?location.origin+location.pathname:location.href.split('#')[0]);if(authMode==='signup'){const result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}});if(result.error)throw result.error;if(result.data.session){currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Account created and signed in.');goPage('coach');}else{notify('Account created. Check your email to confirm it, then sign in.');setAuthMode('signin');}}else{const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Signed in successfully.');goPage('coach');}renderCoachPage();}catch(err){const authMessage=String(err?.message||'Sign-in failed. Check your email and password.');const rateLimited=/rate.?limit|too many requests|email.*limit/i.test(authMessage);notify((rateLimited?'Email sending limit reached. Wait before trying again, or configure custom SMTP in Supabase. ':authMessage).slice(0,220));}finally{submit.disabled=false;submit.textContent=authMode==='signup'?'Create account':'Sign in';}});
   $('backFromSettings').addEventListener('click',()=>goPage('home'));
   $('saveReminderBtn').addEventListener('click',saveReminderSettings);
   $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);
