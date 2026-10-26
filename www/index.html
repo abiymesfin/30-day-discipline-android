@@ -321,6 +321,7 @@ html[data-theme="dark"] .close-btn{background:#30313d;color:#f3f1fa}
 .template-btn span:first-child{font-size:20px}
 .template-btn small{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-top:3px}
 .data-file-input{display:none}
+.weekday-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:7px}.weekday-choice{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:7px 2px;background:var(--surface);color:var(--muted);font-size:9px;font-weight:800;cursor:pointer}.challenge-day-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;max-height:190px;overflow:auto;margin-top:7px}.challenge-day-choice{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:9px;padding:8px 2px;background:var(--surface);color:var(--muted);font-size:9px;font-weight:800;cursor:pointer}.challenge-day-choice input{accent-color:#6c4ac2;margin-right:3px}.challenge-day-choice:has(input:checked){border-color:#8f73e8;background:#f0eaff;color:#5c3eaa}.weekday-choice input{accent-color:#6c4ac2}.weekday-choice:has(input:checked){border-color:#8f73e8;background:#f0eaff;color:#5c3eaa}.small-note{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:6px}
 .print-report{display:none}
 @media print{
   body.printing-report{background:#fff!important}
@@ -753,6 +754,15 @@ html[data-theme="dark"] .coach-send{color:#171821}
     <div id="habitFormWrap">
       <div class="form-field"><label for="habitName">HABIT NAME</label><input id="habitName" maxlength="70" placeholder="Enter a habit name" autocomplete="off"></div>
       <div class="form-field"><label for="habitDetails">WHY IS THIS IMPORTANT? (OPTIONAL)</label><textarea id="habitDetails" maxlength="180" placeholder="Write your own reason"></textarea></div>
+      <div class="form-field"><label for="habitAddMode">ADD HABIT TO</label><select id="habitAddMode"><option value="challenge">Entire challenge</option><option value="day">Day by day — this day only</option></select><small class="small-note" id="habitAddModeNote">This habit will appear on every day of your challenge.</small></div>
+      <div class="two-col" id="habitRepeatWrap">
+        <div class="form-field"><label for="habitSchedule">REPEAT</label><select id="habitSchedule"><option value="daily">Every day</option><option value="weekly">Selected weekdays each week</option><option value="specific">Specific challenge days</option></select></div>
+        <div class="form-field"><label for="habitWeeklyGoal">WEEKLY GOAL</label><input id="habitWeeklyGoal" type="number" min="1" max="7" value="7" inputmode="numeric"><small class="small-note">How many days each week?</small></div>
+      </div>
+      <div class="form-field" id="habitWeekdaysWrap" hidden><label>ACTIVE WEEKDAYS</label><div class="weekday-grid">
+        <label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="1">Mon</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="2">Tue</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="3">Wed</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="4">Thu</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="5">Fri</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="6">Sat</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="0">Sun</label>
+      </div><small class="small-note">The habit will appear only on these weekdays. Select the same number of days as your weekly goal.</small></div>
+      <div class="form-field" id="habitChallengeDaysWrap" hidden><label>ACTIVE CHALLENGE DAYS</label><div class="challenge-day-grid" id="habitChallengeDays"></div><small class="small-note">Select the exact challenge days when this habit should appear.</small></div>
       <div class="two-col">
         <div class="form-field"><label for="habitEmoji">ICON</label><select id="habitEmoji"><option value="">Choose icon</option><option value="🎯">🎯 Target</option><option value="📚">📚 Learning</option><option value="💧">💧 Water</option><option value="🏃">🏃 Movement</option><option value="🧘">🧘 Mindfulness</option><option value="🙏">🙏 Reflection</option><option value="💤">💤 Sleep</option><option value="📵">📵 Focus</option><option value="✍️">✍️ Writing</option><option value="💪">💪 Strength</option><option value="🌱">🌱 Growth</option><option value="⭐">⭐ Other</option></select></div>
         <div class="form-field"><label for="habitColor">CARD COLOR</label><select id="habitColor"><option value="yellow">Warm yellow</option><option value="blue">Soft blue</option><option value="mint">Mint green</option><option value="pink">Pink</option><option value="lav">Lavender</option></select></div>
@@ -790,11 +800,36 @@ html[data-theme="dark"] .coach-send{color:#171821}
   let cloudSyncReady=false;
   let cloudSaveTimer=null;
   let cloudErrorShown=false;
+  let cloudChannel=null;
   function cloudHasLocalProgress(){return state.habits.length>0||Object.keys(state.checks).length>0||Object.keys(state.notes).length>0||Boolean(state.profile.name||state.profile.challengeTitle||state.goals?.length);}
   function cloudReadableError(error){const m=String(error?.message||error||'');if(/relation|challenge_data/i.test(m))return 'Sign-in works, but the cloud data table is not configured yet.';if(/network|fetch/i.test(m))return 'Network error. Your local changes are still saved.';return m||'Cloud sync failed.';}
   async function saveCloudState(user,quiet=false){if(!supabaseClient||!user)return false;const {error}=await supabaseClient.from('challenge_data').upsert({user_id:user.id,payload:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error&&!quiet&&!cloudErrorShown){cloudErrorShown=true;notify(cloudReadableError(error));}return !error;}
-  function queueCloudSave(){if(!cloudSyncReady||!currentSupabaseSession?.user)return;clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>saveCloudState(currentSupabaseSession.user,true),700);}
-  async function reconcileCloud(user){if(!supabaseClient||!user)return;const {data,error}=await supabaseClient.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){notify(cloudReadableError(error));return;}const cloud=data?.payload&&isPlainObject(data.payload)?data.payload:null;if(cloud&&Object.keys(cloud).length&&cloudHasLocalProgress()){await saveCloudState(user,true);}else if(cloud&&Object.keys(cloud).length){state=normalizeState(cloud);persist({sync:false});}else if(cloudHasLocalProgress()){await saveCloudState(user,true);}cloudSyncReady=true;renderAll();}
+  function queueCloudSave(){if(!cloudSyncReady||!currentSupabaseSession?.user)return;clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>saveCloudState(currentSupabaseSession.user,false),700);}
+  function mergeCloudAndLocal(cloudPayload,localState){
+    const remote=normalizeState(cloudPayload),local=normalizeState(localState);
+    const merged=remote;
+    const ids=new Set(merged.habits.map(h=>String(h.id)));
+    local.habits.forEach(h=>{if(!ids.has(String(h.id))){merged.habits.push(h);ids.add(String(h.id));}});
+    Object.keys(local.checks).forEach(day=>{merged.checks[day]={...(merged.checks[day]||{}),...(local.checks[day]||{})};});
+    Object.keys(local.notes).forEach(day=>{if(!merged.notes[day])merged.notes[day]=local.notes[day];else{const a=local.notes[day],b=merged.notes[day];const at=typeof a==='object'?Date.parse(a.updatedAt||''):0,bt=typeof b==='object'?Date.parse(b.updatedAt||''):0;if(at>bt)merged.notes[day]=a;}});
+    if(!merged.profile.name&&local.profile.name)merged.profile.name=local.profile.name;if(!merged.profile.challengeTitle&&local.profile.challengeTitle)merged.profile.challengeTitle=local.profile.challengeTitle;
+    return merged;
+  }
+  function stopCloudRealtime(){
+    if(cloudChannel&&supabaseClient){try{supabaseClient.removeChannel(cloudChannel);}catch(err){}}
+    cloudChannel=null;
+  }
+  function startCloudRealtime(user){
+    stopCloudRealtime();
+    if(!supabaseClient||!user)return;
+    cloudChannel=supabaseClient.channel(`challenge-data-${user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'challenge_data',filter:`user_id=eq.${user.id}`},event=>{
+      const remote=event?.new?.payload;
+      if(!isPlainObject(remote))return;
+      // The database is the shared source of truth once a realtime event arrives.
+      state=normalizeState(remote);persist({sync:false});renderAll();
+    }).subscribe();
+  }
+  async function reconcileCloud(user){if(!supabaseClient||!user)return;const {data,error}=await supabaseClient.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){cloudSyncReady=false;notify(cloudReadableError(error));return;}const cloud=data?.payload&&isPlainObject(data.payload)?data.payload:null;if(cloud&&Object.keys(cloud).length){if(cloudHasLocalProgress()){state=mergeCloudAndLocal(cloud,state);persist({sync:false});await saveCloudState(user,false);}else{state=normalizeState(cloud);persist({sync:false});}}else if(cloudHasLocalProgress()){await saveCloudState(user,false);}cloudSyncReady=true;startCloudRealtime(user);renderAll();}
   async function handleNativeAuthUrl(url){
     try{
       if(!url||!supabaseClient)return;
@@ -817,7 +852,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
         try{const appPlugin=window.Capacitor?.Plugins?.App || (window.Capacitor?.registerPlugin ? window.Capacitor.registerPlugin('App') : null);if(appPlugin?.addListener)appPlugin.addListener('appUrlOpen',event=>handleNativeAuthUrl(event?.url));}catch(err){}
         window.__30DAY_GET_ACCESS_TOKEN=async()=>{if(!supabaseClient)return null;const result=await supabaseClient.auth.getSession();currentSupabaseSession=result?.data?.session||null;return currentSupabaseSession?.access_token||null;};
         supabaseClient.auth.getSession().then(async result=>{currentSupabaseSession=result?.data?.session||null;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();}).catch(()=>{});
-        supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentSupabaseSession=session||null;cloudSyncReady=false;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();});
+        supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentSupabaseSession=session||null;cloudSyncReady=false;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);else stopCloudRealtime();renderCoachPage();renderProfile();});
       }
     }catch(err){console.warn('Supabase client is not configured.',err);}
   }
@@ -877,7 +912,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
       s.habits.forEach(h=>{
         if(!isPlainObject(h)||h.id==null)return;
         const id=String(h.id);if(seen.has(id))return;seen.add(id);
-        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow',...(Array.isArray(h.days)?{days:[...new Set(h.days.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{}),...(Array.isArray(h.excludeDays)?{excludeDays:[...new Set(h.excludeDays.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{})});
+        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow',schedule:h.schedule==='weekly'?'weekly':h.schedule==='specific'?'specific':'daily',weeklyGoal:Math.max(1,Math.min(7,Math.floor(Number(h.weeklyGoal)||7))),...(Array.isArray(h.weekdays)?{weekdays:[...new Set(h.weekdays.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<=6))]}:{}),...(Array.isArray(h.days)?{days:[...new Set(h.days.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{}),...(Array.isArray(h.excludeDays)?{excludeDays:[...new Set(h.excludeDays.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{})});
       });
     }
     if(isPlainObject(s.checks))Object.keys(s.checks).forEach(k=>{if(isPlainObject(s.checks[k]))out.checks[k]=s.checks[k];});
@@ -974,9 +1009,15 @@ html[data-theme="dark"] .coach-send{color:#171821}
   function habitDaysFor(habit){
     const base=Array.isArray(habit.days)&&habit.days.length?habit.days.map(Number):Array.from({length:challengeDuration()},(_,i)=>i+1);
     const excluded=new Set(Array.isArray(habit.excludeDays)?habit.excludeDays.map(Number):[]);
-    return [...new Set(base)].filter(d=>Number.isInteger(d)&&d>=1&&d<=challengeDuration()&&!excluded.has(d));
+    let days=[...new Set(base)].filter(d=>Number.isInteger(d)&&d>=1&&d<=challengeDuration()&&!excluded.has(d));
+    if(habit.schedule==='weekly'){
+      const weekdays=Array.isArray(habit.weekdays)&&habit.weekdays.length?habit.weekdays.map(Number):[1,2,3,4,5,6,0].slice(0,Math.max(1,Math.min(7,Number(habit.weeklyGoal)||7)));
+      days=days.filter(d=>weekdays.includes(dateFromISO(checkDate(d)).getDay()));
+    }
+    return days;
   }
-  function habitsForDay(day){const d=Number(day);return state.habits.filter(h=>{const allowed=!Array.isArray(h.days)||h.days.length===0||h.days.includes(d);const excluded=Array.isArray(h.excludeDays)&&h.excludeDays.includes(d);return allowed&&!excluded;});}
+  function habitsForDay(day){const d=Number(day);return state.habits.filter(h=>habitDaysFor(h).includes(d));}
+  function habitScheduleLabel(habit){if(habit.schedule!=='weekly')return 'Every day';const n=Number(habit.weeklyGoal)||7;return `${n} day${n===1?'':'s'} per week`; }
   function doneCount(day){return habitsForDay(day).filter(h=>Boolean(dayChecks(day)[h.id])).length;}
   function isDayDone(day){const habits=habitsForDay(day);return habits.length>0 && doneCount(day)===habits.length;}
   function totalChecked(){let n=0;for(let d=1;d<=challengeDuration();d++)n+=doneCount(d);return n;}
@@ -1064,7 +1105,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
         const card=document.createElement('button');
         card.type='button';
         card.className=`habit-card ${escapeHTML(habit.color||['yellow','blue','mint','pink','lav'][index%5])}${complete?' complete':''}`;
-        card.innerHTML=`<span class="tag">${complete?'COMPLETED':'DAILY HABIT'}</span><span class="habit-card-name">${escapeHTML(habit.name)}</span><span class="habit-card-meta">${escapeHTML(habit.details||'Your personal commitment')}</span><span class="card-foot"><span>${escapeHTML(habit.emoji||'⭐')} &nbsp;${complete?'Done for today':'Tap to mark done'}</span><span class="card-mark">${complete?icons.check:'↗'}</span></span>`;
+        card.innerHTML=`<span class="tag">${complete?'COMPLETED':habit.schedule==='weekly'?'WEEKLY GOAL':'DAILY HABIT'}</span><span class="habit-card-name">${escapeHTML(habit.name)}</span><span class="habit-card-meta">${escapeHTML(habit.details||'Your personal commitment')}</span><span class="card-foot"><span>${escapeHTML(habit.emoji||'⭐')} &nbsp;${complete?'Done for today':'Tap to mark done'}</span><span class="card-mark">${complete?icons.check:'↗'}</span></span>`;
         card.addEventListener('click',()=>toggleHabit(habit.id,selectedDay));
         plans.append(card);
       });
@@ -1077,7 +1118,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const check=document.createElement('button');check.className='check-btn'+(complete?' checked':'');check.setAttribute('aria-label',complete?'Mark incomplete':'Mark complete');check.innerHTML=complete?icons.check:'';
     check.addEventListener('click',()=>toggleHabit(habit.id,day));
     const em=document.createElement('div');em.className='row-icon';em.textContent=habit.emoji||'⭐';
-    const main=document.createElement('div');main.className='row-main';main.innerHTML=`<div class="row-name">${escapeHTML(habit.name)}</div><div class="row-desc">${escapeHTML(complete?'Completed for this day':habit.details||'Not checked off yet')}</div>`;
+    const main=document.createElement('div');main.className='row-main';main.innerHTML=`<div class="row-name">${escapeHTML(habit.name)}</div><div class="row-desc">${escapeHTML(complete?'Completed for this day':habit.details||habitScheduleLabel(habit))}</div>`;
     const actions=document.createElement('div');actions.className='habit-actions';
     const edit=document.createElement('button');edit.type='button';edit.className='habit-action';edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>';edit.setAttribute('aria-label',`Edit ${habit.name}`);edit.onclick=()=>openHabitModal(habit.id);
     const del=document.createElement('button');del.type='button';del.className='habit-action delete';del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16"/><path d="M10 11v6m4-6v6"/><path d="M5 7l1 14h12l1-14M9 7V4h6v3Z"/></svg>';del.setAttribute('aria-label',`Delete ${habit.name}`);del.onclick=()=>deleteHabit(habit.id);
@@ -1283,6 +1324,22 @@ html[data-theme="dark"] .coach-send{color:#171821}
     cfg.lastReminderDate=today;persist();
     await sendSystemNotification(false);
   }
+  function renderHabitDayPicker(selectedDays=[]){
+    const wrap=$('habitChallengeDays');if(!wrap)return;wrap.innerHTML='';
+    const selected=new Set((Array.isArray(selectedDays)?selectedDays:[]).map(Number));
+    for(let day=1;day<=challengeDuration();day++){
+      const label=document.createElement('label');label.className='challenge-day-choice';
+      const checked=selected.has(day);label.innerHTML=`<input type="checkbox" class="habit-challenge-day" value="${day}" ${checked?'checked':''}>Day ${day}`;wrap.append(label);
+    }
+  }
+  function updateHabitAddModeUI(){
+    const mode=$('habitAddMode')?.value||'challenge';
+    const dayOnly=mode==='day';
+    if($('habitRepeatWrap'))$('habitRepeatWrap').hidden=dayOnly;
+    if($('habitWeekdaysWrap'))$('habitWeekdaysWrap').hidden=dayOnly||$('habitSchedule').value!=='weekly';
+    if($('habitChallengeDaysWrap'))$('habitChallengeDaysWrap').hidden=true;
+    if($('habitAddModeNote'))$('habitAddModeNote').textContent=dayOnly?`This habit will appear on Day ${selectedDay} only. Add another habit from another day to make each day different.`:'This habit will appear on every day of your challenge.';
+  }
   function openModal(mode){
     modalMode=mode;
     $('modalBack').classList.add('show');
@@ -1292,10 +1349,18 @@ html[data-theme="dark"] .coach-send{color:#171821}
     $('modalTitle').textContent=mode==='profile'?'Edit profile':mode==='date'?'Challenge start date':editingHabitId?'Edit habit':'Add a habit';
     if(mode==='habit'){
       const existing=editingHabitId?state.habits.find(h=>h.id===editingHabitId):null;
+      $('habitAddMode').value='challenge';
       $('habitName').value=existing?.name||'';
       $('habitDetails').value=existing?.details||'';
       $('habitEmoji').value=existing?.emoji||'';
       $('habitColor').value=existing?.color||'yellow';
+      $('habitSchedule').value=existing?.schedule==='weekly'?'weekly':existing?.schedule==='specific'?'specific':'daily';
+      $('habitWeeklyGoal').value=String(existing?.weeklyGoal||7);
+      document.querySelectorAll('.habit-weekday').forEach(box=>box.checked=Array.isArray(existing?.weekdays)?existing.weekdays.map(Number).includes(Number(box.value)):$('habitSchedule').value==='daily');
+      $('habitWeekdaysWrap').hidden=$('habitSchedule').value!=='weekly';
+      $('habitChallengeDaysWrap').hidden=$('habitSchedule').value!=='specific';
+      renderHabitDayPicker(existing?.schedule==='specific'&&Array.isArray(existing?.days)?existing.days:[selectedDay]);
+      updateHabitAddModeUI();
       const editDays=existing?habitDaysFor(existing):[];
       $('habitEditScopeWrap').hidden=!(existing&&editDays.includes(selectedDay)&&editDays.length>1);
       $('habitEditScope').value='day';
@@ -1315,6 +1380,18 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const name=$('habitName').value.trim();
     if(!name){notify('Enter a habit name first.');$('habitName').focus();return;}
     const details=$('habitDetails').value.trim(),emoji=$('habitEmoji').value,color=$('habitColor').value;
+    if(!editingHabitId&&$('habitAddMode').value==='day'){
+      state.habits.push({id:cryptoId(),name,details,emoji,color,schedule:'specific',weeklyGoal:1,weekdays:[],days:[selectedDay],excludeDays:[],createdAt:new Date().toISOString()});
+      persist();closeModal();renderAll();notify(`Habit added for Day ${selectedDay} only.`);return;
+    }
+    const selectedSchedule=$('habitSchedule').value;
+    const schedule=selectedSchedule==='weekly'?'weekly':selectedSchedule==='specific'?'specific':'daily';
+    const weeklyGoal=Math.max(1,Math.min(7,Math.floor(Number($('habitWeeklyGoal').value)||7)));
+    const weekdays=[...document.querySelectorAll('.habit-weekday:checked')].map(box=>Number(box.value));
+    const selectedDays=[...document.querySelectorAll('.habit-challenge-day:checked')].map(box=>Number(box.value));
+    if(schedule==='weekly'&&weekdays.length!==weeklyGoal){notify(`Select exactly ${weeklyGoal} weekday${weeklyGoal===1?'':'s'} for this weekly goal.`);return;}
+    if(schedule==='specific'&&!selectedDays.length){notify('Select at least one challenge day for this habit.');return;}
+    const scheduleFields={schedule,weeklyGoal,weekdays:schedule==='weekly'?weekdays:[],days:schedule==='specific'?selectedDays:[]};
     if(editingHabitId){
       const h=state.habits.find(h=>h.id===editingHabitId);
       if(h){
@@ -1327,19 +1404,19 @@ html[data-theme="dark"] .coach-send{color:#171821}
           if(Array.isArray(h.days)&&h.days.length){h.days=visibleDays.filter(day=>day!==selectedDay);}
           else{h.excludeDays=[...new Set([...(Array.isArray(h.excludeDays)?h.excludeDays:[]),selectedDay])];}
           const cloneId=cryptoId();
-          state.habits.push({...h,id:cloneId,name,details,emoji,color,days:[selectedDay],excludeDays:[],createdAt:new Date().toISOString(),daySpecificEditOf:h.id});
+          state.habits.push({...h,...scheduleFields,id:cloneId,name,details,emoji,color,days:[selectedDay],excludeDays:[],createdAt:new Date().toISOString(),daySpecificEditOf:h.id});
           if(wasChecked){dayChecksForSelected[cloneId]=true;delete dayChecksForSelected[h.id];}
           notify('Updated for this day only. Other days are unchanged.');
         }else{
-          Object.assign(h,{name,details,emoji,color});
+          Object.assign(h,{name,details,emoji,color,...scheduleFields});
           if($('habitEditScope').value==='all'){
-            state.habits.filter(item=>item.daySpecificEditOf===h.id).forEach(item=>Object.assign(item,{name,details,emoji,color}));
+            state.habits.filter(item=>item.daySpecificEditOf===h.id).forEach(item=>Object.assign(item,{name,details,emoji,color,...scheduleFields}));
           }
           notify('Habit updated.');
         }
       }
     }else{
-      state.habits.push({id:cryptoId(),name,details,emoji,color,createdAt:new Date().toISOString()});
+      state.habits.push({id:cryptoId(),name,details,emoji,color,...scheduleFields,createdAt:new Date().toISOString()});
       notify('Habit added.');
     }
     persist();closeModal();renderAll();
@@ -1452,6 +1529,35 @@ html[data-theme="dark"] .coach-send{color:#171821}
     }
     return pdf.output('blob');
   }
+  function makeStructuredPdf(report,title){
+    const jsPDF=window.jspdf?.jsPDF;
+    if(!jsPDF)return makePdfBlob(report.text,title);
+    const pdf=new jsPDF({unit:'pt',format:'a4'});
+    const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),M=34,W=pageW-M*2;
+    let y=M,page=1;
+    const colors={purple:[91,63,168],light:[246,243,252],line:[220,216,230],ink:[28,27,34],muted:[99,96,108]};
+    const addPage=()=>{pdf.addPage();page++;y=M;};
+    const footer=()=>{pdf.setFont('helvetica','normal');pdf.setFontSize(8);pdf.setTextColor(...colors.muted);pdf.text(`${title}  •  ${page}`,pageW-M,pageH-18,{align:'right'});};
+    const ensure=h=>{if(y+h>pageH-42){footer();addPage();}};
+    const text=(value,x,maxW,size=9,bold=false,color=colors.ink)=>{pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);pdf.setTextColor(...color);return pdf.splitTextToSize(String(value??'—'),maxW);};
+    pdf.setFillColor(...colors.purple);pdf.roundedRect(M,y,W,54,8,8,'F');
+    pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(21);pdf.text(String(title||'30 DAY Challenge Report'),M+16,y+25);pdf.setFont('helvetica','normal');pdf.setFontSize(9);pdf.text('Progress report',M+16,y+41);y+=68;
+    pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','normal');pdf.setFontSize(10);pdf.text(String(report.meta||''),M,y);y+=28;
+    const stats=report.stats||[];const gap=8,cardW=(W-gap*(stats.length-1))/Math.max(1,stats.length);
+    stats.forEach((stat,i)=>{const x=M+i*(cardW+gap);pdf.setFillColor(...colors.light);pdf.setDrawColor(...colors.line);pdf.roundedRect(x,y,cardW,50,6,6,'FD');pdf.setTextColor(...colors.purple);pdf.setFont('helvetica','bold');pdf.setFontSize(17);pdf.text(String(stat.value),x+10,y+22);pdf.setTextColor(...colors.muted);pdf.setFont('helvetica','normal');pdf.setFontSize(8);pdf.text(String(stat.label),x+10,y+38);});y+=66;
+    const drawTable=(headers,rows,widths)=>{
+      const headerH=24;
+      const drawHeader=()=>{pdf.setFillColor(...colors.purple);pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(8);let x=M;headers.forEach((h,i)=>{pdf.rect(x,y,widths[i],headerH,'F');pdf.text(String(h),x+6,y+16,{maxWidth:widths[i]-12});x+=widths[i];});y+=headerH;};
+      ensure(headerH);drawHeader();
+      rows.forEach((row,ri)=>{const lines=row.map((v,i)=>text(v,0,widths[i]-12,8,false));const rowH=Math.max(24,...lines.map(a=>a.length*10+10));if(y+rowH>pageH-42){footer();addPage();drawHeader();}let x=M;row.forEach((v,i)=>{pdf.setFillColor(...(ri%2? [255,255,255]:colors.light));pdf.setDrawColor(...colors.line);pdf.rect(x,y,widths[i],rowH,'FD');pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','normal');pdf.setFontSize(8);lines[i].forEach((line,j)=>pdf.text(line,x+6,y+14+j*10,{maxWidth:widths[i]-12}));x+=widths[i];});y+=rowH;});y+=16;
+    };
+    pdf.setTextColor(...colors.ink);pdf.setFont('helvetica','bold');pdf.setFontSize(14);pdf.text('Habit summary',M,y);y+=10;
+    drawTable(['Habit','Purpose','Completed'],report.habits,[W*.36,W*.46,W*.18]);
+    pdf.setFont('helvetica','bold');pdf.setFontSize(14);pdf.setTextColor(...colors.ink);pdf.text('Daily check-ins & journal',M,y);y+=10;
+    drawTable(['Day','Check-ins','Mood','Reflection / win / tomorrow'],report.days,[W*.14,W*.16,W*.16,W*.54]);
+    footer();
+    return pdf.output('blob');
+  }
   async function exportData(){
     const content=JSON.stringify({exportedAt:new Date().toISOString(),...state},null,2);
     if(isNativeAndroid()){
@@ -1472,10 +1578,17 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const habitRows=state.habits.length?state.habits.map(h=>`<tr><td>${escapeHTML(h.emoji||'⭐')} ${escapeHTML(h.name)}</td><td>${escapeHTML(h.details||'—')}</td><td>${Array.from({length:duration},(_,i)=>Boolean((state.checks[String(i+1)]||{})[h.id])).filter(Boolean).length} / ${duration}</td></tr>`).join(''):'<tr><td colspan="3">No habits added yet</td></tr>';
     const moodLabels={great:'😄 Great',good:'🙂 Good',okay:'😐 Okay',low:'😔 Low',tough:'😣 Tough'};
     const dayRows=Array.from({length:duration},(_,i)=>{const day=i+1, n=doneCount(day), rawNote=state.notes[String(day)]||{}, note=typeof rawNote==='string'?{entry:rawNote}:rawNote;const reflections=[note.entry?`Reflection: ${note.entry}`:'',note.win?`Win: ${note.win}`:'',note.tomorrow?`Tomorrow: ${note.tomorrow}`:''].filter(Boolean).join(' • ');return `<tr><td>Day ${day}<br><span class="report-muted">${escapeHTML(formatDate(checkDate(day),{month:'short',day:'numeric',year:'numeric'}))}</span></td><td>${n} / ${state.habits.length} habits</td><td>${escapeHTML(moodLabels[note.mood]||note.mood||'—')}</td><td>${escapeHTML(reflections||'—')}</td></tr>`;}).join('');
-    report.innerHTML=`<h1>${escapeHTML(state.profile.challengeTitle||`${duration}-Day Challenge`)} — Report</h1><div class="report-meta">${escapeHTML(state.profile.name||'Personal challenge')}<br>Period: ${escapeHTML(started)} – ${escapeHTML(ended)} · Generated ${escapeHTML(formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'}))}</div><div class="report-stat-grid"><div class="report-stat"><b>${overallPercent()}%</b><br><span>Overall completion</span></div><div class="report-stat"><b>${allDoneDays()} / ${duration}</b><br><span>Days completed</span></div><div class="report-stat"><b>${currentStreak()}</b><br><span>Current full-day streak</span></div></div><h2>Habit summary</h2><table><thead><tr><th>Habit</th><th>Purpose</th><th>Completed days</th></tr></thead><tbody>${habitRows}</tbody></table><h2>Daily check-ins & reflections</h2><table><thead><tr><th>Day</th><th>Habit check-ins</th><th>Mood</th><th>Reflection / win / tomorrow's focus</th></tr></thead><tbody>${dayRows}</tbody></table><p class="report-muted">Your data is stored locally on this device. Sign-in and cloud sync are not enabled in this version.</p>`;
+    report.innerHTML=`<h1>${escapeHTML(state.profile.challengeTitle||`${duration}-Day Challenge`)} — Report</h1><div class="report-meta">${escapeHTML(state.profile.name||'Personal challenge')}<br>Period: ${escapeHTML(started)} – ${escapeHTML(ended)} · Generated ${escapeHTML(formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'}))}</div><div class="report-stat-grid"><div class="report-stat"><b>${overallPercent()}%</b><br><span>Overall completion</span></div><div class="report-stat"><b>${allDoneDays()} / ${duration}</b><br><span>Days completed</span></div><div class="report-stat"><b>${currentStreak()}</b><br><span>Current full-day streak</span></div></div><h2>Habit summary</h2><table><thead><tr><th>Habit</th><th>Purpose</th><th>Completed days</th></tr></thead><tbody>${habitRows}</tbody></table><h2>Daily check-ins & reflections</h2><table><thead><tr><th>Day</th><th>Habit check-ins</th><th>Mood</th><th>Reflection / win / tomorrow's focus</th></tr></thead><tbody>${dayRows}</tbody></table><p class="report-muted">Your data is stored on this device and synced to your account when you are signed in.</p>`;
     const reportText=report.innerText || report.textContent || '';
+    const structured={
+      text:reportText,
+      meta:`${state.profile.name||'Personal challenge'}  •  ${started} – ${ended}  •  Generated ${formatDate(todayISO(),{year:'numeric',month:'long',day:'numeric'})}`,
+      stats:[{value:`${overallPercent()}%`,label:'Overall completion'},{value:`${allDoneDays()} / ${duration}`,label:'Days completed'},{value:String(currentStreak()),label:'Current full-day streak'}],
+      habits:state.habits.length?state.habits.map(h=>[`${h.emoji||'⭐'} ${h.name}`,h.details||'—',`${Array.from({length:duration},(_,i)=>Boolean((state.checks[String(i+1)]||{})[h.id])).filter(Boolean).length} / ${duration}`]):[['No habits added yet','—','—']],
+      days:Array.from({length:duration},(_,i)=>{const day=i+1,raw=state.notes[String(day)]||{},note=typeof raw==='string'?{entry:raw}:raw;const reflections=[note.entry?`Reflection: ${note.entry}`:'',note.win?`Win: ${note.win}`:'',note.tomorrow?`Tomorrow: ${note.tomorrow}`:''].filter(Boolean).join(' • ');return [`Day ${day}\n${formatDate(checkDate(day),{month:'short',day:'numeric',year:'numeric'})}`,`${doneCount(day)} / ${state.habits.length} habits`,moodLabels[note.mood]||note.mood||'—',reflections||'—'];})
+    };
     try{
-      const pdfBlob=await makePdfBlob(reportText, state.profile.challengeTitle||'Challenge report');
+      const pdfBlob=await makeStructuredPdf(structured, state.profile.challengeTitle||'30 DAY Challenge Report');
       const filename=`my-${duration}-day-challenge-report-${todayISO()}.pdf`;
       if(isNativeAndroid()){
         await saveNativeDownload(filename,await blobToBase64(pdfBlob),'application/pdf');
@@ -1722,6 +1835,9 @@ html[data-theme="dark"] .coach-send{color:#171821}
   $('themeSelect').addEventListener('change',e=>{state.settings.theme=e.target.value==='dark'?'dark':'light';persist();applyTheme();notify(`${state.settings.theme==='dark'?'Dark':'Light'} mode enabled.`);});
   $('closeModal').addEventListener('click',closeModal);
   $('cancelModal').addEventListener('click',closeModal);
+  $('habitAddMode').addEventListener('change',updateHabitAddModeUI);
+  $('habitSchedule').addEventListener('change',()=>{const mode=$('habitSchedule').value;$('habitWeekdaysWrap').hidden=mode!=='weekly';$('habitChallengeDaysWrap').hidden=mode!=='specific';if(mode==='weekly'&&![...document.querySelectorAll('.habit-weekday:checked')].length){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<Number($('habitWeeklyGoal').value||7));}if(mode==='specific'&&!document.querySelector('.habit-challenge-day:checked'))renderHabitDayPicker([selectedDay]);});
+  $('habitWeeklyGoal').addEventListener('change',()=>{const n=Math.max(1,Math.min(7,Number($('habitWeeklyGoal').value)||7));$('habitWeeklyGoal').value=n;if($('habitSchedule').value==='weekly'){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<n);}});
   $('saveHabitBtn').addEventListener('click',saveHabit);
   $('editProfileBtn').addEventListener('click',()=>openModal('profile'));
   $('editChallengeBtn').addEventListener('click',()=>openModal('date'));
@@ -1744,7 +1860,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
   function setAuthMode(mode){authMode=mode;const signup=mode==='signup';$('authSignInTab').classList.toggle('active',!signup);$('authSignUpTab').classList.toggle('active',signup);$('authConfirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authSubmit').textContent=signup?'Create account':'Sign in';$('authPassword').autocomplete=signup?'new-password':'current-password';$('authConfirm').setCustomValidity('');}
   $('authSignInTab').addEventListener('click',()=>setAuthMode('signin'));
   $('authSignUpTab').addEventListener('click',()=>setAuthMode('signup'));
-  $('authForm').addEventListener('submit',async e=>{e.preventDefault();if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}if(!supabaseClient){notify('Supabase is not configured yet. Add the project URL and publishable key in ai-coach-config.js.');return;}const email=$('authEmail').value.trim(),password=$('authPassword').value,submit=$('authSubmit');submit.disabled=true;submit.textContent=authMode==='signup'?'Creating account…':'Signing in…';try{const authRedirect=isNativeAndroid()?'com.thirtyday.discipline://auth/callback':location.href.split('#')[0];if(authMode==='signup'){const result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}});if(result.error)throw result.error;if(result.data.session){currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Account created and signed in.');goPage('coach');}else{notify('Account created. Check your email to confirm it, then sign in.');setAuthMode('signin');}}else{const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Signed in successfully.');goPage('coach');}renderCoachPage();}catch(err){notify(String(err?.message||'Sign-in failed. Check your email and password.').slice(0,180));}finally{submit.disabled=false;submit.textContent=authMode==='signup'?'Create account':'Sign in';}});
+  $('authForm').addEventListener('submit',async e=>{e.preventDefault();if(authMode==='signup'&&$('authPassword').value!==$('authConfirm').value){$('authConfirm').setCustomValidity('Passwords do not match.');$('authConfirm').reportValidity();$('authConfirm').setCustomValidity('');return;}if(!supabaseClient){notify('Supabase is not configured yet. Add the project URL and publishable key in ai-coach-config.js.');return;}const email=$('authEmail').value.trim(),password=$('authPassword').value,submit=$('authSubmit');submit.disabled=true;submit.textContent=authMode==='signup'?'Creating account…':'Signing in…';try{const authRedirect=isNativeAndroid()?'com.thirtyday.discipline://auth/callback':(location.origin&&location.origin!=='null'?location.origin+location.pathname:location.href.split('#')[0]);if(authMode==='signup'){const result=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:authRedirect}});if(result.error)throw result.error;if(result.data.session){currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Account created and signed in.');goPage('coach');}else{notify('Account created. Check your email to confirm it, then sign in.');setAuthMode('signin');}}else{const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;currentSupabaseSession=result.data.session;await reconcileCloud(currentSupabaseSession.user);notify('Signed in successfully.');goPage('coach');}renderCoachPage();}catch(err){const authMessage=String(err?.message||'Sign-in failed. Check your email and password.');const rateLimited=/rate.?limit|too many requests|email.*limit/i.test(authMessage);notify((rateLimited?'Email sending limit reached. Wait before trying again, or configure custom SMTP in Supabase. ':authMessage).slice(0,220));}finally{submit.disabled=false;submit.textContent=authMode==='signup'?'Create account':'Sign in';}});
   $('backFromSettings').addEventListener('click',()=>goPage('home'));
   $('saveReminderBtn').addEventListener('click',saveReminderSettings);
   $('enableNotificationsBtn').addEventListener('click',enableDailyReminder);

@@ -800,6 +800,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
   let cloudSyncReady=false;
   let cloudSaveTimer=null;
   let cloudErrorShown=false;
+  let cloudChannel=null;
   function cloudHasLocalProgress(){return state.habits.length>0||Object.keys(state.checks).length>0||Object.keys(state.notes).length>0||Boolean(state.profile.name||state.profile.challengeTitle||state.goals?.length);}
   function cloudReadableError(error){const m=String(error?.message||error||'');if(/relation|challenge_data/i.test(m))return 'Sign-in works, but the cloud data table is not configured yet.';if(/network|fetch/i.test(m))return 'Network error. Your local changes are still saved.';return m||'Cloud sync failed.';}
   async function saveCloudState(user,quiet=false){if(!supabaseClient||!user)return false;const {error}=await supabaseClient.from('challenge_data').upsert({user_id:user.id,payload:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error&&!quiet&&!cloudErrorShown){cloudErrorShown=true;notify(cloudReadableError(error));}return !error;}
@@ -814,7 +815,21 @@ html[data-theme="dark"] .coach-send{color:#171821}
     if(!merged.profile.name&&local.profile.name)merged.profile.name=local.profile.name;if(!merged.profile.challengeTitle&&local.profile.challengeTitle)merged.profile.challengeTitle=local.profile.challengeTitle;
     return merged;
   }
-  async function reconcileCloud(user){if(!supabaseClient||!user)return;const {data,error}=await supabaseClient.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){cloudSyncReady=false;notify(cloudReadableError(error));return;}const cloud=data?.payload&&isPlainObject(data.payload)?data.payload:null;if(cloud&&Object.keys(cloud).length){if(cloudHasLocalProgress()){state=mergeCloudAndLocal(cloud,state);persist({sync:false});await saveCloudState(user,false);}else{state=normalizeState(cloud);persist({sync:false});}}else if(cloudHasLocalProgress()){await saveCloudState(user,false);}cloudSyncReady=true;renderAll();}
+  function stopCloudRealtime(){
+    if(cloudChannel&&supabaseClient){try{supabaseClient.removeChannel(cloudChannel);}catch(err){}}
+    cloudChannel=null;
+  }
+  function startCloudRealtime(user){
+    stopCloudRealtime();
+    if(!supabaseClient||!user)return;
+    cloudChannel=supabaseClient.channel(`challenge-data-${user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'challenge_data',filter:`user_id=eq.${user.id}`},event=>{
+      const remote=event?.new?.payload;
+      if(!isPlainObject(remote))return;
+      // The database is the shared source of truth once a realtime event arrives.
+      state=normalizeState(remote);persist({sync:false});renderAll();
+    }).subscribe();
+  }
+  async function reconcileCloud(user){if(!supabaseClient||!user)return;const {data,error}=await supabaseClient.from('challenge_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){cloudSyncReady=false;notify(cloudReadableError(error));return;}const cloud=data?.payload&&isPlainObject(data.payload)?data.payload:null;if(cloud&&Object.keys(cloud).length){if(cloudHasLocalProgress()){state=mergeCloudAndLocal(cloud,state);persist({sync:false});await saveCloudState(user,false);}else{state=normalizeState(cloud);persist({sync:false});}}else if(cloudHasLocalProgress()){await saveCloudState(user,false);}cloudSyncReady=true;startCloudRealtime(user);renderAll();}
   async function handleNativeAuthUrl(url){
     try{
       if(!url||!supabaseClient)return;
@@ -837,7 +852,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
         try{const appPlugin=window.Capacitor?.Plugins?.App || (window.Capacitor?.registerPlugin ? window.Capacitor.registerPlugin('App') : null);if(appPlugin?.addListener)appPlugin.addListener('appUrlOpen',event=>handleNativeAuthUrl(event?.url));}catch(err){}
         window.__30DAY_GET_ACCESS_TOKEN=async()=>{if(!supabaseClient)return null;const result=await supabaseClient.auth.getSession();currentSupabaseSession=result?.data?.session||null;return currentSupabaseSession?.access_token||null;};
         supabaseClient.auth.getSession().then(async result=>{currentSupabaseSession=result?.data?.session||null;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();}).catch(()=>{});
-        supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentSupabaseSession=session||null;cloudSyncReady=false;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);renderCoachPage();renderProfile();});
+        supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentSupabaseSession=session||null;cloudSyncReady=false;if(currentSupabaseSession)await reconcileCloud(currentSupabaseSession.user);else stopCloudRealtime();renderCoachPage();renderProfile();});
       }
     }catch(err){console.warn('Supabase client is not configured.',err);}
   }
