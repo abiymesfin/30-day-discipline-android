@@ -321,7 +321,7 @@ html[data-theme="dark"] .close-btn{background:#30313d;color:#f3f1fa}
 .template-btn span:first-child{font-size:20px}
 .template-btn small{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-top:3px}
 .data-file-input{display:none}
-.weekday-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:7px}.weekday-choice{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:7px 2px;background:var(--surface);color:var(--muted);font-size:9px;font-weight:800;cursor:pointer}.weekday-choice input{accent-color:#6c4ac2}.weekday-choice:has(input:checked){border-color:#8f73e8;background:#f0eaff;color:#5c3eaa}.small-note{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:6px}
+.weekday-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:7px}.weekday-choice{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:7px 2px;background:var(--surface);color:var(--muted);font-size:9px;font-weight:800;cursor:pointer}.challenge-day-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;max-height:190px;overflow:auto;margin-top:7px}.challenge-day-choice{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:9px;padding:8px 2px;background:var(--surface);color:var(--muted);font-size:9px;font-weight:800;cursor:pointer}.challenge-day-choice input{accent-color:#6c4ac2;margin-right:3px}.challenge-day-choice:has(input:checked){border-color:#8f73e8;background:#f0eaff;color:#5c3eaa}.weekday-choice input{accent-color:#6c4ac2}.weekday-choice:has(input:checked){border-color:#8f73e8;background:#f0eaff;color:#5c3eaa}.small-note{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:6px}
 .print-report{display:none}
 @media print{
   body.printing-report{background:#fff!important}
@@ -755,12 +755,13 @@ html[data-theme="dark"] .coach-send{color:#171821}
       <div class="form-field"><label for="habitName">HABIT NAME</label><input id="habitName" maxlength="70" placeholder="Enter a habit name" autocomplete="off"></div>
       <div class="form-field"><label for="habitDetails">WHY IS THIS IMPORTANT? (OPTIONAL)</label><textarea id="habitDetails" maxlength="180" placeholder="Write your own reason"></textarea></div>
       <div class="two-col">
-        <div class="form-field"><label for="habitSchedule">REPEAT</label><select id="habitSchedule"><option value="daily">Every day</option><option value="weekly">Selected days each week</option></select></div>
+        <div class="form-field"><label for="habitSchedule">REPEAT</label><select id="habitSchedule"><option value="daily">Every day</option><option value="weekly">Selected weekdays each week</option><option value="specific">Specific challenge days</option></select></div>
         <div class="form-field"><label for="habitWeeklyGoal">WEEKLY GOAL</label><input id="habitWeeklyGoal" type="number" min="1" max="7" value="7" inputmode="numeric"><small class="small-note">How many days each week?</small></div>
       </div>
       <div class="form-field" id="habitWeekdaysWrap" hidden><label>ACTIVE WEEKDAYS</label><div class="weekday-grid">
         <label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="1">Mon</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="2">Tue</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="3">Wed</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="4">Thu</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="5">Fri</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="6">Sat</label><label class="weekday-choice"><input type="checkbox" class="habit-weekday" value="0">Sun</label>
       </div><small class="small-note">The habit will appear only on these weekdays. Select the same number of days as your weekly goal.</small></div>
+      <div class="form-field" id="habitChallengeDaysWrap" hidden><label>ACTIVE CHALLENGE DAYS</label><div class="challenge-day-grid" id="habitChallengeDays"></div><small class="small-note">Select the exact challenge days when this habit should appear.</small></div>
       <div class="two-col">
         <div class="form-field"><label for="habitEmoji">ICON</label><select id="habitEmoji"><option value="">Choose icon</option><option value="🎯">🎯 Target</option><option value="📚">📚 Learning</option><option value="💧">💧 Water</option><option value="🏃">🏃 Movement</option><option value="🧘">🧘 Mindfulness</option><option value="🙏">🙏 Reflection</option><option value="💤">💤 Sleep</option><option value="📵">📵 Focus</option><option value="✍️">✍️ Writing</option><option value="💪">💪 Strength</option><option value="🌱">🌱 Growth</option><option value="⭐">⭐ Other</option></select></div>
         <div class="form-field"><label for="habitColor">CARD COLOR</label><select id="habitColor"><option value="yellow">Warm yellow</option><option value="blue">Soft blue</option><option value="mint">Mint green</option><option value="pink">Pink</option><option value="lav">Lavender</option></select></div>
@@ -885,7 +886,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
       s.habits.forEach(h=>{
         if(!isPlainObject(h)||h.id==null)return;
         const id=String(h.id);if(seen.has(id))return;seen.add(id);
-        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow',schedule:h.schedule==='weekly'?'weekly':'daily',weeklyGoal:Math.max(1,Math.min(7,Math.floor(Number(h.weeklyGoal)||7))),...(Array.isArray(h.weekdays)?{weekdays:[...new Set(h.weekdays.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<=6))]}:{}),...(Array.isArray(h.days)?{days:[...new Set(h.days.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{}),...(Array.isArray(h.excludeDays)?{excludeDays:[...new Set(h.excludeDays.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{})});
+        out.habits.push({...h,id,name:typeof h.name==='string'&&h.name.trim()?h.name:'Habit',details:typeof h.details==='string'?h.details:'',emoji:typeof h.emoji==='string'?h.emoji:'',color:typeof h.color==='string'?h.color:'yellow',schedule:h.schedule==='weekly'?'weekly':h.schedule==='specific'?'specific':'daily',weeklyGoal:Math.max(1,Math.min(7,Math.floor(Number(h.weeklyGoal)||7))),...(Array.isArray(h.weekdays)?{weekdays:[...new Set(h.weekdays.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<=6))]}:{}),...(Array.isArray(h.days)?{days:[...new Set(h.days.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{}),...(Array.isArray(h.excludeDays)?{excludeDays:[...new Set(h.excludeDays.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=365))]}:{})});
       });
     }
     if(isPlainObject(s.checks))Object.keys(s.checks).forEach(k=>{if(isPlainObject(s.checks[k]))out.checks[k]=s.checks[k];});
@@ -1297,6 +1298,14 @@ html[data-theme="dark"] .coach-send{color:#171821}
     cfg.lastReminderDate=today;persist();
     await sendSystemNotification(false);
   }
+  function renderHabitDayPicker(selectedDays=[]){
+    const wrap=$('habitChallengeDays');if(!wrap)return;wrap.innerHTML='';
+    const selected=new Set((Array.isArray(selectedDays)?selectedDays:[]).map(Number));
+    for(let day=1;day<=challengeDuration();day++){
+      const label=document.createElement('label');label.className='challenge-day-choice';
+      const checked=selected.has(day);label.innerHTML=`<input type="checkbox" class="habit-challenge-day" value="${day}" ${checked?'checked':''}>Day ${day}`;wrap.append(label);
+    }
+  }
   function openModal(mode){
     modalMode=mode;
     $('modalBack').classList.add('show');
@@ -1310,10 +1319,12 @@ html[data-theme="dark"] .coach-send{color:#171821}
       $('habitDetails').value=existing?.details||'';
       $('habitEmoji').value=existing?.emoji||'';
       $('habitColor').value=existing?.color||'yellow';
-      $('habitSchedule').value=existing?.schedule==='weekly'?'weekly':'daily';
+      $('habitSchedule').value=existing?.schedule==='weekly'?'weekly':existing?.schedule==='specific'?'specific':'daily';
       $('habitWeeklyGoal').value=String(existing?.weeklyGoal||7);
       document.querySelectorAll('.habit-weekday').forEach(box=>box.checked=Array.isArray(existing?.weekdays)?existing.weekdays.map(Number).includes(Number(box.value)):$('habitSchedule').value==='daily');
       $('habitWeekdaysWrap').hidden=$('habitSchedule').value!=='weekly';
+      $('habitChallengeDaysWrap').hidden=$('habitSchedule').value!=='specific';
+      renderHabitDayPicker(existing?.schedule==='specific'&&Array.isArray(existing?.days)?existing.days:[selectedDay]);
       const editDays=existing?habitDaysFor(existing):[];
       $('habitEditScopeWrap').hidden=!(existing&&editDays.includes(selectedDay)&&editDays.length>1);
       $('habitEditScope').value='day';
@@ -1333,11 +1344,14 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const name=$('habitName').value.trim();
     if(!name){notify('Enter a habit name first.');$('habitName').focus();return;}
     const details=$('habitDetails').value.trim(),emoji=$('habitEmoji').value,color=$('habitColor').value;
-    const schedule=$('habitSchedule').value==='weekly'?'weekly':'daily';
+    const selectedSchedule=$('habitSchedule').value;
+    const schedule=selectedSchedule==='weekly'?'weekly':selectedSchedule==='specific'?'specific':'daily';
     const weeklyGoal=Math.max(1,Math.min(7,Math.floor(Number($('habitWeeklyGoal').value)||7)));
     const weekdays=[...document.querySelectorAll('.habit-weekday:checked')].map(box=>Number(box.value));
+    const selectedDays=[...document.querySelectorAll('.habit-challenge-day:checked')].map(box=>Number(box.value));
     if(schedule==='weekly'&&weekdays.length!==weeklyGoal){notify(`Select exactly ${weeklyGoal} weekday${weeklyGoal===1?'':'s'} for this weekly goal.`);return;}
-    const scheduleFields={schedule,weeklyGoal,weekdays:schedule==='weekly'?weekdays:[]};
+    if(schedule==='specific'&&!selectedDays.length){notify('Select at least one challenge day for this habit.');return;}
+    const scheduleFields={schedule,weeklyGoal,weekdays:schedule==='weekly'?weekdays:[],days:schedule==='specific'?selectedDays:[]};
     if(editingHabitId){
       const h=state.habits.find(h=>h.id===editingHabitId);
       if(h){
@@ -1781,7 +1795,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
   $('themeSelect').addEventListener('change',e=>{state.settings.theme=e.target.value==='dark'?'dark':'light';persist();applyTheme();notify(`${state.settings.theme==='dark'?'Dark':'Light'} mode enabled.`);});
   $('closeModal').addEventListener('click',closeModal);
   $('cancelModal').addEventListener('click',closeModal);
-  $('habitSchedule').addEventListener('change',()=>{$('habitWeekdaysWrap').hidden=$('habitSchedule').value!=='weekly';if($('habitSchedule').value==='weekly'&&![...document.querySelectorAll('.habit-weekday:checked')].length){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<Number($('habitWeeklyGoal').value||7));}});
+  $('habitSchedule').addEventListener('change',()=>{const mode=$('habitSchedule').value;$('habitWeekdaysWrap').hidden=mode!=='weekly';$('habitChallengeDaysWrap').hidden=mode!=='specific';if(mode==='weekly'&&![...document.querySelectorAll('.habit-weekday:checked')].length){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<Number($('habitWeeklyGoal').value||7));}if(mode==='specific'&&!document.querySelector('.habit-challenge-day:checked'))renderHabitDayPicker([selectedDay]);});
   $('habitWeeklyGoal').addEventListener('change',()=>{const n=Math.max(1,Math.min(7,Number($('habitWeeklyGoal').value)||7));$('habitWeeklyGoal').value=n;if($('habitSchedule').value==='weekly'){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<n);}});
   $('saveHabitBtn').addEventListener('click',saveHabit);
   $('editProfileBtn').addEventListener('click',()=>openModal('profile'));
