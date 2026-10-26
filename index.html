@@ -754,7 +754,8 @@ html[data-theme="dark"] .coach-send{color:#171821}
     <div id="habitFormWrap">
       <div class="form-field"><label for="habitName">HABIT NAME</label><input id="habitName" maxlength="70" placeholder="Enter a habit name" autocomplete="off"></div>
       <div class="form-field"><label for="habitDetails">WHY IS THIS IMPORTANT? (OPTIONAL)</label><textarea id="habitDetails" maxlength="180" placeholder="Write your own reason"></textarea></div>
-      <div class="two-col">
+      <div class="form-field"><label for="habitAddMode">ADD HABIT TO</label><select id="habitAddMode"><option value="challenge">Entire challenge</option><option value="day">Day by day — this day only</option></select><small class="small-note" id="habitAddModeNote">This habit will appear on every day of your challenge.</small></div>
+      <div class="two-col" id="habitRepeatWrap">
         <div class="form-field"><label for="habitSchedule">REPEAT</label><select id="habitSchedule"><option value="daily">Every day</option><option value="weekly">Selected weekdays each week</option><option value="specific">Specific challenge days</option></select></div>
         <div class="form-field"><label for="habitWeeklyGoal">WEEKLY GOAL</label><input id="habitWeeklyGoal" type="number" min="1" max="7" value="7" inputmode="numeric"><small class="small-note">How many days each week?</small></div>
       </div>
@@ -1306,6 +1307,14 @@ html[data-theme="dark"] .coach-send{color:#171821}
       const checked=selected.has(day);label.innerHTML=`<input type="checkbox" class="habit-challenge-day" value="${day}" ${checked?'checked':''}>Day ${day}`;wrap.append(label);
     }
   }
+  function updateHabitAddModeUI(){
+    const mode=$('habitAddMode')?.value||'challenge';
+    const dayOnly=mode==='day';
+    if($('habitRepeatWrap'))$('habitRepeatWrap').hidden=dayOnly;
+    if($('habitWeekdaysWrap'))$('habitWeekdaysWrap').hidden=dayOnly||$('habitSchedule').value!=='weekly';
+    if($('habitChallengeDaysWrap'))$('habitChallengeDaysWrap').hidden=true;
+    if($('habitAddModeNote'))$('habitAddModeNote').textContent=dayOnly?`This habit will appear on Day ${selectedDay} only. Add another habit from another day to make each day different.`:'This habit will appear on every day of your challenge.';
+  }
   function openModal(mode){
     modalMode=mode;
     $('modalBack').classList.add('show');
@@ -1315,6 +1324,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
     $('modalTitle').textContent=mode==='profile'?'Edit profile':mode==='date'?'Challenge start date':editingHabitId?'Edit habit':'Add a habit';
     if(mode==='habit'){
       const existing=editingHabitId?state.habits.find(h=>h.id===editingHabitId):null;
+      $('habitAddMode').value='challenge';
       $('habitName').value=existing?.name||'';
       $('habitDetails').value=existing?.details||'';
       $('habitEmoji').value=existing?.emoji||'';
@@ -1325,6 +1335,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
       $('habitWeekdaysWrap').hidden=$('habitSchedule').value!=='weekly';
       $('habitChallengeDaysWrap').hidden=$('habitSchedule').value!=='specific';
       renderHabitDayPicker(existing?.schedule==='specific'&&Array.isArray(existing?.days)?existing.days:[selectedDay]);
+      updateHabitAddModeUI();
       const editDays=existing?habitDaysFor(existing):[];
       $('habitEditScopeWrap').hidden=!(existing&&editDays.includes(selectedDay)&&editDays.length>1);
       $('habitEditScope').value='day';
@@ -1344,6 +1355,10 @@ html[data-theme="dark"] .coach-send{color:#171821}
     const name=$('habitName').value.trim();
     if(!name){notify('Enter a habit name first.');$('habitName').focus();return;}
     const details=$('habitDetails').value.trim(),emoji=$('habitEmoji').value,color=$('habitColor').value;
+    if(!editingHabitId&&$('habitAddMode').value==='day'){
+      state.habits.push({id:cryptoId(),name,details,emoji,color,schedule:'specific',weeklyGoal:1,weekdays:[],days:[selectedDay],excludeDays:[],createdAt:new Date().toISOString()});
+      persist();closeModal();renderAll();notify(`Habit added for Day ${selectedDay} only.`);return;
+    }
     const selectedSchedule=$('habitSchedule').value;
     const schedule=selectedSchedule==='weekly'?'weekly':selectedSchedule==='specific'?'specific':'daily';
     const weeklyGoal=Math.max(1,Math.min(7,Math.floor(Number($('habitWeeklyGoal').value)||7)));
@@ -1795,6 +1810,7 @@ html[data-theme="dark"] .coach-send{color:#171821}
   $('themeSelect').addEventListener('change',e=>{state.settings.theme=e.target.value==='dark'?'dark':'light';persist();applyTheme();notify(`${state.settings.theme==='dark'?'Dark':'Light'} mode enabled.`);});
   $('closeModal').addEventListener('click',closeModal);
   $('cancelModal').addEventListener('click',closeModal);
+  $('habitAddMode').addEventListener('change',updateHabitAddModeUI);
   $('habitSchedule').addEventListener('change',()=>{const mode=$('habitSchedule').value;$('habitWeekdaysWrap').hidden=mode!=='weekly';$('habitChallengeDaysWrap').hidden=mode!=='specific';if(mode==='weekly'&&![...document.querySelectorAll('.habit-weekday:checked')].length){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<Number($('habitWeeklyGoal').value||7));}if(mode==='specific'&&!document.querySelector('.habit-challenge-day:checked'))renderHabitDayPicker([selectedDay]);});
   $('habitWeeklyGoal').addEventListener('change',()=>{const n=Math.max(1,Math.min(7,Number($('habitWeeklyGoal').value)||7));$('habitWeeklyGoal').value=n;if($('habitSchedule').value==='weekly'){document.querySelectorAll('.habit-weekday').forEach((box,i)=>box.checked=i<n);}});
   $('saveHabitBtn').addEventListener('click',saveHabit);
